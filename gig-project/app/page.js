@@ -6,12 +6,65 @@ export default function HomePage() {
     <div className="flex flex-row max-w-full max-h-full">
       <div className="flex flex-col m-4 mb-10 pl-6 pr-6 md:w-[75%]">
         <div className="flex w-6/12 max-w-6/12">
-          <p className="font-poppins mt-1 text-gray-600 font-normal text-lg">
+          <p className="font-poppins mt-1 text-dark-gray font-normal text-lg">
             Challenges for you
           </p>
         </div>
         <div className="w-full mt-4 space-y-4">
-          <div className="bg-white h-60 rounded-lg p-5 overflow-hidden">
+          <div className="bg-white h-60 rounded-lg p-5">
+            <div className="flex flex-col">
+              <div className="flex flex-row justify-between ">
+                <div className="flex flex-col">
+                  <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                      $1,000 Cash Prize to Top 3
+                    </div>
+                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                      Potential Intern Role
+                    </div>
+                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                      $50 Free XYZ Credits
+                    </div>
+                  </div>
+                  <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
+                    Lorem Ipsum Dolor
+                  </div>
+                  <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
+                    Posted 10 mins ago by XYZ
+                  </div>
+                </div>
+                <Link href="/apply">
+                  <button className="rounded-lg bg-mid-purple text-white font-poppins w-32 h-10 font-medium">
+                    Apply
+                  </button>
+                </Link>
+              </div>
+              <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
+                imperdiet sem non ante ornare, ut iaculis dui iaculis. Maecenas
+                blandit porta libero, id sollicitudin ex aliquam ut. Nullam
+                tortor neque, tempor non lacus nec, porta viverra erat. Vivamus
+                in euismod ipsum. Proin luctus non tellus sed dapibus. Fusce
+                sodales metus eget suscipit ultricies.
+              </div>
+              <div className="lg:flex hidden flex-row justify-between">
+                <div className="flex flex-row mt-1 items-center">
+                  <StarIcon className="size-5 fill-mid-purple/80" />
+                  <StarIcon className="size-5 fill-mid-purple/80" />
+                  <StarIcon className="size-5 fill-mid-purple/80" />
+                  <StarIcon className="size-5 fill-gray-400" />
+                  <StarIcon className="size-5 fill-gray-400" />
+                  <div className="font-poppins text-xs pr-2 text-gray-500">
+                    &nbsp; Difficulty&nbsp; / ~ 2 hours of work
+                  </div>
+                </div>
+                <div className="font-poppins text-sm pr-2 text-gray-500">
+                  Python, React, and AWS
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white h-60 rounded-lg p-5">
             <div className="flex flex-col">
               <div className="flex flex-row justify-between ">
                 <div className="flex flex-col">
@@ -62,7 +115,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="bg-white h-60 rounded-lg p-5 overflow-hidden">
+          <div className="bg-white h-60 rounded-lg p-5">
             <div className="flex flex-col">
               <div className="flex flex-row justify-between ">
                 <div className="flex flex-col">
@@ -113,7 +166,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="bg-white h-60 rounded-lg p-5 overflow-hidden">
+          <div className="bg-white h-60 rounded-lg p-5">
             <div className="flex flex-col">
               <div className="flex flex-row justify-between ">
                 <div className="flex flex-col">
@@ -164,58 +217,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="bg-white h-60 rounded-lg p-5 overflow-hidden">
-            <div className="flex flex-col">
-              <div className="flex flex-row justify-between ">
-                <div className="flex flex-col">
-                  <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      $1,000 Cash Prize to Top 3
-                    </div>
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      Potential Intern Role
-                    </div>
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      $50 Free XYZ Credits
-                    </div>
-                  </div>
-                  <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
-                    Lorem Ipsum Dolor
-                  </div>
-                  <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                    Posted 10 mins ago by XYZ
-                  </div>
-                </div>
-                <button className="rounded-lg bg-mid-purple text-white font-poppins w-32 h-10 font-medium">
-                  Apply
-                </button>
-              </div>
-              <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-                imperdiet sem non ante ornare, ut iaculis dui iaculis. Maecenas
-                blandit porta libero, id sollicitudin ex aliquam ut. Nullam
-                tortor neque, tempor non lacus nec, porta viverra erat. Vivamus
-                in euismod ipsum. Proin luctus non tellus sed dapibus. Fusce
-                sodales metus eget suscipit ultricies.
-              </div>
-              <div className="lg:flex hidden flex-row justify-between">
-                <div className="flex flex-row mt-1 items-center">
-                  <StarIcon className="size-5 fill-mid-purple/80" />
-                  <StarIcon className="size-5 fill-mid-purple/80" />
-                  <StarIcon className="size-5 fill-mid-purple/80" />
-                  <StarIcon className="size-5 fill-gray-400" />
-                  <StarIcon className="size-5 fill-gray-400" />
-                  <div className="font-poppins text-xs pr-2 text-gray-500">
-                    &nbsp; Difficulty&nbsp; / ~ 2 hours of work
-                  </div>
-                </div>
-                <div className="font-poppins text-sm pr-2 text-gray-500">
-                  Python, React, and AWS
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white h-60 rounded-lg p-5 overflow-hidden">
+          <div className="bg-white h-60 rounded-lg p-5">
             <div className="flex flex-col">
               <div className="flex flex-row justify-between ">
                 <div className="flex flex-col">
@@ -411,9 +413,11 @@ export default function HomePage() {
             </label>
           </div>
           <div className="flex w-full justify-end mb-4">
-            <button className="rounded-lg bg-mid-purple text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
-              <Link href="/">Filter</Link>
-            </button>
+            <Link href="/">
+              <button className="rounded-lg bg-mid-purple text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
+                Filter
+              </button>
+            </Link>
           </div>
         </div>
       </div>
