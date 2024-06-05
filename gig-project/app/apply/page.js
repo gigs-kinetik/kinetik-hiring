@@ -38,7 +38,7 @@ export default function ApplyPage() {
           ipsum. Proin luctus non tellus sed dapibus. Fusce sodales metus eget
           suscipit ultricies. Lorem ipsum dolor sit amet, consectetur adipiscing
           elit. Nunc imperdiet sem non ante ornare, ut iaculis dui iaculis.
-          Maecenas blandit porta libero, id sollicitudin ex aliquam ut. Nullam
+          Maecenas blandit porta libero id sollicitudin ex aliquam ut. Nullam
           tortor neque, tempor non lacus nec, porta viverra erat. Vivamus in
           euismod ipsum. Proin luctus non tellus sed dapibus. Fusce sodales
           metus eget suscipit ultricies.
