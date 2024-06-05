@@ -11,8 +11,8 @@ import {
 
 export default function RootLayout({ children }) {
   return (
-    <html className="bg-off-white">
-      <body className="h-full flex flex-col">
+    <html className="h-full w-full bg-off-white">
+      <body className="flex flex-col min-h-full">
         <nav className="sticky top-0 bg-off-white">
           <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-2 border-b-2 border-light-gray items-center">
             <div className="flex items-center">
@@ -26,12 +26,6 @@ export default function RootLayout({ children }) {
                 className="pt-4 pb-4 pl-6 font-poppins text-dark-gray md:text-lg text-sm font-light hover:font-semibold hover:text-mid-purple/80"
               >
                 Home
-              </Link>
-              <Link
-                href="/other"
-                className="pt-4 pb-4 pl-6 pr-4 font-poppins text-dark-gray md:text-lg text-sm font-light hover:font-semibold hover:text-mid-purple/80"
-              >
-                Portfolio
               </Link>
             </div>
             <div className="lg:flex justify-end max-w-96 w-full h-12 rounded-full border-box border-2 border-gray-400 p-3 lg:text-sm hidden items-center overflow-hidden">
@@ -74,16 +68,18 @@ export default function RootLayout({ children }) {
           </div>
         </nav>
         <main className="flex-grow">{children}</main>
-        <footer className="flex flex-row rounded-t-md text-sm pl-10 pr-10 pt-5 pb-5 font-poppins text-off-white bg-mid-purple h-20 justify-between">
-          <div className="flex self-center">
-            Please contact for any inquiries.
-          </div>
-          <div className="flex text-center self-center">
-            @2024 Kinetik. All Rights Reserved.
-          </div>
-          <div className="flex flex-col text-right self-end">
-            <div>pran.singaraju@gmail</div>
-            <div>agnithegreat@gmail.com</div>
+        <footer>
+          <div className="md:flex flex-row rounded-t-md hidden text-sm pl-10 pr-10 pt-5 pb-5 font-poppins text-off-white bg-mid-purple h-20 justify-between">
+            <div className="flex self-center">
+              Please contact for any inquiries.
+            </div>
+            <div className="flex text-center self-center">
+              @2024 Kinetik. All Rights Reserved.
+            </div>
+            <div className="flex flex-col text-right self-end">
+              <div>pran.singaraju@gmail.com</div>
+              <div>agnithegreat@gmail.com</div>
+            </div>
           </div>
         </footer>
       </body>
