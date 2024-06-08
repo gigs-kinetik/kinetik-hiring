@@ -26,13 +26,13 @@ export default function HomeLayout({ children }) {
                 </Link>
               </div>
               <div className="group transition w-20 flex flex-row justify-start ml-2 mt-2">
-                <div className="text-gray-800 duration-3000 hover:text-mid-purple/80 font-normal hover:font-semibold transition-all">
+                <div className="text-logo-purple/85 duration-3000font-normal hover:font-semibold transition-all">
                   <Link
                     href="/home"
                     className="pt-5 pb-4 pl-6 font-poppins md:text-lg text-sm"
                   >
                     Home
-                    <span className="ml-6 block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-mid-purple/80"></span>
+                    <span className="ml-6 block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-logo-purple/85"></span>
                   </Link>
                 </div>
               </div>
@@ -80,7 +80,7 @@ export default function HomeLayout({ children }) {
         </nav>
         <main className="flex-grow">{children}</main>
         <footer>
-          <div className="md:flex flex-row rounded-t-md hidden text-sm pl-10 pr-10 pt-5 pb-5 font-poppins text-off-white bg-mid-purple h-20 justify-between">
+          <div className="flex flex-row text-sm pl-10 pr-10 pt-5 pb-5 font-poppins text-off-white bg-logo-purple/85 h-20 justify-between">
             <div className="flex self-center">
               Please contact for any inquiries.
             </div>

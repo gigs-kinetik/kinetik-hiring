@@ -16,13 +16,13 @@ export default function HomePage() {
               <div className="flex flex-row justify-between ">
                 <div className="flex flex-col">
                   <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
                       $1,000 Cash Prize to Top 3
                     </div>
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
                       Potential Intern Role
                     </div>
-                    <div className="rounded-full bg-mid-purple/70 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
                       $50 Free XYZ Credits
                     </div>
                   </div>
@@ -34,7 +34,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <Link href="/apply">
-                  <button className="rounded-lg bg-mid-purple text-white font-poppins w-32 h-10 font-medium">
+                  <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
                     Apply
                   </button>
                 </Link>
@@ -49,9 +49,9 @@ export default function HomePage() {
               </div>
               <div className="lg:flex hidden flex-row justify-between">
                 <div className="flex flex-row mt-1 items-center">
-                  <StarIcon className="size-5 fill-mid-purple/80" />
-                  <StarIcon className="size-5 fill-mid-purple/80" />
-                  <StarIcon className="size-5 fill-mid-purple/80" />
+                  <StarIcon className="size-5 fill-logo-purple/85" />
+                  <StarIcon className="size-5 fill-logo-purple/85" />
+                  <StarIcon className="size-5 fill-logo-purple/85" />
                   <StarIcon className="size-5 fill-gray-400" />
                   <StarIcon className="size-5 fill-gray-400" />
                   <div className="font-poppins text-xs pr-2 text-gray-500">
@@ -78,7 +78,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -91,7 +91,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -104,7 +104,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -118,7 +118,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -131,7 +131,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -144,7 +144,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -157,7 +157,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -173,7 +173,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -186,7 +186,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -199,7 +199,7 @@ export default function HomePage() {
             <input
               id="default-checkbox"
               type="checkbox"
-              className="size-4 accent-mid-purple/40"
+              className="size-4 accent-logo-purple/85"
             />
             <label
               htmlFor="default-checkbox"
@@ -210,7 +210,7 @@ export default function HomePage() {
           </div>
           <div className="flex w-full justify-end mb-4">
             <Link href="/home">
-              <button className="rounded-lg bg-mid-purple text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
+              <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
                 Filter
               </button>
             </Link>
