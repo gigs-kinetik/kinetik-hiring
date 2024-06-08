@@ -100,7 +100,7 @@ export default function ApplyPage() {
         </p>
         <div>
           <Link href="/home">
-            <button className="rounded-lg bg-mid-purple text-white font-poppins w-32 h-10 font-medium mt-10 mb-5">
+            <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-10 mb-5">
               Submit
             </button>
           </Link>
