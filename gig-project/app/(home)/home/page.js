@@ -11,9 +11,9 @@ export default function HomePage() {
           </p>
         </div>
         <div className="w-full mt-4 space-y-4">
-          <div className="bg-white h-60 rounded-lg p-5">
+          <div className="bg-white h-fit rounded-lg p-5">
             <div className="flex flex-col">
-              <div className="flex flex-row justify-between ">
+              <div className="flex flex-row justify-between">
                 <div className="flex flex-col">
                   <div className="lg:flex flex-row hidden space-x-2 mb-2">
                     <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
@@ -82,7 +82,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               Easy (1-2 star)
             </label>
@@ -95,7 +95,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               Medium (3 star)
             </label>
@@ -108,7 +108,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               Hard (4-5 star)
             </label>
@@ -122,7 +122,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               &lt; $500
             </label>
@@ -135,7 +135,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               $500 to $1,000
             </label>
@@ -148,7 +148,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               $1,000 to $5,000
             </label>
@@ -161,7 +161,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               &gt; $5,000
             </label>
@@ -177,7 +177,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               &lt; 2 skills
             </label>
@@ -190,7 +190,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               2 to 4 skills
             </label>
@@ -203,7 +203,7 @@ export default function HomePage() {
             />
             <label
               htmlFor="default-checkbox"
-              className="ms-2 text-sm text-gray-900 dark:text-gray-300"
+              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
             >
               &gt; 4 skills
             </label>
