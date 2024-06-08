@@ -13,13 +13,13 @@ export default function HomeLayout({ children }) {
   return (
     <html className="h-full w-full bg-off-white">
       <body className="flex flex-col min-h-full">
-        <nav className="sticky top-0 bg-off-white">
+        <nav className="sticky top-0 bg-off-white mt-4">
           <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-2 border-b-2 border-light-gray items-center justify-between">
             <div className="flex flex-row">
               <div className="flex items-center">
                 <Link href="/">
                   <img
-                    className="flex max-w-32"
+                    className="flex max-w-32 mb-4"
                     src="/name.png"
                     alt="Company Logo"
                   />
@@ -37,45 +37,36 @@ export default function HomeLayout({ children }) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row">
-              <div className="lg:flex justify-end max-w-96 w-full h-12 rounded-full border-box border-2 border-gray-400 p-3 lg:text-sm hidden items-center overflow-hidden">
-                <MagnifyingGlassIcon className="size-5 fill-gray-400 ml-2" />
-                <input
-                  type="text"
-                  className="w-96 pl-4 pr-4 bg-off-white text-dark-gray focus:outline-none font-poppins"
-                  placeholder="Search for a Gig"
-                />
-              </div>
-              <Menu>
-                <MenuButton className="ml-8 justify-end font-semibold">
-                  <UserCircleIcon className="lg:size-11 size-8" />
-                </MenuButton>
-                <Transition
-                  enter="transition ease-out duration-75"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
+
+            <Menu>
+              <MenuButton className="ml-8 justify-end font-semibold">
+                <UserCircleIcon className="lg:size-11 size-8" />
+              </MenuButton>
+              <Transition
+                enter="transition ease-out duration-75"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <MenuItems
+                  anchor="bottom end"
+                  className="w-56 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
                 >
-                  <MenuItems
-                    anchor="bottom end"
-                    className="w-56 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
-                  >
-                    <MenuItem>
-                      <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 border-box border-b-2 border-off-white">
-                        Welcome, Test User!
-                      </div>
-                    </MenuItem>
-                    <MenuItem>
-                      <button className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold">
-                        Sign Out
-                      </button>
-                    </MenuItem>
-                  </MenuItems>
-                </Transition>
-              </Menu>
-            </div>
+                  <MenuItem>
+                    <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 border-box border-b-2 border-off-white">
+                      Welcome, Test User!
+                    </div>
+                  </MenuItem>
+                  <MenuItem>
+                    <button className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold">
+                      Sign Out
+                    </button>
+                  </MenuItem>
+                </MenuItems>
+              </Transition>
+            </Menu>
           </div>
         </nav>
         <main className="flex-grow">{children}</main>
