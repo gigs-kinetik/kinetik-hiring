@@ -74,29 +74,21 @@ export default function ApplyPage() {
           Upload Project Submission
         </div>
         <input
-          className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50"
-          id="file_input"
-          type="file"
+          className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+          type="text"
         />
-        <p
-          class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300 mb-4"
-          id="file_input_help"
-        >
-          ZIP, PDF, HTML.
+        <p class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300 mb-4">
+          Please attach your GitHub or Google Drive link.
         </p>
         <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2 dark:text-white">
           Upload Resume
         </div>
         <input
-          className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50"
-          id="file_input"
-          type="file"
+          className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+          type="text"
         />
-        <p
-          class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300"
-          id="file_input_help"
-        >
-          PDF, DOCX.
+        <p class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
+          Please attach your Google Drive link.
         </p>
         <div>
           <Link href="/home">

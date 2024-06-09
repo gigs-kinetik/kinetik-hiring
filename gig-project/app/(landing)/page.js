@@ -79,13 +79,19 @@ export default function LandingPage() {
             }`}
           >
             <div className="mt-2">
-              <Link href="/home" className="group transition-all duration-1000">
+              <Link
+                href="/login"
+                className="group transition-all duration-1000"
+              >
                 Log In
                 <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-off-white"></span>
               </Link>
             </div>
             <div className="mt-2">
-              <Link href="/home" className="group transition-all duration-1000">
+              <Link
+                href="/signup"
+                className="group transition-all duration-1000"
+              >
                 Sign Up
                 <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-off-white"></span>
               </Link>
