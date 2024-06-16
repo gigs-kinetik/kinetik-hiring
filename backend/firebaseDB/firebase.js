@@ -103,5 +103,14 @@ const displayCollectionSetupValues = async () => {
     throw error;
   }
 }
+function addToEventDB(eventID, userID, projectLink, resumeLink) {
+  const docRef = db.collection(eventID).doc(userID);
+  const newData = {
+    'Project Link': projectLink,
+    'Resume Link': resumeLink
+  };
+
+  return docRef.set(newData);
+}
 
 module.exports = { displayCollectionSetupValues };  // Export the function
