@@ -1,57 +1,107 @@
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase-admin/firestore';
-import serviceAccount from './serviceAccountKey.json';
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+
+const serviceAccount = require('./serviceAccountKey.json');
 
 initializeApp({
-  credential: cert(serviceAccount),
+  credential: cert(serviceAccount)
 });
 
 const db = getFirestore();
 
-export async function addToEventDB(eventID, userID, projectLink, resumeLink) {
-  const docRef = db.collection(eventID).doc(userID);
-  const newData = {
-    'Project Link': projectLink,
-    'Resume Link': resumeLink,
-  };
-
-  await docRef.set(newData);
-}
-
-export async function getSetupDocumentValues(eventID) {
-  const docRef = doc(db, eventID, 'SETUP');
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    const { Difficulty: difficulty, 'Prize Pool': prizePool, Skill: skill, Task: task, Time: time } = data;
-
-    return { difficulty, prizePool, skill, task, time };
-  } else {
-    console.log("No such document!");
-    return {};
+async function getCollectionNames() {
+  try {
+    const collections = await db.listCollections();
+    const collectionNames = collections.map(collection => collection.id);
+    return collectionNames;
+  } catch (error) {
+    console.error('Error listing collections:', error);
+    throw error; // Rethrow the error to be handled by the caller if necessary
   }
 }
 
-async function listCollections() {
-  const collections = await db.listCollections();
-  return collections.map(collection => collection.id);
-}
+async function getSetupDocumentValues(collectionID) {
+  try {
+    const docRef = db.collection(collectionID).doc('SETUP');
+    const docSnap = await docRef.get();
 
-export async function getAllEvents() {
-  const collectionNames = await listCollections();
-  const allSetupEvents = [];
+    if (docSnap.exists) {
+      const data = docSnap.data();
+      const { Difficulty: difficulty, 'Prize Pool': prizePool, Skill: skill, Task: task, Time: time } = data;
 
-  for (const collectionName of collectionNames) {
-    const eventsCollection = collection(db, collectionName);
-    const eventsSnapshot = await getDocs(eventsCollection);
-    const setupEvents = eventsSnapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(event => event.type === 'SETUP');
-    allSetupEvents.push(...setupEvents);
+      return { difficulty, prizePool, skill, task, time };
+    } else {
+      console.log("No such document!");
+      return {};
+    }
+  } catch (error) {
+    console.error('Error getting document:', error);
+    throw error;
   }
-
-  return allSetupEvents;
 }
 
-module.exports = { addToEventDB, getSetupDocumentValues, getAllEvents };
+const displayCollectionSetupValues = async () => {
+  try {
+    const collectionNames = await getCollectionNames();
+    let htmlOutput = '<ul>';
+
+    for (const collectionID of collectionNames) {
+      const setupValues = await getSetupDocumentValues(collectionID);
+
+      htmlOutput += `
+<div className="w-full mt-4 space-y-4">
+          <div className="bg-white h-fit rounded-lg p-5">
+            <div className="flex flex-col">
+              <div className="flex flex-row justify-between">
+                <div className="flex flex-col">
+                  <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                      ${setupValues.prizePool}
+                    </div>
+                  </div>
+                  <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
+                    ${collectionID}
+                  </div>
+                  <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
+                    Posted at ${setupValues.time}
+                  </div>
+                </div>
+                <Link href="/apply">
+                  <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
+                    Apply
+                  </button>
+                </Link>
+              </div>
+              <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                ${setupValues.task}
+              </div>
+              <div className="lg:flex hidden flex-row justify-between">
+                <div className="flex flex-row mt-1 items-center">
+                  <StarIcon className="size-5 fill-logo-purple/85" />
+                  <StarIcon className="size-5 fill-logo-purple/85" />
+                  <StarIcon className="size-5 fill-logo-purple/85" />
+                  <StarIcon className="size-5 fill-gray-400" />
+                  <StarIcon className="size-5 fill-gray-400" />
+                  <div className="font-poppins text-xs pr-2 text-gray-500">
+                    &nbsp; Difficulty&nbsp; ${setupValues.difficulty}
+                  </div>
+                </div>
+                <div className="font-poppins text-sm pr-2 text-gray-500">
+                  ${setupValues.skill}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    htmlOutput += '</ul>';
+    return htmlOutput;
+  } catch (error) {
+    console.error('Error displaying collection setup values:', error);
+    throw error;
+  }
+}
+
+module.exports = { displayCollectionSetupValues };  // Export the function
