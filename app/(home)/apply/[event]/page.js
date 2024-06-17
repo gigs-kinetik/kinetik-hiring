@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { db } from "../../../../lib/firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function ApplyPage() {
   const path = usePathname();
+  const router = useRouter();
   const eventName = decodeURI(path.split("/").pop());
   const [descriptions, setDescriptions] = useState(null);
   const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
+  const [validationError, setValidationError] = useState("");
 
   const fetchDescriptionDocument = async (eventName) => {
     try {
@@ -35,6 +39,29 @@ export default function ApplyPage() {
     }
   }, [eventName]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userEmail = sessionStorage.getItem("userEmail");
+    if (!projectLink || !resumeLink) {
+      setValidationError("Both project link and resume link are required.");
+      return;
+    } else {
+      setValidationError("");
+    }
+
+    try {
+      await setDoc(doc(db, eventName, userEmail), {
+        projectLink: projectLink,
+        resumeLink: resumeLink,
+      });
+      router.push("/home");
+      alert("Submission successful!");
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert("Submission failed.");
+    }
+  };
+
   return (
     <div className="flex flex-col ml-10 mr-10 mb-10 mt-4">
       <div className="flex flex-row mb-4 place align-middle">
@@ -45,7 +72,7 @@ export default function ApplyPage() {
           Challenge Submission
         </p>
       </div>
-      <form onClick={null}>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col bg-white rounded-lg p-5">
           <div className="flex flex-row justify-between ">
             <div className="flex flex-col">
@@ -84,29 +111,37 @@ export default function ApplyPage() {
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2 dark:text-white">
             Upload Project Submission
           </div>
+          <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
+            Please attach your GitHub or Google Drive link.
+          </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
             type="text"
             value={projectLink}
             onChange={(e) => setProjectLink(e.target.value)}
           />
-          <p class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300 mb-4">
-            Please attach your GitHub or Google Drive link.
-          </p>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2 dark:text-white">
             Upload Resume
           </div>
+          <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
+            Please attach your Google Drive link.
+          </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
             type="text"
             value={resumeLink}
             onChange={(e) => setResumeLink(e.target.value)}
           />
-          <p class="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
-            Please attach your Google Drive link.
-          </p>
+          {validationError && (
+            <p className="font-poppins text-red-700 font-medium text-sm mt-4">
+              {validationError}
+            </p>
+          )}
           <div>
-            <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-10 mb-5">
+            <button
+              type="submit"
+              className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-6 mb-5"
+            >
               Submit
             </button>
           </div>

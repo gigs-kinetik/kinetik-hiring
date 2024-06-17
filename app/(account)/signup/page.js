@@ -5,7 +5,7 @@ import { HomeIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../lib/firebaseAuth";
+import { auth } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,6 +27,11 @@ export default function LoginPage() {
         setError(
           "Email already in use, please login or sign up with another email."
         );
+      } else if (
+        error.message ==
+        "Firebase: Password should be at least 6 characters (auth/weak-password)."
+      ) {
+        setError("Password should be at least 6 characters.");
       } else {
         setError(error.message);
       }

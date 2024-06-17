@@ -5,7 +5,7 @@ import { HomeIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../lib/firebaseAuth";
+import { auth } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
