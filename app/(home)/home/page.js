@@ -96,7 +96,7 @@ export default function HomePage() {
                       Posted {event.data.time}
                     </div>
                   </div>
-                  <Link href="/apply">
+                  <Link href={`/apply/${encodeURIComponent(event.name)}`}>
                     <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
                       Apply
                     </button>

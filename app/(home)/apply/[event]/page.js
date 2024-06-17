@@ -3,42 +3,37 @@
 import Link from "next/link";
 import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function ApplyPage() {
+  const path = usePathname();
+  const eventName = decodeURI(path.split("/").pop());
+  const [descriptions, setDescriptions] = useState(null);
+  const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
-  const [setupValues, setSetupValues] = useState({
-    difficulty: "",
-    prizePool: "",
-    skill: "",
-    task: "",
-    time: "",
-  });
-  const [eventName, setEventName] = useState("");
+
+  const fetchDescriptionDocument = async (eventName) => {
+    try {
+      const response = await fetch(
+        `/api/getDescriptionDocs?collectionID=${encodeURIComponent(eventName)}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setDescriptions(data);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      setError(error.message);
+    }
+  };
 
   useEffect(() => {
-    const storedEventName = localStorage.getItem("selectedEvent");
-    if (storedEventName) {
-      setEventName(storedEventName);
-      fetchSetupValues(storedEventName);
+    if (eventName) {
+      fetchDescriptionDocument(eventName);
     }
-  }, []);
-
-  const fetchSetupValues = async (eventName) => {
-    const values = await getSetupDocumentValues(eventName);
-    setSetupValues(values);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      await addToEventDB(eventName, projectLink, resumeLink);
-      alert("Submission successful!");
-    } catch (error) {
-      console.error("Error submitting data: ", error);
-      alert("Submission failed. Please try again.");
-    }
-  };
+  }, [eventName]);
 
   return (
     <div className="flex flex-col ml-10 mr-10 mb-10 mt-4">
@@ -50,7 +45,7 @@ export default function ApplyPage() {
           Challenge Submission
         </p>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onClick={null}>
         <div className="flex flex-col bg-white rounded-lg p-5">
           <div className="flex flex-row justify-between ">
             <div className="flex flex-col">
@@ -58,7 +53,7 @@ export default function ApplyPage() {
                 {eventName}
               </div>
               <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
-                {setupValues.time}
+                {descriptions?.time}
               </div>
             </div>
           </div>
@@ -66,25 +61,25 @@ export default function ApplyPage() {
             Task
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {setupValues.task}
+            {descriptions?.task}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Prize Pool
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {setupValues.prizePool}
+            {descriptions?.prizes}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Difficulty
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {setupValues.difficulty}
+            {descriptions?.difficulty}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Skill Requirements
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {setupValues.skill}
+            {descriptions?.skill}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2 dark:text-white">
             Upload Project Submission
@@ -111,11 +106,9 @@ export default function ApplyPage() {
             Please attach your Google Drive link.
           </p>
           <div>
-            <Link href="/home">
-              <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-10 mb-5">
-                Submit
-              </button>
-            </Link>
+            <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-10 mb-5">
+              Submit
+            </button>
           </div>
         </div>
       </form>
