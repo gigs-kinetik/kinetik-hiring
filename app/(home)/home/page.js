@@ -58,68 +58,75 @@ export default function HomePage() {
           </p>
         </div>
         <div className="w-full mt-4 space-y-4">
-          {events.map((event) => (
-            <div key={event.name} className="bg-white h-fit rounded-lg p-5">
-              <div className="flex flex-col">
-                <div className="flex flex-row justify-between">
-                  <div className="flex flex-col">
-                    <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                      {event.data.prizeList &&
-                      event.data.prizeList.length > 0 ? (
-                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                          {event.data.prizeList[0]}
-                        </div>
-                      ) : (
-                        <div></div>
-                      )}
-                      {event.data.prizeList &&
-                      event.data.prizeList.length > 1 ? (
-                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                          {event.data.prizeList[1]}
-                        </div>
-                      ) : (
-                        <div></div>
-                      )}
-                      {event.data.prizeList &&
-                      event.data.prizeList.length > 2 ? (
-                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                          {event.data.prizeList[2]}
-                        </div>
-                      ) : (
-                        <div></div>
-                      )}
+          {events.map((event) => {
+            const isSubmitted = sessionStorage.getItem(event.name) === "true";
+            return (
+              <div key={event.name} className="bg-white h-fit rounded-lg p-5">
+                <div className="flex flex-col">
+                  <div className="flex flex-row justify-between">
+                    <div className="flex flex-col">
+                      <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                        {event.data.prizeList &&
+                        event.data.prizeList.length > 0 ? (
+                          <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                            {event.data.prizeList[0]}
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                        {event.data.prizeList &&
+                        event.data.prizeList.length > 1 ? (
+                          <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                            {event.data.prizeList[1]}
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                        {event.data.prizeList &&
+                        event.data.prizeList.length > 2 ? (
+                          <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                            {event.data.prizeList[2]}
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                      </div>
+                      <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
+                        {event.name}
+                      </div>
+                      <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
+                        Posted {event.data.time}
+                      </div>
                     </div>
-                    <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
-                      {event.name}
-                    </div>
-                    <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                      Posted {event.data.time}
-                    </div>
+                    <Link href={`/apply/${encodeURIComponent(event.name)}`}>
+                      <button
+                        className={`rounded-lg font-poppins w-32 h-10 font-medium ${
+                          isSubmitted ? "bg-green-600" : "bg-logo-purple/85"
+                        } text-white`}
+                      >
+                        {isSubmitted ? "Applied!" : "Apply"}
+                      </button>
+                    </Link>
                   </div>
-                  <Link href={`/apply/${encodeURIComponent(event.name)}`}>
-                    <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
-                      Apply
-                    </button>
-                  </Link>
-                </div>
-                <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                  {event.data.task || "No description available"}
-                </div>
-                <div className="lg:flex hidden flex-row justify-between">
-                  <div className="flex flex-row mt-1 items-center">
-                    {generateStars(timeToStars(event.data.difficulty))}
-                    <div className="font-poppins text-xs pr-2 text-gray-500">
-                      &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} of
-                      work
-                    </div>
+                  <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                    {event.data.task || "No description available"}
                   </div>
-                  <div className="font-poppins text-sm pr-2 text-gray-500">
-                    {event.data.skill}
+                  <div className="lg:flex hidden flex-row justify-between">
+                    <div className="flex flex-row mt-1 items-center">
+                      {generateStars(timeToStars(event.data.difficulty))}
+                      <div className="font-poppins text-xs pr-2 text-gray-500">
+                        &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} of
+                        work
+                      </div>
+                    </div>
+                    <div className="font-poppins text-sm pr-2 text-gray-500">
+                      {event.data.skill}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       <div className="md:flex hidden flex-col m-4 pr-6 mb-6 md:w-[25%] h-full">

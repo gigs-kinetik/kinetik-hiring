@@ -54,6 +54,7 @@ export default function ApplyPage() {
         projectLink: projectLink,
         resumeLink: resumeLink,
       });
+      sessionStorage.setItem(eventName, "true");
       router.push("/home");
       alert("Submission successful!");
     } catch (error) {
@@ -147,6 +148,11 @@ export default function ApplyPage() {
           </div>
         </div>
       </form>
+      {error && (
+        <p className="font-poppins text-red-700 font-medium text-sm mt-4">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
