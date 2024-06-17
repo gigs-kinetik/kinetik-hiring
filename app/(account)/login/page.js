@@ -1,59 +1,50 @@
 "use client";
+
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/16/solid";
-import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../backend/loginService/firebaseAuth";
+import { auth } from "../../../lib/firebaseAuth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loggedInEmail, setLoggedInEmail] = useState(null);
-  const router = useRouter(); // Use the useRouter hook from next/navigation
-
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("userEmail");
-    if (storedEmail) {
-      setLoggedInEmail(storedEmail);
-    }
-  }, []);
+  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem("userEmail", email);
+      sessionStorage.setItem("userEmail", email);
       setLoggedInEmail(email);
       setError("");
-      router.push('home'); // Redirect to the desired page after login
-      
+      router.push("home");
     } catch (error) {
-      setError(error.message);
+      if (error.message == "Firebase: Error (auth/invalid-credential).") {
+        setError("Invalid username or password.");
+      } else {
+        setError(error.message);
+      }
     }
   };
 
   return (
     <div className="font-poppins flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
-      {/* Home button */}
       <button className="w-fit h-fit">
         <Link href="/">
-          <HomeIcon className="size-12 ml-12 fill-logo-purple/85"></HomeIcon>
+          <HomeIcon className="size-12 ml-12 fill-logo-purple/85" />
         </Link>
       </button>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        {/* Logo */}
         <img className="mx-auto h-14 w-auto" src="/logo.png" alt="Kinetik" />
-        {/* Heading */}
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-off-white/90">
           Log in to your account
         </h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
-        {/* Display error message if any */}
-        {error && <p className="text-red-500 text-center">Invalid Credentials</p>}
-        {/* Login form */}
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label
@@ -98,6 +89,11 @@ export default function LoginPage() {
               />
             </div>
           </div>
+          {error && (
+            <p className="text-red-700 font-medium text-md text-center">
+              {error}
+            </p>
+          )}
           <div>
             <button
               type="submit"
@@ -107,7 +103,6 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-        {/* Display logged in email */}
       </div>
     </div>
   );

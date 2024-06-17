@@ -1,7 +1,36 @@
+"use client";
+
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/16/solid";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchAllSetupDocuments = async () => {
+    try {
+      const response = await fetch("/api/getSetupDocs");
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setEvents(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllSetupDocuments();
+  }, []);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="flex flex-row max-w-full max-h-full">
       <div className="flex flex-col m-4 mb-10 pl-6 pr-6 md:w-[75%]">
@@ -11,59 +40,57 @@ export default function HomePage() {
           </p>
         </div>
         <div className="w-full mt-4 space-y-4">
-          <div className="bg-white h-fit rounded-lg p-5">
-            <div className="flex flex-col">
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      $1,000 Cash Prize to Top 3
+          {events.map((event) => (
+            <div key={event.name} className="bg-white h-fit rounded-lg p-5">
+              <div className="flex flex-col">
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-col">
+                    <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                        Cash Prize to Top 3
+                      </div>
+                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                        Potential Intern Role
+                      </div>
+                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                        $50 Free XYZ Credits
+                      </div>
                     </div>
-                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      Potential Intern Role
+                    <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
+                      {event.name}
                     </div>
-                    <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                      $50 Free XYZ Credits
+                    <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
+                      Posted 10 mins ago by XYZ
                     </div>
                   </div>
-                  <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
-                    Lorem Ipsum Dolor
-                  </div>
-                  <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                    Posted 10 mins ago by XYZ
-                  </div>
+                  <Link href="/apply">
+                    <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
+                      Apply
+                    </button>
+                  </Link>
                 </div>
-                <Link href="/apply">
-                  <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium">
-                    Apply
-                  </button>
-                </Link>
-              </div>
-              <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-                imperdiet sem non ante ornare, ut iaculis dui iaculis. Maecenas
-                blandit porta libero, id sollicitudin ex aliquam ut. Nullam
-                tortor neque, tempor non lacus nec, porta viverra erat. Vivamus
-                in euismod ipsum. Proin luctus non tellus sed dapibus. Fusce
-                sodales metus eget suscipit ultricies.
-              </div>
-              <div className="lg:flex hidden flex-row justify-between">
-                <div className="flex flex-row mt-1 items-center">
-                  <StarIcon className="size-5 fill-logo-purple/85" />
-                  <StarIcon className="size-5 fill-logo-purple/85" />
-                  <StarIcon className="size-5 fill-logo-purple/85" />
-                  <StarIcon className="size-5 fill-gray-400" />
-                  <StarIcon className="size-5 fill-gray-400" />
-                  <div className="font-poppins text-xs pr-2 text-gray-500">
-                    &nbsp; Difficulty&nbsp; / ~ 2 hours of work
-                  </div>
+                <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                  {event.data.task || "No description available."}
                 </div>
-                <div className="font-poppins text-sm pr-2 text-gray-500">
-                  Python, React, and AWS
+                <div className="lg:flex hidden flex-row justify-between">
+                  <div className="flex flex-row mt-1 items-center">
+                    <StarIcon className="size-5 fill-logo-purple/85" />
+                    <StarIcon className="size-5 fill-logo-purple/85" />
+                    <StarIcon className="size-5 fill-logo-purple/85" />
+                    <StarIcon className="size-5 fill-gray-400" />
+                    <StarIcon className="size-5 fill-gray-400" />
+                    <div className="font-poppins text-xs pr-2 text-gray-500">
+                      &nbsp; Difficulty&nbsp; / ~ {event.data.time} hours of
+                      work
+                    </div>
+                  </div>
+                  <div className="font-poppins text-sm pr-2 text-gray-500">
+                    {event.data.skill}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
       <div className="md:flex hidden flex-col m-4 pr-6 mb-6 md:w-[25%] h-full">
@@ -209,11 +236,9 @@ export default function HomePage() {
             </label>
           </div>
           <div className="flex w-full justify-end mb-4">
-            <Link href="/home">
-              <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
-                Filter
-              </button>
-            </Link>
+            <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
+              Filter
+            </button>
           </div>
         </div>
       </div>

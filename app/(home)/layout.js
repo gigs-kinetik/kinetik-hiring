@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import "../globals.css";
-import { UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/16/solid";
+import { UserCircleIcon } from "@heroicons/react/16/solid";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Menu,
   MenuButton,
@@ -10,14 +15,37 @@ import {
 } from "@headlessui/react";
 
 export default function HomeLayout({ children }) {
+  const [email, setEmail] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("userEmail");
+    if (storedEmail) {
+      setLoggedIn(true);
+      setEmail(storedEmail);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
+  const handleSignOut = () => {
+    sessionStorage.clear();
+    router.push("/");
+  };
+
+  if (!loggedIn) {
+    return null;
+  }
+
   return (
-    <html className="h-full w-full bg-off-white">
-      <body className="flex flex-col min-h-full">
+    <div className="h-full w-full bg-off-white">
+      <div className="flex flex-col min-h-full">
         <nav className="sticky top-0 bg-off-white mt-4">
           <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-2 border-b-2 border-light-gray items-center justify-between">
             <div className="flex flex-row">
               <div className="flex items-center">
-                <Link href="/">
+                <Link href="/home">
                   <img
                     className="flex max-w-32 mb-4"
                     src="/name.png"
@@ -56,11 +84,14 @@ export default function HomeLayout({ children }) {
                 >
                   <MenuItem>
                     <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 border-box border-b-2 border-off-white">
-                      Welcome!
+                      Welcome, {email}!
                     </div>
                   </MenuItem>
                   <MenuItem>
-                    <button className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold">
+                    <button
+                      className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold"
+                      onClick={handleSignOut}
+                    >
                       Sign Out
                     </button>
                   </MenuItem>
@@ -80,11 +111,11 @@ export default function HomeLayout({ children }) {
             </div>
             <div className="flex flex-col text-right self-end">
               <div>pran.singaraju@gmail.com</div>
-              <div>agni.the.great@gmail.com</div>
+              <div>agnithegreat@gmail.com</div>
             </div>
           </div>
         </footer>
-      </body>
-    </html>
+      </div>
+    </div>
   );
 }

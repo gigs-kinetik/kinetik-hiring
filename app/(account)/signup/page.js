@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/16/solid";
-import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../backend/loginService/firebaseAuth";
+import { auth } from "../../../lib/firebaseAuth";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,11 +18,18 @@ export default function SignupPage() {
     e.preventDefault();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      sessionStorage.setItem("userEmail", email);
       setIsSignedUp(true);
       setError("");
-      router.push('home');
+      router.push("home");
     } catch (error) {
-      setError(error.message);
+      if (error.message == "Firebase: Error (auth/email-already-in-use).") {
+        setError(
+          "Email already in use, please login or sign up with another email."
+        );
+      } else {
+        setError(error.message);
+      }
       setIsSignedUp(false);
     }
   };
@@ -41,7 +48,6 @@ export default function SignupPage() {
         </h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
-        {error && <p className="text-red-500 text-center">{error}</p>}
         {isSignedUp ? (
           <div className="text-center text-off-white">
             <p>Account created successfully!</p>
@@ -100,6 +106,11 @@ export default function SignupPage() {
                 Sign Up
               </button>
             </div>
+            {error && (
+              <p className="text-red-700 font-medium text-md text-center">
+                {error}
+              </p>
+            )}
           </form>
         )}
       </div>
