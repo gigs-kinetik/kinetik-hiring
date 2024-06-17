@@ -2,51 +2,52 @@
 
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/16/solid";
-import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
+import { useEvents } from "../../../lib/eventsContext";
 
 export default function HomePage() {
-  const [events, setEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { events, loading, error } = useEvents();
 
-  const fetchAllSetupDocuments = async () => {
-    try {
-      const response = await fetch("/api/getSetupDocs");
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+  const timeToStars = (timeStr) => {
+    const timeParts = timeStr.split(" ");
+    let minutes = 0;
+    for (let i = 0; i < timeParts.length; i += 2) {
+      const value = parseInt(timeParts[i]);
+      const unit = timeParts[i + 1];
+      if (unit.startsWith("mins")) {
+        minutes += value;
+      } else if (unit.startsWith("hours")) {
+        minutes += value * 60;
       }
-      const data = await response.json();
-      setEvents(data);
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    }
+    if (minutes <= 30) {
+      return 1;
+    } else if (minutes <= 60) {
+      return 2;
+    } else if (minutes <= 120) {
+      return 3;
+    } else if (minutes <= 240) {
+      return 4;
+    } else {
+      return 5;
     }
   };
 
-  useEffect(() => {
-    fetchAllSetupDocuments();
-  }, []);
+  const generateStars = (starCount) => {
+    const totalStars = 5;
+    const filledStars = Math.min(Math.max(starCount, 0), totalStars);
+    const emptyStars = totalStars - filledStars;
 
-  if (loading) {
     return (
-      <div className="flex justify-center items-center w-full pt-20">
-        <Oval
-          visible={true}
-          height="35"
-          width="35"
-          color="#161A30"
-          secondaryColor="#d6d6d6"
-          ariaLabel="oval-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-        />
+      <div className="flex flex-row">
+        {[...Array(filledStars)].map((_, index) => (
+          <StarIcon key={index} className="size-5 fill-logo-purple/85" />
+        ))}
+        {[...Array(emptyStars)].map((_, index) => (
+          <StarIcon key={index} className="size-5 fill-gray-400" />
+        ))}
       </div>
     );
-  }
+  };
 
   return (
     <div className="flex flex-row max-w-full max-h-full">
@@ -63,21 +64,36 @@ export default function HomePage() {
                 <div className="flex flex-row justify-between">
                   <div className="flex flex-col">
                     <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                        Cash Prize to Top 3
-                      </div>
-                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                        Potential Intern Role
-                      </div>
-                      <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                        $50 Free XYZ Credits
-                      </div>
+                      {event.data.prizeList &&
+                      event.data.prizeList.length > 0 ? (
+                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                          {event.data.prizeList[0]}
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                      {event.data.prizeList &&
+                      event.data.prizeList.length > 1 ? (
+                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                          {event.data.prizeList[1]}
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                      {event.data.prizeList &&
+                      event.data.prizeList.length > 2 ? (
+                        <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                          {event.data.prizeList[2]}
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
                     </div>
                     <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
                       {event.name}
                     </div>
                     <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                      Posted {event.data.time} ago
+                      Posted {event.data.time}
                     </div>
                   </div>
                   <Link href="/apply">
@@ -87,18 +103,14 @@ export default function HomePage() {
                   </Link>
                 </div>
                 <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                  {event.data.task || "No description available."}
+                  {event.data.task || "No description available"}
                 </div>
                 <div className="lg:flex hidden flex-row justify-between">
                   <div className="flex flex-row mt-1 items-center">
-                    <StarIcon className="size-5 fill-logo-purple/85" />
-                    <StarIcon className="size-5 fill-logo-purple/85" />
-                    <StarIcon className="size-5 fill-logo-purple/85" />
-                    <StarIcon className="size-5 fill-gray-400" />
-                    <StarIcon className="size-5 fill-gray-400" />
+                    {generateStars(timeToStars(event.data.difficulty))}
                     <div className="font-poppins text-xs pr-2 text-gray-500">
-                      &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} hours
-                      of work
+                      &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} of
+                      work
                     </div>
                   </div>
                   <div className="font-poppins text-sm pr-2 text-gray-500">

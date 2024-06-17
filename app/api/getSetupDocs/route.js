@@ -11,7 +11,7 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
-async function getCollectionValues(collectionID) {
+async function getSetupCollectionValues(collectionID) {
   try {
     const docRef = db.collection(collectionID).doc("SETUP");
     const docSnap = await docRef.get();
@@ -19,12 +19,12 @@ async function getCollectionValues(collectionID) {
       const data = docSnap.data();
       const {
         Difficulty: difficulty,
-        "Prize Pool": prizePool,
+        "Prize List": prizeList,
         Skill: skill,
         Task: task,
         Time: time,
       } = data;
-      return { difficulty, prizePool, skill, task, time };
+      return { difficulty, prizeList, skill, task, time };
     }
   } catch (error) {
     console.error("Error getting document:", error);
@@ -32,13 +32,13 @@ async function getCollectionValues(collectionID) {
   }
 }
 
-async function getAllCollections() {
+async function getSetupAllCollections() {
   try {
     const collections = await db.listCollections();
     const info = [];
     for (const collection of collections) {
       const name = collection.id;
-      const data = await getCollectionValues(name);
+      const data = await getSetupCollectionValues(name);
       info.push({ name, data });
     }
     return info;
@@ -50,7 +50,7 @@ async function getAllCollections() {
 
 export async function GET() {
   try {
-    const data = await getAllCollections();
+    const data = await getSetupAllCollections();
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(
