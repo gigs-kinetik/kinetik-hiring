@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
+import { Oval } from "react-loader-spinner";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchAllSetupDocuments = async () => {
     try {
@@ -20,6 +22,8 @@ export default function HomePage() {
     } catch (error) {
       console.error("Error fetching documents:", error);
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,8 +31,21 @@ export default function HomePage() {
     fetchAllSetupDocuments();
   }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full pt-20">
+        <Oval
+          visible={true}
+          height="35"
+          width="35"
+          color="#161A30"
+          secondaryColor="#d6d6d6"
+          ariaLabel="oval-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
   }
 
   return (
@@ -60,7 +77,7 @@ export default function HomePage() {
                       {event.name}
                     </div>
                     <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                      Posted 10 mins ago by XYZ
+                      Posted {event.data.time} ago
                     </div>
                   </div>
                   <Link href="/apply">
@@ -80,8 +97,8 @@ export default function HomePage() {
                     <StarIcon className="size-5 fill-gray-400" />
                     <StarIcon className="size-5 fill-gray-400" />
                     <div className="font-poppins text-xs pr-2 text-gray-500">
-                      &nbsp; Difficulty&nbsp; / ~ {event.data.time} hours of
-                      work
+                      &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} hours
+                      of work
                     </div>
                   </div>
                   <div className="font-poppins text-sm pr-2 text-gray-500">
