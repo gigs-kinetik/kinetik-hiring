@@ -39,8 +39,8 @@ export default function HomeLayout({ children }) {
   }
 
   return (
-    <div className="h-full w-full bg-off-white">
-      <div className="flex flex-col min-h-full">
+    <html className="h-full w-full bg-off-white">
+      <body className="flex flex-col min-h-full">
         <nav className="sticky top-0 bg-off-white mt-4">
           <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-2 border-b-2 border-light-gray items-center justify-between">
             <div className="flex flex-row">
@@ -115,7 +115,7 @@ export default function HomeLayout({ children }) {
             </div>
           </div>
         </footer>
-      </div>
-    </div>
+      </body>
+    </html>
   );
 }
