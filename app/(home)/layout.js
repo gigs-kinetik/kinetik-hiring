@@ -19,6 +19,7 @@ export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
+  const countdown = true;
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("userEmail");
@@ -30,12 +31,18 @@ export default function HomeLayout({ children }) {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (countdown) {
+      router.push("/countdown");
+    }
+  }, [router]);
+
   const handleSignOut = () => {
     sessionStorage.clear();
     router.push("/");
   };
 
-  if (!loggedIn) {
+  if (!loggedIn || countdown) {
     return null;
   }
 

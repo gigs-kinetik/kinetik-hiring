@@ -45,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div>
+    <div className="font-poppins flex h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
       <button className="w-fit h-fit">
         <Link href="/">
           <HomeIcon className="size-12 ml-12 fill-logo-purple/85"></HomeIcon>
