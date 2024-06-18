@@ -17,13 +17,20 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      sessionStorage.setItem("userEmail", email);
-      setLoggedInEmail(email);
-      setError("");
-      router.push("home");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Check if email is verified
+      if (user.emailVerified) {
+        sessionStorage.setItem("userEmail", email);
+        setLoggedInEmail(email);
+        setError("");
+        router.push("countdown");
+      } else {
+        setError("Email not verified. Please check your inbox for the verification email.");
+      }
     } catch (error) {
-      if (error.message == "Firebase: Error (auth/invalid-credential).") {
+      if (error.message === "Firebase: Error (auth/invalid-credential).") {
         setError("Invalid username or password.");
       } else {
         setError(error.message);

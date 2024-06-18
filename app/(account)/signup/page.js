@@ -1,10 +1,9 @@
-"use client";
-
+'use client';
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation"; // Correct hook for App Router
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
@@ -13,24 +12,21 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSignedUp, setIsSignedUp] = useState(false);
   const router = useRouter();
+  const auth = getAuth(); // Initialize Firebase Auth
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(auth.currentUser);
       sessionStorage.setItem("userEmail", email);
       setIsSignedUp(true);
       setError("");
-      router.push("home");
+      router.push("/login");
     } catch (error) {
-      if (error.message == "Firebase: Error (auth/email-already-in-use).") {
-        setError(
-          "Email already in use, please login or sign up with another email."
-        );
-      } else if (
-        error.message ==
-        "Firebase: Password should be at least 6 characters (auth/weak-password)."
-      ) {
+      if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use, please login or sign up with another email.");
+      } else if (error.code === "auth/weak-password") {
         setError("Password should be at least 6 characters.");
       } else {
         setError(error.message);
