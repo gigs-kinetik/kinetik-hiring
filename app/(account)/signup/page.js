@@ -1,9 +1,12 @@
-'use client';
+"use client";
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Correct hook for App Router
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { auth } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
@@ -12,20 +15,26 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSignedUp, setIsSignedUp] = useState(false);
   const router = useRouter();
-  const auth = getAuth(); // Initialize Firebase Auth
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       await sendEmailVerification(auth.currentUser);
       sessionStorage.setItem("userEmail", email);
       setIsSignedUp(true);
       setError("");
       router.push("/login");
+      alert("An email verification has been sent to " + email);
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setError("Email already in use, please login or sign up with another email.");
+        setError(
+          "Email already in use, please login or sign up with another email."
+        );
       } else if (error.code === "auth/weak-password") {
         setError("Password should be at least 6 characters.");
       } else {
@@ -36,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="font-poppins flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
+    <div>
       <button className="w-fit h-fit">
         <Link href="/">
           <HomeIcon className="size-12 ml-12 fill-logo-purple/85"></HomeIcon>

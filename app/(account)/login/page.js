@@ -17,21 +17,29 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      
-      // Check if email is verified
       if (user.emailVerified) {
         sessionStorage.setItem("userEmail", email);
         setLoggedInEmail(email);
         setError("");
-        router.push("countdown");
+        router.push("/countdown");
       } else {
-        setError("Email not verified. Please check your inbox for the verification email.");
+        setError(
+          "Email not verified. Please check your inbox for the verification email."
+        );
       }
     } catch (error) {
-      if (error.message === "Firebase: Error (auth/invalid-credential).") {
+      if (error.code === "auth/invalid-credential") {
         setError("Invalid username or password.");
+      } else if (error.code === "auth/too-many-requests") {
+        setError(
+          "Too many attempts, account has been temporarily disabled. Please reset your password."
+        );
       } else {
         setError(error.message);
       }
@@ -39,7 +47,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="font-poppins flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
+    <div>
       <button className="w-fit h-fit">
         <Link href="/">
           <HomeIcon className="size-12 ml-12 fill-logo-purple/85" />
