@@ -74,7 +74,6 @@ export default function HomeLayout({ children }) {
                   </div>
                 </div>
               </div>
-
               <Menu>
                 <MenuButton className="ml-8 justify-end font-semibold">
                   <UserCircleIcon className="lg:size-11 size-8" />
@@ -89,10 +88,10 @@ export default function HomeLayout({ children }) {
                 >
                   <MenuItems
                     anchor="bottom end"
-                    className="w-56 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
+                    className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 pr-5 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
                   >
                     <MenuItem>
-                      <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 border-box border-b-2 border-off-white">
+                      <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 text-ellipsis overflow-hidden border-box border-b-2 border-off-white">
                         Welcome, {email}!
                       </div>
                     </MenuItem>
