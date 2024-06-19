@@ -19,6 +19,8 @@ export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
+
+  // change this variable to false once countdown gets closer or else it won't work
   const countdown = true;
 
   useEffect(() => {
@@ -37,14 +39,14 @@ export default function HomeLayout({ children }) {
     }
   }, [router]);
 
+  if (!loggedIn || countdown) {
+    return null;
+  }
+
   const handleSignOut = () => {
     sessionStorage.clear();
     router.push("/");
   };
-
-  if (!loggedIn || countdown) {
-    return null;
-  }
 
   return (
     <EventsProvider>
@@ -116,6 +118,9 @@ export default function HomeLayout({ children }) {
               </div>
               <div className="flex text-center self-center">
                 @2024 Kinetik. All Rights Reserved.
+              </div>
+              <div className="flex flex-col text-right self-center">
+                <div>kinetik.gigs@gmail.com</div>
               </div>
             </div>
           </footer>
