@@ -117,10 +117,6 @@ export default function HomeLayout({ children }) {
               <div className="flex text-center self-center">
                 @2024 Kinetik. All Rights Reserved.
               </div>
-              <div className="flex flex-col text-right self-end">
-                <div>pran.singaraju@gmail.com</div>
-                <div>agnithegreat@gmail.com</div>
-              </div>
             </div>
           </footer>
         </body>
