@@ -4,24 +4,21 @@ import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loggedInEmail, setLoggedInEmail] = useState(null);
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       if (user.emailVerified) {
         sessionStorage.setItem("userEmail", email);
@@ -29,20 +26,31 @@ export default function LoginPage() {
         setError("");
         router.push("/countdown");
       } else {
-        setError(
-          "Email not verified. Please check your inbox for the verification email."
-        );
+        setError("Email not verified. Please check your inbox for the verification email.");
       }
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         setError("Invalid username or password.");
       } else if (error.code === "auth/too-many-requests") {
-        setError(
-          "Too many attempts, account has been temporarily disabled. Please reset your password."
-        );
+        setError("Too many attempts, account has been temporarily disabled. Please reset your password.");
       } else {
         setError(error.message);
       }
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError("Please enter your email address to reset your password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setSuccess("Password reset email sent! Check your inbox.");
+      setError("");
+    } catch (error) {
+      setError(error.message);
+      setSuccess("");
     }
   };
 
@@ -89,7 +97,15 @@ export default function LoginPage() {
               >
                 Password
               </label>
-              <div className="text-sm"></div>
+              <div className="text-sm">
+                <button
+                  type="button"
+                  onClick={handlePasswordReset}
+                  className="font-medium text-logo-purple hover:text-logo-purple/75"
+                >
+                  Forgot password?
+                </button>
+              </div>
             </div>
             <div className="mt-2">
               <input
@@ -107,6 +123,11 @@ export default function LoginPage() {
           {error && (
             <p className="text-red-700 font-medium text-md text-center">
               {error}
+            </p>
+          )}
+          {success && (
+            <p className="text-green-700 font-medium text-md text-center">
+              {success}
             </p>
           )}
           <div>
