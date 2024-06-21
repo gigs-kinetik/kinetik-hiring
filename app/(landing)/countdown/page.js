@@ -20,7 +20,7 @@ export default function CountdownPage() {
 
   useEffect(() => {
     if (email) {
-      const countDownDate = new Date("Jun 30, 2024 23:59:59").getTime();
+      const countDownDate = new Date("July 15, 2024 23:59:59").getTime();
       const timer = setInterval(() => {
         const now = new Date().getTime();
         const distance = countDownDate - now;
