@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { HomeIcon } from "@heroicons/react/16/solid";
+import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSignedUp, setIsSignedUp] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
 
   const handleSignUp = async (e) => {
@@ -42,6 +43,10 @@ export default function LoginPage() {
       }
       setIsSignedUp(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   return (
@@ -95,17 +100,27 @@ export default function LoginPage() {
                 </label>
                 <div className="text-sm"></div>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                 />
+                <span
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                >
+                  {passwordVisible ? (
+                    <EyeSlashIcon className="h-5 w-5 text-gray-600" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5 text-gray-600" />
+                  )}
+                </span>
               </div>
             </div>
             <div>
