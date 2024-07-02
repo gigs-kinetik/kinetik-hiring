@@ -9,6 +9,14 @@ export default function CountdownPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // if disabled then reroute to home
+  const disable = true;
+  useEffect(() => {
+    if (disable) {
+      router.push("/home");
+    }
+  }, [router]);
+
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("userEmail");
     if (!storedEmail) {

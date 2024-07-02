@@ -19,13 +19,13 @@ export default function HomePage() {
         minutes += value * 60;
       }
     }
-    if (minutes <= 30) {
+    if (minutes <= 120) {
       return 1;
-    } else if (minutes <= 60) {
-      return 2;
-    } else if (minutes <= 120) {
-      return 3;
     } else if (minutes <= 240) {
+      return 2;
+    } else if (minutes <= 360) {
+      return 3;
+    } else if (minutes <= 480) {
       return 4;
     } else {
       return 5;
@@ -49,6 +49,8 @@ export default function HomePage() {
     );
   };
 
+  console.log(events);
+
   return (
     <div className="flex flex-row max-w-full max-h-full">
       <div className="flex flex-col m-4 mb-10 pl-6 pr-6 md:w-[75%]">
@@ -59,7 +61,7 @@ export default function HomePage() {
         </div>
         <div className="w-full mt-4 space-y-4">
           {events.map((event) => {
-            const isSubmitted = sessionStorage.getItem(event.name) === "true";
+            const isSubmitted = localStorage.getItem(event.name) === "true";
             return (
               <div key={event.name} className="bg-white h-fit rounded-lg p-5">
                 <div className="flex flex-col">
@@ -95,7 +97,7 @@ export default function HomePage() {
                         {event.name}
                       </div>
                       <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                        Posted {event.data.time}
+                        Deadline: {event.data.time}
                       </div>
                     </div>
                     <Link href={`/apply/${encodeURIComponent(event.name)}`}>

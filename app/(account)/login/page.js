@@ -31,7 +31,7 @@ export default function LoginPage() {
         sessionStorage.setItem("userEmail", email);
         setLoggedInEmail(email);
         setError("");
-        router.push("/countdown");
+        router.push("/home");
       } else {
         setError(
           "Email not verified. Please check your inbox for the verification email."
