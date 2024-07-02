@@ -54,7 +54,7 @@ export default function ApplyPage() {
         projectLink: projectLink,
         resumeLink: resumeLink,
       });
-      sessionStorage.setItem(eventName, "true");
+      localStorage.setItem(eventName, "true");
       router.push("/home");
       alert("Submission successful!");
     } catch (error) {

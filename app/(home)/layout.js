@@ -6,7 +6,7 @@ import { UserCircleIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EventsProvider } from "../../lib/eventsContext";
-
+import { auth } from "../../lib/firebaseConfig";
 import {
   Menu,
   MenuButton,
@@ -21,7 +21,7 @@ export default function HomeLayout({ children }) {
   const router = useRouter();
 
   // change this variable to false once countdown gets closer or else it won't work
-  const countdown = true;
+  const countdown = false;
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("userEmail");
@@ -33,11 +33,11 @@ export default function HomeLayout({ children }) {
     }
   }, [router]);
 
-  useEffect(() => {
-    if (countdown) {
-      router.push("/countdown");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   if (countdown) {
+  //     router.push("/countdown");
+  //   }
+  // }, [router]);
 
   if (!loggedIn || countdown) {
     return null;
@@ -45,6 +45,7 @@ export default function HomeLayout({ children }) {
 
   const handleSignOut = () => {
     sessionStorage.clear();
+    auth.signOut();
     router.push("/");
   };
 
@@ -90,7 +91,7 @@ export default function HomeLayout({ children }) {
                 >
                   <MenuItems
                     anchor="bottom end"
-                    className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 pr-5 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
+                    className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
                   >
                     <MenuItem>
                       <div className="group flex w-full font-semibold items-center gap-2 py-3 px-3 text-ellipsis overflow-hidden border-box border-b-2 border-off-white">
@@ -120,7 +121,7 @@ export default function HomeLayout({ children }) {
                 @2024 Kinetik. All Rights Reserved.
               </div>
               <div className="flex flex-col text-right self-center">
-                <div>kinetik.gigs@gmail.com</div>
+                <div>kinetikgigs.us@gmail.com</div>
               </div>
             </div>
           </footer>

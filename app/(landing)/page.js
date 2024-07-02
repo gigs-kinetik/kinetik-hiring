@@ -205,7 +205,7 @@ export default function LandingPage() {
           @2024 Kinetik. All Rights Reserved.
         </div>
         <div className="flex flex-col text-right self-center">
-          <div>kinetik.gigs@gmail.com</div>
+          <div>kinetikgigs.us@gmail.com</div>
         </div>
       </div>
     </div>

@@ -27,8 +27,8 @@ export default function LoginPage() {
         password
       );
       await sendEmailVerification(auth.currentUser);
-      sessionStorage.setItem("userEmail", email);
       setIsSignedUp(true);
+      auth.signOut();
       setError("");
       router.push("/login");
       alert("An email verification has been sent to " + email);
