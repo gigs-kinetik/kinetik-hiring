@@ -200,12 +200,14 @@ export default function LandingPage() {
         </div>
       </div>
       <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-between">
-        <div className="self-center">Please contact for any inquiries.</div>
+        <div className="md:flex hidden self-center">
+          Please contact for any inquiries.
+        </div>
         <div className="text-center self-center">
           @2024 Kinetik. All Rights Reserved.
         </div>
         <div className="flex flex-col text-right self-center">
-          <div>kinetikgigs.us@gmail.com</div>
+          <div>kinetik.gigs@gmail.com</div>
         </div>
       </div>
     </div>

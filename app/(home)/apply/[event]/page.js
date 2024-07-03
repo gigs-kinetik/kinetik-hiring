@@ -3,41 +3,24 @@
 import Link from "next/link";
 import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { db } from "../../../../lib/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
 
 export default function ApplyPage() {
-  const path = usePathname();
   const router = useRouter();
-  const eventName = decodeURI(path.split("/").pop());
-  const [descriptions, setDescriptions] = useState(null);
   const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
   const [validationError, setValidationError] = useState("");
-
-  const fetchDescriptionDocument = async (eventName) => {
-    try {
-      const response = await fetch(
-        `/api/getDescriptionDocs?collectionID=${encodeURIComponent(eventName)}`
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      setDescriptions(data);
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      setError(error.message);
-    }
-  };
+  const [event, setEventInfo] = useState(null);
 
   useEffect(() => {
-    if (eventName) {
-      fetchDescriptionDocument(eventName);
+    const storedEvent = sessionStorage.getItem("currentEvent");
+    if (storedEvent) {
+      setEventInfo(JSON.parse(storedEvent));
     }
-  }, [eventName]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,11 +33,13 @@ export default function ApplyPage() {
     }
 
     try {
-      await setDoc(doc(db, eventName, userEmail), {
+      const userInfoRef = doc(db, "User Information", userEmail);
+      const submissionsRef = collection(userInfoRef, "Submissions");
+      await setDoc(doc(submissionsRef, event["Event ID"]), {
+        eventName: event["Event Name"],
         projectLink: projectLink,
         resumeLink: resumeLink,
       });
-      localStorage.setItem(eventName, "true");
       router.push("/home");
       alert("Submission successful!");
     } catch (error) {
@@ -62,6 +47,10 @@ export default function ApplyPage() {
       alert("Submission failed.");
     }
   };
+
+  if (!event) {
+    return <div></div>;
+  }
 
   return (
     <div className="flex flex-col ml-10 mr-10 mb-10 mt-4">
@@ -78,10 +67,10 @@ export default function ApplyPage() {
           <div className="flex flex-row justify-between ">
             <div className="flex flex-col">
               <div className="font-poppins lg:text-3xl text-xl font-semibold text-logo-purple">
-                {eventName}
+                {event["Event Name"]}
               </div>
               <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
-                {descriptions?.time}
+                Deadline: {event["Deadline"]}
               </div>
             </div>
           </div>
@@ -89,31 +78,34 @@ export default function ApplyPage() {
             Task
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {descriptions?.task}
+            {event["Long Description"]}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Prize Pool
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {descriptions?.prizes}
+            {event["Prize List"] &&
+              event["Prize List"].map((prize, index) => <div>{prize}</div>)}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Difficulty
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {descriptions?.difficulty}
+            This project will take around {event["Time Needed"]} to complete.
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Skill Requirements
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {descriptions?.skill}
+            This challenge will require you to utilize the following skills to
+            the best of your ablity: {event["Required Skills"]}.
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2 dark:text-white">
             Upload Project Submission
           </div>
           <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
-            Please attach your GitHub or Google Drive link.
+            Please attach your GitHub link (public repo) or Google Drive link
+            (allow access to anyone).
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -125,7 +117,7 @@ export default function ApplyPage() {
             Upload Resume
           </div>
           <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
-            Please attach your Google Drive link.
+            Please attach your Google Drive link (allow access to anyone).
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
