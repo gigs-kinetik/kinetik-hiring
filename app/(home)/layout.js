@@ -51,7 +51,7 @@ export default function HomeLayout({ children }) {
 
   return (
     <EventsProvider>
-      <html className="h-full w-full bg-off-white">
+      <html className="h-full w-full bg-off-white overflow-y-scroll">
         <body className="flex flex-col min-h-full">
           <nav className="sticky top-0 bg-off-white mt-4">
             <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-2 border-b-2 border-light-gray items-center justify-between">
@@ -113,15 +113,15 @@ export default function HomeLayout({ children }) {
           </nav>
           <main className="flex-grow">{children}</main>
           <footer>
-            <div className="flex flex-row text-sm pl-10 pr-10 pt-5 pb-5 font-poppins text-off-white bg-logo-purple/85 h-20 justify-between">
-              <div className="flex self-center">
+            <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-between font-poppins">
+              <div className="md:flex hidden self-center">
                 Please contact for any inquiries.
               </div>
-              <div className="flex text-center self-center">
+              <div className="text-center self-center">
                 @2024 Kinetik. All Rights Reserved.
               </div>
               <div className="flex flex-col text-right self-center">
-                <div>kinetikgigs.us@gmail.com</div>
+                <div>kinetik.gigs@gmail.com</div>
               </div>
             </div>
           </footer>

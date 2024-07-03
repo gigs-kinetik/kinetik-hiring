@@ -3,9 +3,34 @@
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/16/solid";
 import { useEvents } from "../../../lib/eventsContext";
+import { useState, useEffect } from "react";
+import { db } from "../../../lib/firebaseConfig";
+import { getDocs, collection, query } from "firebase/firestore";
 
 export default function HomePage() {
-  const { events, loading, error } = useEvents();
+  const events = useEvents();
+  const [submissionIds, setSubmissionIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSubmissionIds().then((ids) => {
+      setSubmissionIds(ids);
+      setIsLoading(false);
+    });
+  }, []);
+  const fetchSubmissionIds = async () => {
+    const userEmail = sessionStorage.getItem("userEmail");
+    const submissionsRef = collection(
+      db,
+      "User Information",
+      userEmail,
+      "Submissions"
+    );
+    const q = query(submissionsRef);
+    const querySnapshot = await getDocs(q);
+    const ids = querySnapshot.docs.map((doc) => doc.id);
+    return ids;
+  };
 
   const timeToStars = (timeStr) => {
     const timeParts = timeStr.split(" ");
@@ -49,7 +74,17 @@ export default function HomePage() {
     );
   };
 
-  console.log(events);
+  const handleApplyClick = async (event) => {
+    sessionStorage.setItem("currentEvent", JSON.stringify(event));
+  };
+
+  const isApplied = (eventId) => {
+    return submissionIds.includes(eventId);
+  };
+
+  if (isLoading) {
+    return <div></div>;
+  }
 
   return (
     <div className="flex flex-row max-w-full max-h-full">
@@ -61,68 +96,80 @@ export default function HomePage() {
         </div>
         <div className="w-full mt-4 space-y-4">
           {events.map((event) => {
-            const isSubmitted = localStorage.getItem(event.name) === "true";
             return (
-              <div key={event.name} className="bg-white h-fit rounded-lg p-5">
+              <div
+                key={event["Event Name"]}
+                className="bg-white h-fit rounded-lg p-5"
+              >
                 <div className="flex flex-col">
                   <div className="flex flex-row justify-between">
                     <div className="flex flex-col">
                       <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                        {event.data.prizeList &&
-                        event.data.prizeList.length > 0 ? (
+                        {event["Prize List"] &&
+                        event["Prize List"].length > 0 ? (
                           <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                            {event.data.prizeList[0]}
+                            {event["Prize List"][0]}
                           </div>
                         ) : (
                           <div></div>
                         )}
-                        {event.data.prizeList &&
-                        event.data.prizeList.length > 1 ? (
+                        {event["Prize List"] &&
+                        event["Prize List"].length > 1 ? (
                           <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                            {event.data.prizeList[1]}
+                            {event["Prize List"][1]}
                           </div>
                         ) : (
                           <div></div>
                         )}
-                        {event.data.prizeList &&
-                        event.data.prizeList.length > 2 ? (
+                        {event["Prize List"] &&
+                        event["Prize List"].length > 2 ? (
                           <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                            {event.data.prizeList[2]}
+                            {event["Prize List"][2]}
                           </div>
                         ) : (
                           <div></div>
                         )}
                       </div>
                       <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
-                        {event.name}
+                        {event["Event Name"]}
                       </div>
                       <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
-                        Deadline: {event.data.time}
+                        Deadline: {event["Deadline"]}
                       </div>
                     </div>
-                    <Link href={`/apply/${encodeURIComponent(event.name)}`}>
+                    <Link
+                      href={`/apply/${encodeURIComponent(event["Event Name"])}`}
+                      className="w-fit h-fit rounded-lg"
+                    >
                       <button
-                        className={`rounded-lg font-poppins w-32 h-10 font-medium ${
-                          isSubmitted ? "bg-green-600" : "bg-logo-purple/85"
-                        } text-white`}
+                        className={`rounded-lg font-poppins w-32 h-10 font-medium text-white ${
+                          isApplied(event["Event ID"])
+                            ? "bg-green-600/90 cursor-not-allowed"
+                            : "bg-logo-purple/85 hover:bg-logo-purple"
+                        }`}
+                        onClick={() =>
+                          !isApplied(event["Event ID"]) &&
+                          handleApplyClick(event)
+                        }
+                        disabled={isApplied(event["Event ID"])}
                       >
-                        {isSubmitted ? "Applied!" : "Apply"}
+                        {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
                       </button>
                     </Link>
                   </div>
                   <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                    {event.data.task || "No description available"}
+                    {event["Short Description"] || "No description available"}
                   </div>
                   <div className="lg:flex hidden flex-row justify-between">
                     <div className="flex flex-row mt-1 items-center">
-                      {generateStars(timeToStars(event.data.difficulty))}
+                      {generateStars(timeToStars(event["Time Needed"]))}
                       <div className="font-poppins text-xs pr-2 text-gray-500">
-                        &nbsp; Difficulty&nbsp; / ~ {event.data.difficulty} of
+                        &nbsp; Difficulty&nbsp; / ~ {event["Time Needed"]} of
                         work
                       </div>
                     </div>
                     <div className="font-poppins text-sm pr-2 text-gray-500">
-                      {event.data.skill}
+                      {event["Required Skills"]}
                     </div>
                   </div>
                 </div>
