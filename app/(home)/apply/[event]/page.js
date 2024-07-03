@@ -100,10 +100,10 @@ export default function ApplyPage() {
             This challenge will require you to utilize the following skills to
             the best of your ablity: {event["Required Skills"]}.
           </div>
-          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2 dark:text-white">
+          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2">
             Upload Project Submission
           </div>
-          <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
             Please attach your GitHub link (public repo) or Google Drive link
             (allow access to anyone).
           </p>
@@ -113,10 +113,10 @@ export default function ApplyPage() {
             value={projectLink}
             onChange={(e) => setProjectLink(e.target.value)}
           />
-          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2 dark:text-white">
+          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2">
             Upload Resume
           </div>
-          <p className="font-poppins mt-1 text-sm text-gray-500 dark:text-gray-300">
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
             Please attach your Google Drive link (allow access to anyone).
           </p>
           <input
