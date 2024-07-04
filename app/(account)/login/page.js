@@ -8,7 +8,8 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { auth } from "../../../lib/firebaseConfig";
+import { auth, db } from "../../../lib/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,8 +31,14 @@ export default function LoginPage() {
       if (user.emailVerified) {
         sessionStorage.setItem("userEmail", email);
         setLoggedInEmail(email);
+        const options = { timeZone: "America/Chicago", timeZoneName: "short" };
+        const currDate = new Date().toLocaleDateString("en-US", options);
+        const currTime = new Date().toLocaleTimeString("en-US", options);
+        await updateDoc(doc(db, "User Information", email), {
+          "Last Login": currDate + " " + currTime,
+        });
         setError("");
-        router.push("/home");
+        router.push("/info");
       } else {
         setError(
           "Email not verified. Please check your inbox for the verification email."

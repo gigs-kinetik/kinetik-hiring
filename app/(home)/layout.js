@@ -20,9 +20,6 @@ export default function HomeLayout({ children }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
 
-  // change this variable to false once countdown gets closer or else it won't work
-  const countdown = false;
-
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("userEmail");
     if (storedEmail) {
@@ -33,13 +30,7 @@ export default function HomeLayout({ children }) {
     }
   }, [router]);
 
-  // useEffect(() => {
-  //   if (countdown) {
-  //     router.push("/countdown");
-  //   }
-  // }, [router]);
-
-  if (!loggedIn || countdown) {
+  if (!loggedIn) {
     return null;
   }
 
