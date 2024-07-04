@@ -14,14 +14,15 @@ export default function InfoPage() {
 
   const checkAccessCode = async () => {
     try {
+      const formattedAccessCode = accessCode.toUpperCase();
       const accessCodeRef = doc(db, "Company Information", "Access Codes");
       const docSnap = await getDoc(accessCodeRef);
       const data = docSnap.data();
-      if (data.hasOwnProperty(accessCode)) {
-        setEventNames(data[accessCode]);
+      if (data.hasOwnProperty(formattedAccessCode)) {
+        setEventNames(data[formattedAccessCode]);
         sessionStorage.setItem(
           "filteredEvents",
-          JSON.stringify(data[accessCode])
+          JSON.stringify(data[formattedAccessCode])
         );
         setError("");
         router.push("/home");
@@ -56,22 +57,23 @@ export default function InfoPage() {
     <div className="font-poppins h-full flex flex-col">
       <div className="flex h-screen bg-gradient-to-tl from-logo-purple/95 via-mid-purple/40 via-65% to-transparent items-center justify-center">
         <div className="flex flex-col items-center text-center">
-          <div className="bg-off-white/40 rounded-lg">
-            <input
-              type="text"
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value)}
-              className="md:text-lg text-md font-medium rounded-lg border-0 text-logo-purple bg-transparent focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 text-center w-80 placeholder-gray-600"
-              placeholder="Enter your access code"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="md:text-lg text-md font-semibold text-white bg-logo-purple px-4 py-2 rounded-lg hover:bg-opacity-80 mt-6"
-          >
-            Submit
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="bg-off-white/40 rounded-lg">
+              <input
+                type="text"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                className="md:text-lg text-md font-medium rounded-lg border-0 text-logo-purple bg-transparent focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 text-center w-80 placeholder-gray-600"
+                placeholder="Enter your access code"
+              />
+            </div>
+            <button
+              type="button"
+              className="md:text-lg text-md font-semibold text-white bg-logo-purple px-4 py-2 rounded-lg hover:bg-opacity-80 mt-6"
+            >
+              Submit
+            </button>
+          </form>
           {error && <p className="text-red-600 mt-4">{error}</p>}
         </div>
       </div>
