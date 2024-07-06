@@ -95,7 +95,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-row max-w-full max-h-full">
-      <div className="flex flex-col m-4 mb-10 pl-6 pr-6 md:w-[75%]">
+      <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
         <div className="flex w-6/12 max-w-6/12">
           <p className="font-poppins mt-1 text-dark-gray font-normal text-lg">
             Challenges for you
@@ -189,7 +189,7 @@ export default function HomePage() {
           })}
         </div>
       </div>
-      <div className="md:flex hidden flex-col m-4 pr-6 mb-6 md:w-[25%] h-full">
+      <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
         <p className="font-poppins mt-1 text-gray-600 font-normal text-lg">
           Filters
         </p>

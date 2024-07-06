@@ -85,7 +85,9 @@ export default function ApplyPage() {
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
             {event["Prize List"] &&
-              event["Prize List"].map((prize, index) => <div>{prize}</div>)}
+              event["Prize List"].map((prize, index) => (
+                <div key={index}>{prize}</div>
+              ))}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Difficulty

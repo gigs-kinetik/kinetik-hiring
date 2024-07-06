@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({ children }) {
   return (
-    <html className="h-full w-full">
+    <html className="h-full w-full bg-off-white">
       <head>
         <link rel="icon" href="/logo.png" />
       </head>

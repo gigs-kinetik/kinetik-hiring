@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 export default function LandingPage() {
   const [showButton, setShowButton] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
-  const words = ["Hire", "Test", "Build"];
+  const words = ["Build", "Test", "Hire"];
 
   useEffect(() => {
     const animateTopText = () => {
@@ -80,11 +80,15 @@ export default function LandingPage() {
     <div className="font-poppins h-full flex flex-col">
       <div className="relative h-screen bg-gradient-to-tl from-logo-purple/95 via-mid-purple/40 via-65% to-transparent">
         <div className="relative z-10 flex justify-between p-5 mx-8 mt-5">
-          <div className="text-4xl font-extrabold text-logo-purple">
-            <img className="w-36" src="/name.png" alt="Company Logo" />
+          <div className="text-logo-purple flex-shrink-0">
+            <img
+              className="w-full max-w-24 sm:max-w-28 md:max-w-32 lg:max-w-36 h-auto"
+              src="/name.png"
+              alt="Company Logo"
+            />
           </div>
           <div
-            className={`flex space-x-10 sm:text-lg text-xs font-semibold text-off-white ${
+            className={`flex space-x-10 sm:text-lg text-sm font-semibold text-off-white ${
               showButton ? "fade-in" : "opacity-0"
             }`}
           >
@@ -110,17 +114,18 @@ export default function LandingPage() {
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full">
           <div className="flex flex-col items-center text-center space-y-5">
-            <div className="md:text-7xl text-5xl font-bold text-logo-purple">
+            <div className="md:text-7xl text-4xl font-bold text-logo-purple">
               <div className="top-animated-text opacity-0"></div>
               <div className="flex flex-row">
-                <div className="top-animated-text opacity-0 ml-4 text-off-white/70">
+                <div className="top-animated-text opacity-0 text-off-white/70">
                   {words[wordIndex]}
                 </div>
-                <div className="top-animated-text opacity-0 ml-4">with</div>
-                <div className="top-animated-text opacity-0 ml-4">Speed.</div>
+                <div className="top-animated-text opacity-0 ml-3">
+                  with Speed.
+                </div>
               </div>
             </div>
-            <div className="flex space-x-2 md:text-2xl text-lg font-semibold text-logo-purple/70">
+            <div className="flex space-x-2 md:text-2xl text-md font-semibold text-logo-purple/70">
               <div className="top-animated-text opacity-0">
                 The Premier Platform for Tech Gigs.
               </div>
@@ -134,20 +139,20 @@ export default function LandingPage() {
         </div>
       </div>
       <div
-        id="students-section"
+        id="organizations-section"
         className="section text-logo-purple flex flex-col"
       >
         <div className="bg-off-white w-full h-full">
           <div className="p-5 mx-20 mt-24 mb-40 h-fit flex flex-col items-end">
-            <div className="font-semibold text-3xl animated-text opacity-0">
+            <div className="font-semibold text-2xl md:text-3xl animated-text opacity-0">
               Organizations
             </div>
-            <div className="h-1.5 w-12 rounded-xl bg-logo-purple mb-6 animated-text opacity-0"></div>
-            <div className="font-normal text-lg md:text-2xl mb-32 text-gray-900 animated-text opacity-0">
+            <div className="h-1.5 w-9 md:w-12 rounded-xl bg-logo-purple mb-6 animated-text opacity-0"></div>
+            <div className="font-normal text-md lg:text-left text-right md:text-2xl mb-20 sm:mb-28 text-gray-900 animated-text opacity-0">
               Move fast and agile with quality. Operationalize your ideas in
               little to no time.
             </div>
-            <div className="w-full flex space-x-10 text-sm md:text-lg font-medium justify-around mb-10">
+            <div className="flex w-full sm:flex-row flex-col space-y-10 sm:space-x-10 sm:space-y-0 text-sm md:text-lg font-medium justify-around md:mb-10 md:text-left text-center place-items-center">
               <div className="flex flex-col w-80 items-center animated-text opacity-0">
                 <CommandLineIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6" />
                 Host Company-Relevant Coding Challenges and Get Multiple
@@ -158,29 +163,29 @@ export default function LandingPage() {
                 Receive Comprehensive Reports on Challenge Submissions, Tailored
                 to What You Need.
               </div>
-              <div className="flex h-fit flex-col w-80 items-center animated-text opacity-0">
-                <SparklesIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6 text-justify" />
-                Your One-Stop-Shop: Iterate on Ideas, Quickly Build MVPs, Hire
-                Talent, and Promote Yourself.
+              <div className="flex flex-col w-80 items-center animated-text opacity-0">
+                <SparklesIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6" />
+                Iterate on Ideas, Quickly Build MVPs, Hire Talent, and Promote
+                Yourself.
               </div>
             </div>
           </div>
         </div>
       </div>
       <div
-        id="organizations-section"
+        id="students-section"
         className="section bg-gradient-to-br from-logo-purple/95 via-mid-purple/40 via-75% to-transparent h-full"
       >
-        <div className="p-5 mx-20 mt-24 mb-52 h-fit flex flex-col items-start">
-          <div className="font-semibold text-3xl text-off-white animated-text opacity-0">
+        <div className="p-5 mx-20 mt-24 mb-40 h-fit flex flex-col items-start">
+          <div className="font-semibold text-2xl text-off-white md:text-3xl animated-text opacity-0">
             Developers
           </div>
-          <div className="h-1.5 w-12 rounded-xl bg-off-white mb-6 animated-text opacity-0"></div>
-          <div className="font-normal text-lg md:text-2xl mb-28 text-off-white animated-text opacity-0">
+          <div className="h-1.5 w-9 md:w-12 rounded-xl bg-off-white mb-6 animated-text opacity-0"></div>
+          <div className="font-normal text-md md:text-2xl mb-20 sm:mb-28 text-off-white animated-text opacity-0">
             Level up your skills while winning prizes. Find internships. Build
             your resume.
           </div>
-          <div className="w-full flex space-x-10 text-sm md:text-lg font-medium justify-around">
+          <div className="flex w-full sm:flex-row flex-col space-y-10 sm:space-x-10 sm:space-y-0 text-sm md:text-lg font-medium justify-around md:mb-10 md:text-left text-center place-items-center">
             <div className="flex flex-col w-80 items-center animated-text text-white opacity-0">
               <NewspaperIcon className="fill-white size-14 md:size-28 mb-6" />
               Learn Advanced Skills, Grow Your Resume, and Strengthen Your Tech
@@ -192,18 +197,18 @@ export default function LandingPage() {
               Credits, and Other Rewards.
             </div>
             <div className="flex flex-col w-80 items-center animated-text text-off-white opacity-0">
-              <UserGroupIcon className="fill-white size-14 md:size-28 mb-6 text-justify" />
+              <UserGroupIcon className="fill-white size-14 md:size-28 mb-6" />
               Earn Prestigious Badges, Enhance Your Professional Portfolio, and
               Post on LinkedIn.
             </div>
           </div>
         </div>
       </div>
-      <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-between">
+      <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-center sm:justify-between">
         <div className="md:flex hidden self-center">
           Please contact for any inquiries.
         </div>
-        <div className="text-center self-center">
+        <div className="sm:flex hidden text-center self-center">
           @2024 Kinetik. All Rights Reserved.
         </div>
         <div className="flex flex-col text-right self-center">
