@@ -68,7 +68,7 @@ export default function InfoPage() {
               />
             </div>
             <button
-              type="button"
+              type="submit"
               className="md:text-lg text-md font-semibold text-white bg-logo-purple px-4 py-2 rounded-lg hover:bg-opacity-80 mt-6"
             >
               Submit
