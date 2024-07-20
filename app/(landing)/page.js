@@ -1,8 +1,8 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import {
-  ArrowDownCircleIcon,
   NewspaperIcon,
   CreditCardIcon,
   UserGroupIcon,
@@ -10,69 +10,15 @@ import {
   DocumentChartBarIcon,
   SparklesIcon,
 } from "@heroicons/react/16/solid";
-import { useEffect, useState } from "react";
 
 export default function LandingPage() {
-  const [showButton, setShowButton] = useState(false);
-  const [wordIndex, setWordIndex] = useState(0);
-  const words = ["Build", "Test", "Hire"];
+  const [email, setEmail] = useState("");
 
-  useEffect(() => {
-    const animateTopText = () => {
-      const elements = document.querySelectorAll(".top-animated-text");
-      elements.forEach((el, index) => {
-        el.style.animationDelay = `${index * 0.2}s`;
-        el.classList.add("fade-slide-in");
-      });
-    };
-    animateTopText();
-
-    const timer = setTimeout(() => {
-      setShowButton(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = (entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const elements = entry.target.querySelectorAll(".animated-text");
-          elements.forEach((el, index) => {
-            el.style.animationDelay = `${index * 0.2}s`;
-            el.classList.add("fade-slide-in");
-          });
-          observer.unobserve(entry.target);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(handleScroll, {
-      threshold: 0.1,
-    });
-
-    const sections = document.querySelectorAll(".section");
-
-    sections.forEach((section) => observer.observe(section));
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [words.length]);
-
-  const handleScrollDown = () => {
-    if (window.scrollY === 0) {
-      const viewportHeight = window.innerHeight;
-      window.scrollBy({ top: viewportHeight, behavior: "smooth" });
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (email) {
+      window.location.href =
+        "https://calendly.com/kinetikgigs/chat-with-kinetik";
     }
   };
 
@@ -87,11 +33,7 @@ export default function LandingPage() {
               alt="Company Logo"
             />
           </div>
-          <div
-            className={`flex space-x-10 sm:text-lg text-sm font-semibold text-off-white ${
-              showButton ? "fade-in" : "opacity-0"
-            }`}
-          >
+          <div className="flex space-x-10 sm:text-lg text-sm font-semibold text-off-white">
             <div className="mt-2">
               <Link
                 href="/login"
@@ -112,58 +54,61 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full">
-          <div className="flex flex-col items-center text-center space-y-5">
-            <div className="md:text-7xl text-4xl font-bold text-logo-purple">
-              <div className="top-animated-text opacity-0"></div>
+        <div className="flex flex-col items-center justify-start pt-24">
+          <div className="flex flex-col items-center text-center space-y-8">
+            <div className="md:text-6xl text-3xl font-bold text-logo-purple">
               <div className="flex flex-row">
-                <div className="top-animated-text opacity-0 text-off-white/70">
-                  {words[wordIndex]}
-                </div>
-                <div className="top-animated-text opacity-0 ml-3">
-                  with Speed.
+                <div className="md:text-6xl text-3xl font-bold text-logo-purple">
+                  <span className="text-off-white/90">Visualize </span>
+                  <span>your ideas at scale</span>
                 </div>
               </div>
             </div>
             <div className="flex space-x-2 md:text-2xl text-md font-semibold text-logo-purple/70">
-              <div className="top-animated-text opacity-0">
-                The Premier Platform for Tech Gigs.
-              </div>
+              <div>Design, Build, and Test at Lightning Speeds.</div>
             </div>
-          </div>
-          <div className={`mt-28 mb-8 ${showButton ? "fade-in" : "opacity-0"}`}>
-            <button className="animate-bounce" onClick={handleScrollDown}>
-              <ArrowDownCircleIcon className="h-14 w-14 fill-logo-purple/80" />
-            </button>
           </div>
         </div>
+        <div className="flex flex-row justify-center mt-28">
+          <form
+            className="flex items-center bg-off-white rounded-full px-4 py-2 w-full max-w-lg justify-between space-x-4"
+            onSubmit={handleSubmit}
+          >
+            <input
+              type="email"
+              placeholder="Your work email"
+              className="flex-grow border-none bg-transparent focus:ring-0"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-full hover:bg-logo-purple/90 transition duration-300"
+            >
+              Book a Demo
+            </button>
+          </form>
+        </div>
       </div>
-      <div
-        id="organizations-section"
-        className="section text-logo-purple flex flex-col"
-      >
+      <div className="section text-logo-purple flex flex-col">
         <div className="bg-off-white w-full h-full">
           <div className="p-5 mx-20 mt-24 mb-40 h-fit flex flex-col items-end">
-            <div className="font-semibold text-2xl md:text-3xl animated-text opacity-0">
-              Organizations
-            </div>
-            <div className="h-1.5 w-9 md:w-12 rounded-xl bg-logo-purple mb-6 animated-text opacity-0"></div>
-            <div className="font-normal text-md lg:text-left text-right md:text-2xl mb-20 sm:mb-28 text-gray-900 animated-text opacity-0">
-              Move fast and agile with quality. Operationalize your ideas in
+            <div className="font-normal text-md lg:text-left text-right md:text-2xl mb-20 sm:mb-28 text-gray-900">
+              Move fast and agile with quality. Operationalize your MVPs in
               little to no time.
             </div>
             <div className="flex w-full sm:flex-row flex-col space-y-10 sm:space-x-10 sm:space-y-0 text-sm md:text-lg font-medium justify-around md:mb-10 md:text-left text-center place-items-center">
-              <div className="flex flex-col w-80 items-center animated-text opacity-0">
+              <div className="flex flex-col w-80 items-center">
                 <CommandLineIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6" />
                 Host Company-Relevant Coding Challenges and Get Multiple
                 High-Quality MVP Submissions.
               </div>
-              <div className="flex flex-col w-80 items-center animated-text opacity-0">
+              <div className="flex flex-col w-80 items-center">
                 <DocumentChartBarIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6" />
                 Receive Comprehensive Reports on Challenge Submissions, Tailored
                 to What You Need.
               </div>
-              <div className="flex flex-col w-80 items-center animated-text opacity-0">
+              <div className="flex flex-col w-80 items-center">
                 <SparklesIcon className="fill-logo-purple/85 size-14 md:size-28 mb-6" />
                 Iterate on Ideas, Quickly Build MVPs, Hire Talent, and Promote
                 Yourself.
@@ -172,31 +117,28 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div
-        id="students-section"
-        className="section bg-gradient-to-br from-logo-purple/95 via-mid-purple/40 via-75% to-transparent h-full"
-      >
+      <div className="section bg-gradient-to-br from-logo-purple/95 via-mid-purple/40 via-75% to-transparent h-full">
         <div className="p-5 mx-20 mt-24 mb-40 h-fit flex flex-col items-start">
-          <div className="font-semibold text-2xl text-off-white md:text-3xl animated-text opacity-0">
+          <div className="font-semibold text-2xl text-off-white md:text-3xl">
             Developers
           </div>
-          <div className="h-1.5 w-9 md:w-12 rounded-xl bg-off-white mb-6 animated-text opacity-0"></div>
-          <div className="font-normal text-md md:text-2xl mb-20 sm:mb-28 text-off-white animated-text opacity-0">
+          <div className="h-1.5 w-9 md:w-12 rounded-xl bg-off-white mb-6"></div>
+          <div className="font-normal text-md md:text-2xl mb-20 sm:mb-28 text-off-white">
             Level up your skills while winning prizes. Find internships. Build
             your resume.
           </div>
           <div className="flex w-full sm:flex-row flex-col space-y-10 sm:space-x-10 sm:space-y-0 text-sm md:text-lg font-medium justify-around md:mb-10 md:text-left text-center place-items-center">
-            <div className="flex flex-col w-80 items-center animated-text text-white opacity-0">
+            <div className="flex flex-col w-80 items-center text-white">
               <NewspaperIcon className="fill-white size-14 md:size-28 mb-6" />
               Learn Advanced Skills, Grow Your Resume, and Strengthen Your Tech
               Stack for Future Jobs.
             </div>
-            <div className="flex flex-col w-80 items-center animated-text text-off-white opacity-0">
+            <div className="flex flex-col w-80 items-center text-off-white">
               <CreditCardIcon className="fill-white size-14 md:size-28 mb-6" />
               Compete for Reputed Internships, Lucrative Cash Prizes, Exclusive
               Credits, and Other Rewards.
             </div>
-            <div className="flex flex-col w-80 items-center animated-text text-off-white opacity-0">
+            <div className="flex flex-col w-80 items-center text-off-white">
               <UserGroupIcon className="fill-white size-14 md:size-28 mb-6" />
               Earn Prestigious Badges, Enhance Your Professional Portfolio, and
               Post on LinkedIn.
@@ -212,7 +154,7 @@ export default function LandingPage() {
           @2024 Kinetik. All Rights Reserved.
         </div>
         <div className="flex flex-col text-right self-center">
-          <div>kinetik.gigs@gmail.com</div>
+          <div>info@kinetikgigs.com</div>
         </div>
       </div>
     </div>
