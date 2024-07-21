@@ -84,7 +84,6 @@ export default function LoginPage() {
           <HomeIcon className="md:size-12 size-10 fill-logo-purple/85"></HomeIcon>
         </Link>
       </button>
-
       <div className="font-poppins flex h-screen flex-col px-6 justify-center lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img className="mx-auto h-14 w-auto" src="/logo.png" alt="Kinetik" />
