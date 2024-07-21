@@ -3,15 +3,19 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  NewspaperIcon,
   CreditCardIcon,
   UserGroupIcon,
   CommandLineIcon,
   DocumentChartBarIcon,
   SparklesIcon,
+  CurrencyDollarIcon,
+  BriefcaseIcon,
+  NewspaperIcon,
+  CursorArrowRaysIcon,
 } from "@heroicons/react/16/solid";
 import { db } from "../../lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { Button } from "@headlessui/react";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -43,20 +47,24 @@ export default function LandingPage() {
               alt="Company Logo"
             />
           </div>
-          <div className="flex space-x-10 sm:text-lg text-sm font-semibold text-off-white">
-            <div className="mt-2">
+          <div className="flex space-x-10 text-off-white sm:text-lg text-sm">
+            <Link
+              href="https://calendly.com/kinetikgigs/chat-with-kinetik"
+              className="font-normal bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300 h-fit"
+            >
+              Book a Demo
+            </Link>
+            <div className="flex flex-col sm:flex-row sm:space-x-10 font-semibold sm:items-center items-end">
               <Link
                 href="/login"
-                className="group transition-all duration-1000"
+                className="group transition-all duration-1000 sm:mt-0"
               >
                 Log In
                 <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-off-white"></span>
               </Link>
-            </div>
-            <div className="mt-2">
               <Link
                 href="/signup"
-                className="group transition-all duration-1000"
+                className="group transition-all duration-1000 mt-2 sm:mt-0"
               >
                 Sign Up
                 <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-1 rounded-xl bg-off-white"></span>
@@ -99,49 +107,51 @@ export default function LandingPage() {
             </button>
           </form>
         </div>
-        <div className="flex flex-col bg-off-white w-full pb-20 pt-14">
-          <div className="flex text-logo-purple font-medium text-3xl justify-center mb-2">
+        <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
+          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
             Why Kinetik?
           </div>
-          <div className="flex text-gray-500 font-normal text-lg justify-center mb-14">
+          <div className="flex text-gray-500 font-normal sm:text-lg text-md text-center justify-center mb-14 mx-8">
             Move fast and agile with quality. Operationalize your MVPs in little
             to no time.
           </div>
-          <div className="flex flex-row justify-center space-x-20">
-            <div className="flex flex-col bg-white pt-10 pb-10 pl-8 pr-8 text-logo-purple rounded-xl">
-              <div className="text-xl flex font-semibold mb-8 justify-center">
+          <div className="flex flex-col xl:flex-row justify-center space-y-10 xl:space-y-0 xl:space-x-10 px-4">
+            <div className="flex flex-col bg-white p-8 text-logo-purple rounded-xl shadow-md flex-1">
+              <div className="sm:text-xl text-md flex font-semibold mb-8 justify-center">
                 Efficient execution
               </div>
               <div className="flex justify-center mb-8 items-baseline">
-                <span className="font-normal text-5xl">{"< "} 7</span>
+                <span className="font-normal sm:text-5xl text-2xl">
+                  {"< "} 4
+                </span>
                 <span className="text-md ml-2">days</span>
               </div>
-              <div className="flex font-normal text-md text-gray-400 justify-center text-center w-72">
-                We will get you multiple iterations in less than 1 week.
+              <div className="flex font-normal sm:text-md text-sm text-gray-400 justify-center text-center w-full">
+                We will get you multiple iterations in less than 4 days.
               </div>
             </div>
-            <div className="flex flex-col bg-white pt-10 pb-10 pl-8 pr-8 text-logo-purple rounded-xl">
-              <div className="text-xl flex font-semibold mb-8 justify-center">
+            <div className="flex flex-col bg-white p-8 text-logo-purple rounded-xl shadow-md flex-1">
+              <div className="sm:text-xl text-md flex font-semibold mb-8 justify-center">
                 Quality development
               </div>
               <div className="flex justify-center mb-8 items-baseline">
-                <span className="font-normal text-5xl">100%</span>
+                <span className="font-normal sm:text-5xl text-2xl">100%</span>
                 <span className="text-md ml-2">satisfaction</span>
               </div>
-              <div className="flex font-normal text-md text-gray-400 justify-center text-center w-72">
+              <div className="flex font-normal sm:text-md text-sm text-gray-400 justify-center text-center w-full">
                 We have the highest standards: our job is not done until you
                 like it.
               </div>
             </div>
-            <div className="flex flex-col bg-white pt-10 pb-10 pl-8 pr-8 text-logo-purple rounded-xl">
-              <div className="text-xl flex font-semibold mb-8 justify-center">
+            <div className="flex flex-col bg-white p-8 text-logo-purple rounded-xl shadow-md flex-1">
+              <div className="sm:text-xl text-md flex font-semibold mb-8 justify-center">
                 Best-in-class
               </div>
               <div className="flex justify-center mb-8 items-baseline">
-                <span className="font-normal text-5xl">1000+</span>
+                <span className="font-normal sm:text-5xl text-2xl">1000+</span>
                 <span className="text-md ml-2">developers</span>
               </div>
-              <div className="flex font-normal text-md text-gray-400 justify-center text-center w-72">
+              <div className="flex font-normal sm:text-md text-sm text-gray-400 justify-center text-center">
                 We have the most skilled developers in our global network.
               </div>
             </div>
@@ -149,23 +159,25 @@ export default function LandingPage() {
         </div>
       </div>
       <div className="flex flex-col w-full pb-20 pt-14 bg-white">
-        <div className="flex text-logo-purple font-medium text-3xl justify-center mb-2">
+        <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
           How does Kinetik work?
         </div>
-        <div className="flex text-gray-500 font-normal text-lg justify-center mb-2">
+        <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
           It is very simple.
         </div>
-        <div className="flex flex-row m-14 text-off-white">
-          <div className="flex flex-col justify-center w-96">
-            <div className="flex text-2xl font-medium text-logo-purple justify-center">
+
+        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+            <div className="flex text-2xl font-medium text-logo-purple justify-center text-center">
               Specify Requirements
             </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center">
-              Decide what kind of product you are looking to build.
+            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+              Decide what technologies you are looking to use and what kind of
+              product you are looking to build.
             </div>
           </div>
-          <div className="flex flex-row justify-around w-full">
-            <div className="flex flex-col items-center">
+          <div className="flex flex-row flex-wrap justify-around w-full">
+            <div className="flex flex-col items-center m-4">
               <div className="text-center font-medium text-logo-purple mb-2">
                 Technical Projects
               </div>
@@ -182,7 +194,7 @@ export default function LandingPage() {
                 Mobile Apps, Web Apps, AI Agents, LLM Dev
               </div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center m-4">
               <div className="text-center font-medium text-logo-purple mb-2">
                 Business Projects
               </div>
@@ -199,7 +211,7 @@ export default function LandingPage() {
                 Strategy Decks, Business Plans, Case Studies
               </div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center m-4">
               <div className="text-center font-medium text-logo-purple mb-2">
                 Design Projects
               </div>
@@ -218,105 +230,95 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-row m-14 text-off-white">
-          <div className="flex flex-col justify-center w-96">
+
+        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
             <div className="flex text-2xl font-medium text-logo-purple justify-center">
               Provide Incentives
             </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center justify-center">
+            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
               Offer prizes for the developers: you choose how you want to
               allocate them.
             </div>
           </div>
-          <div className="flex flex-row justify-around w-full">
-            <div className="flex flex-col items-center">
+          <div className="flex flex-row flex-wrap justify-around w-full">
+            <div className="flex flex-col items-center m-4 justify-center">
               <div className="text-center font-medium text-logo-purple mb-2">
-                Technical Projects
+                Cash Prizes
               </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-center mb-4">
-                  <img className="w-16" src="/aws-logo.webp" />
-                </div>
-                <div className="flex justify-around">
-                  <img className="w-12" src="/react-logo.png" />
-                  <img className="w-12" src="/gpt-logo.png" />
-                </div>
+              <div className="flex w-52 p-5 justify-center">
+                <CurrencyDollarIcon className="fill-logo-purple/95 size-20" />
               </div>
               <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Mobile Apps, Web Apps, AI Agents, LLM Dev
+                Monetary rewards for best MVPs.
               </div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center m-4 justify-center">
               <div className="text-center font-medium text-logo-purple mb-2">
-                Business Projects
+                Internships
               </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-around mb-4">
-                  <img className="w-14" src="/excel-logo.png" />
-                  <img className="w-14" src="/powerbi-logo.png" />
-                </div>
-                <div className="flex justify-center">
-                  <img className="w-16" src="/powerpoint-logo.png" />
-                </div>
+              <div className="flex w-52 p-5 justify-center">
+                <BriefcaseIcon className="fill-logo-purple/95 size-20" />
               </div>
               <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Strategy Decks, Business Plans, Case Studies
+                Internships, gigs, or job offers for top developers.
               </div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center m-4 justify-center">
               <div className="text-center font-medium text-logo-purple mb-2">
-                Design Projects
+                Equity
               </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-center mb-4">
-                  <img className="w-16" src="/figma-logo.webp" />
-                </div>
-                <div className="flex justify-around">
-                  <img className="w-12" src="/canva-logo.png" />
-                  <img className="w-12" src="/photoshop-logo.png" />
-                </div>
+              <div className="flex w-52 p-5 justify-center">
+                <NewspaperIcon className="fill-logo-purple/95 size-20" />
               </div>
               <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Creative Designs, Logos, CX, Social Media Marketing
+                Buy-off MVP or sign stake for stunning mockups.
+              </div>
+            </div>
+            <div className="flex flex-col items-center m-4 justify-center">
+              <div className="text-center font-medium text-logo-purple mb-2">
+                Company Perks
+              </div>
+              <div className="flex w-52 p-5 justify-center">
+                <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
+              </div>
+              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                Credits, swag, or other exclusive company benefits.
               </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-row m-14 text-off-white">
-          <div className="flex flex-col justify-center w-96">
+
+        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
             <div className="flex text-2xl font-medium text-logo-purple justify-center">
               Host a Challenge
             </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center justify-center">
+            <div className="flex text-md mt-4 text-gray-500 justify-center">
               That's it!
             </div>
           </div>
-          <div className="text-logo-purple bg-logo-purple/60 rounded-2xl p-1">
-            <img
-              className="rounded-xl align-middle"
-              src="/altora-challenge.png"
-              alt="Altora Challenge"
-            />
+          <div className="flex flex-row justify-center w-full">
+            <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
+              <img className="rounded-xl" src="/altora-challenge.png" />
+            </div>
           </div>
         </div>
-        <div className="flex flex-row m-10 text-off-white">
+
+        <div className="flex flex-row ml-10 mr-10 mt-10 text-off-white justify-center">
           <div className="flex flex-col p-10">
-            <div className="flex text-2xl font-medium text-logo-purple justify-center">
-              Review Submissions
+            <div className="flex text-2xl font-medium text-logo-purple text-center justify-center">
+              Finally, wait for Kinetik's comprehensive report on the
+              submissions!
             </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center">
-              Let us know what prizes you want to offer.
+            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+              You will receive all the submissions as well as Kinetik's
+              assessment of the work.
             </div>
-          </div>
-          <div className="flex-auto text-logo-purple bg-logo-purple/60 rounded-2xl p-1">
-            <img
-              className="rounded-xl align-middle"
-              src="/altora-challenge.png"
-              alt="Altora Challenge"
-            />
           </div>
         </div>
       </div>
+
       <div className="section text-logo-purple flex flex-col">
         <div className="bg-off-white w-full h-full">
           <div className="p-5 mx-20 mt-24 mb-40 h-fit flex flex-col items-end">
