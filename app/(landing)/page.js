@@ -81,7 +81,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-row justify-center mt-28 mb-20">
+        <div className="flex flex-col items-center mt-28 mb-20">
           <form
             className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
             onSubmit={handleSubmit}
@@ -100,6 +100,9 @@ export default function LandingPage() {
               Interested
             </button>
           </form>
+          <small className="text-off-white mt-4">
+            *if you are a company, please sign up for updates
+          </small>
         </div>
         <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
           <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
