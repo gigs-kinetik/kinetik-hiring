@@ -19,6 +19,7 @@ async function getEventDocs() {
     snapshot.forEach((doc) => {
       events.push({ "Event ID": doc.id, ...doc.data() });
     });
+    console.log(events);
     return events;
   } catch (error) {
     console.error("Error getting documents:", error);
