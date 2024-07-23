@@ -30,6 +30,10 @@ export async function GET() {
   try {
     const events = await getEventDocs();
     const response = NextResponse.json(events, { status: 200 });
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
     return response;
   } catch (error) {
     return NextResponse.json(
