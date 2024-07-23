@@ -12,15 +12,28 @@ export default function ApplyPage() {
   const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
+  const [additionalLink1, setAdditionalLink1] = useState("");
+  const [additionalLink2, setAdditionalLink2] = useState("");
+  const [additionalLink3, setAdditionalLink3] = useState("");
   const [validationError, setValidationError] = useState("");
   const [event, setEventInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedEvent = sessionStorage.getItem("currentEvent");
     if (storedEvent) {
-      setEventInfo(JSON.parse(storedEvent));
+      const eventInfo = JSON.parse(storedEvent);
+      setEventInfo(eventInfo);
+      const submissionIds = sessionStorage["submissionIds"];
+      if (submissionIds.includes(eventInfo["Event ID"])) {
+        router.push("/home");
+      } else {
+        setLoading(false);
+      }
+    } else {
+      setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,8 +50,13 @@ export default function ApplyPage() {
       const submissionsRef = collection(userInfoRef, "Submissions");
       await setDoc(doc(submissionsRef, event["Event ID"]), {
         eventName: event["Event Name"],
-        projectLink: projectLink,
-        resumeLink: resumeLink,
+        "Project Link": projectLink,
+        "Resume Link": resumeLink,
+        "Other Links": [
+          additionalLink1,
+          additionalLink2,
+          additionalLink3,
+        ].filter((link) => link !== ""),
       });
       router.push("/home");
       alert("Submission successful!");
@@ -48,7 +66,7 @@ export default function ApplyPage() {
     }
   };
 
-  if (!event) {
+  if (loading || !event) {
     return <div></div>;
   }
 
@@ -64,7 +82,7 @@ export default function ApplyPage() {
       </div>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col bg-white rounded-lg p-5">
-          <div className="flex flex-row justify-between ">
+          <div className="flex flex-row justify-between">
             <div className="flex flex-col">
               <div className="font-poppins lg:text-3xl text-xl font-semibold text-logo-purple">
                 {event["Event Name"]}
@@ -100,14 +118,15 @@ export default function ApplyPage() {
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
             This challenge will require you to utilize the following skills to
-            the best of your ablity: {event["Required Skills"]}.
+            the best of your ability: {event["Required Skills"]}.
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2">
-            Upload Project Submission
+            Upload Project Submission <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
-            Please attach your GitHub link (public repo) or Google Drive link
-            (allow access to anyone).
+            Please attach your GitHub link if technical submission (make public
+            repo) or Google Drive link if business submission (allow access to
+            anyone).
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -116,7 +135,7 @@ export default function ApplyPage() {
             onChange={(e) => setProjectLink(e.target.value)}
           />
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2">
-            Upload Resume
+            Upload Resume <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
             Please attach your Google Drive link (allow access to anyone).
@@ -127,8 +146,34 @@ export default function ApplyPage() {
             value={resumeLink}
             onChange={(e) => setResumeLink(e.target.value)}
           />
+          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2">
+            Upload Additional Attachments
+          </div>
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
+            Please attach any additional links for further review (i.e. pictures
+            of website, website link, server/database link, research articles,
+            etc). The more information the better.
+          </p>
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+            type="text"
+            value={additionalLink1}
+            onChange={(e) => setAdditionalLink1(e.target.value)}
+          />
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90 mt-2"
+            type="text"
+            value={additionalLink2}
+            onChange={(e) => setAdditionalLink2(e.target.value)}
+          />
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90 mt-2"
+            type="text"
+            value={additionalLink3}
+            onChange={(e) => setAdditionalLink3(e.target.value)}
+          />
           {validationError && (
-            <p className="font-poppins text-red-700 font-medium text-sm mt-4">
+            <p className="font-poppins text-red-500 font-medium text-sm mt-4">
               {validationError}
             </p>
           )}

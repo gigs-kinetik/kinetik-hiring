@@ -18,12 +18,15 @@ export default function HomePage() {
       setSubmissionIds(ids);
       setIsLoading(false);
     });
-
     const filteredEventsFromStorage = JSON.parse(
       sessionStorage.getItem("filteredEvents") || "[]"
     );
     setFilteredEvents(filteredEventsFromStorage);
   }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("submissionIds", JSON.stringify(submissionIds));
+  }, [submissionIds]);
 
   const fetchSubmissionIds = async () => {
     const userEmail = sessionStorage.getItem("userEmail");

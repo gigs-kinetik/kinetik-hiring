@@ -14,7 +14,7 @@ export default function InfoPage() {
 
   const checkAccessCode = async () => {
     try {
-      const formattedAccessCode = accessCode.toUpperCase();
+      const formattedAccessCode = accessCode.toLowerCase();
       const accessCodeRef = doc(db, "Company Information", "Access Codes");
       const docSnap = await getDoc(accessCodeRef);
       const data = docSnap.data();
