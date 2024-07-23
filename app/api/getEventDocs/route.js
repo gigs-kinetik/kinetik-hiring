@@ -19,7 +19,6 @@ async function getEventDocs() {
     snapshot.forEach((doc) => {
       events.push({ "Event ID": doc.id, ...doc.data() });
     });
-    console.log(events);
     return events;
   } catch (error) {
     console.error("Error getting documents:", error);
@@ -30,7 +29,12 @@ async function getEventDocs() {
 export async function GET() {
   try {
     const events = await getEventDocs();
-    return NextResponse.json(events, { status: 200 });
+    const response = NextResponse.json(events, { status: 200 });
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate"
+    );
+    return response;
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch data" },

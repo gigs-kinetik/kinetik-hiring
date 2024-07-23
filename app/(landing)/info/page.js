@@ -24,7 +24,6 @@ export default function InfoPage() {
           "filteredEvents",
           JSON.stringify(data[formattedAccessCode])
         );
-        console.log(sessionStorage.getItem("filteredEvents"));
         setError("");
         router.push("/home");
       } else {

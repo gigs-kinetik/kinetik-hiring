@@ -9,7 +9,6 @@ import { getDocs, collection, query } from "firebase/firestore";
 
 export default function HomePage() {
   const events = useEvents();
-  console.log(events);
   const [submissionIds, setSubmissionIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -25,8 +24,6 @@ export default function HomePage() {
     );
     setFilteredEvents(filteredEventsFromStorage);
   }, []);
-
-  console.log(filteredEvents);
 
   const fetchSubmissionIds = async () => {
     const userEmail = sessionStorage.getItem("userEmail");
