@@ -12,6 +12,7 @@ export default function ApplyPage() {
   const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
+  const [videoLink, setVideoLink] = useState("");
   const [additionalLink1, setAdditionalLink1] = useState("");
   const [additionalLink2, setAdditionalLink2] = useState("");
   const [additionalLink3, setAdditionalLink3] = useState("");
@@ -24,7 +25,7 @@ export default function ApplyPage() {
     if (storedEvent) {
       const eventInfo = JSON.parse(storedEvent);
       setEventInfo(eventInfo);
-      const submissionIds = sessionStorage["submissionIds"];
+      const submissionIds = sessionStorage.getItem("submissionIds");
       if (submissionIds.includes(eventInfo["Event ID"])) {
         router.push("/home");
       } else {
@@ -38,8 +39,10 @@ export default function ApplyPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userEmail = sessionStorage.getItem("userEmail");
-    if (!projectLink || !resumeLink) {
-      setValidationError("Both project link and resume link are required.");
+    if (!projectLink || !resumeLink || !videoLink) {
+      setValidationError(
+        "Project link, resume link, and video link are required."
+      );
       return;
     } else {
       setValidationError("");
@@ -52,6 +55,7 @@ export default function ApplyPage() {
         eventName: event["Event Name"],
         "Project Link": projectLink,
         "Resume Link": resumeLink,
+        "Video Link": videoLink,
         "Other Links": [
           additionalLink1,
           additionalLink2,
@@ -120,13 +124,12 @@ export default function ApplyPage() {
             This challenge will require you to utilize the following skills to
             the best of your ability: {event["Required Skills"]}.
           </div>
-          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4 mb-2">
+          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
             Upload Project Submission <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
-            Please attach your GitHub link if technical submission (make public
-            repo) or Google Drive link if business submission (allow access to
-            anyone).
+            Please attach your GitHub link (coding submission) or Google Drive
+            link (business proposal) with proper access.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -134,11 +137,15 @@ export default function ApplyPage() {
             value={projectLink}
             onChange={(e) => setProjectLink(e.target.value)}
           />
-          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2">
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+            GitHub, Google Drive
+          </p>
+          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
             Upload Resume <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
-            Please attach your Google Drive link (allow access to anyone).
+            Please attach your resume with proper access. We collect resumes for
+            potential sponsor hiring.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -146,13 +153,31 @@ export default function ApplyPage() {
             value={resumeLink}
             onChange={(e) => setResumeLink(e.target.value)}
           />
-          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block mb-2">
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+            Google Drive
+          </p>
+          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
+            Upload Video Submission <span className="text-red-500">*</span>
+          </div>
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
+            Please attach a video of you explaining your product or proposal
+            with proper access.
+          </p>
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+            type="text"
+            value={videoLink}
+            onChange={(e) => setVideoLink(e.target.value)}
+          />
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+            Google Drive, YouTube, Vimeo
+          </p>
+          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
             Upload Additional Attachments
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
-            Please attach any additional links for further review (i.e. pictures
-            of website, website link, server/database link, research articles,
-            etc). The more information the better.
+            Please attach any additional links for further review (i.e. website
+            link, server/database link, research articles, etc).
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
