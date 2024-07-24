@@ -71,7 +71,6 @@ export default function HomePage() {
     const totalStars = 5;
     const filledStars = Math.min(Math.max(starCount, 0), totalStars);
     const emptyStars = totalStars - filledStars;
-
     return (
       <div className="flex flex-row">
         {[...Array(filledStars)].map((_, index) => (
@@ -91,10 +90,6 @@ export default function HomePage() {
   const isApplied = (eventId) => {
     return submissionIds.includes(eventId);
   };
-
-  if (isLoading) {
-    return <div></div>;
-  }
 
   return (
     <div className="flex flex-row max-w-full max-h-full">
@@ -202,39 +197,39 @@ export default function HomePage() {
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="easy-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="easy-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               Easy (1-2 star)
             </label>
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="medium-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="medium-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               Medium (3 star)
             </label>
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="hard-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="hard-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               Hard (4-5 star)
             </label>
@@ -244,39 +239,39 @@ export default function HomePage() {
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="less-than-2-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="less-than-2-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               &lt; 2 skills
             </label>
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="between-2-and-4-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="between-2-and-4-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               2 to 4 skills
             </label>
           </div>
           <div className="ml-8 mt-2 font-poppins">
             <input
-              id="default-checkbox"
+              id="more-than-4-checkbox"
               type="checkbox"
-              className="size-4 accent-logo-purple/85"
+              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
             />
             <label
-              htmlFor="default-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900 dark:text-gray-300"
+              htmlFor="more-than-4-checkbox"
+              className="ms-2 lg:text-sm text-xs text-gray-900"
             >
               &gt; 4 skills
             </label>
