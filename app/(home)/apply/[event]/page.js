@@ -51,8 +51,14 @@ export default function ApplyPage() {
     try {
       const userInfoRef = doc(db, "User Information", userEmail);
       const submissionsRef = collection(userInfoRef, "Submissions");
+      const options = { timeZone: "America/Chicago", timeZoneName: "short" };
+      const currDate = new Date()
+        .toLocaleDateString("en-US", options)
+        .split(", ")[0];
+      const currTime = new Date().toLocaleTimeString("en-US", options);
       await setDoc(doc(submissionsRef, event["Event ID"]), {
-        eventName: event["Event Name"],
+        "Event Name": event["Event Name"],
+        "Submitted At": currDate + ", " + currTime,
         "Project Link": projectLink,
         "Resume Link": resumeLink,
         "Video Link": videoLink,
@@ -62,6 +68,9 @@ export default function ApplyPage() {
           additionalLink3,
         ].filter((link) => link !== ""),
       });
+      const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
+      const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
+      await setDoc(doc(submissionsRef2, userEmail), {});
       router.push("/home");
       alert("Submission successful!");
     } catch (error) {
@@ -127,7 +136,7 @@ export default function ApplyPage() {
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
             Upload Project Submission <span className="text-red-500">*</span>
           </div>
-          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
             Please attach your GitHub link (coding submission) or Google Drive
             link (business proposal) with proper access.
           </p>
@@ -137,13 +146,13 @@ export default function ApplyPage() {
             value={projectLink}
             onChange={(e) => setProjectLink(e.target.value)}
           />
-          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 mt-1 mb-4">
             GitHub, Google Drive
           </p>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
             Upload Resume <span className="text-red-500">*</span>
           </div>
-          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
             Please attach your resume with proper access. We collect resumes for
             potential sponsor hiring.
           </p>
@@ -153,15 +162,15 @@ export default function ApplyPage() {
             value={resumeLink}
             onChange={(e) => setResumeLink(e.target.value)}
           />
-          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 mt-1 mb-4">
             Google Drive
           </p>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
             Upload Video Submission <span className="text-red-500">*</span>
           </div>
-          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
-            Please attach a video of you explaining your product or proposal
-            with proper access.
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
+            Please attach a quick video of you explaining your product or
+            proposal with proper access.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -169,13 +178,13 @@ export default function ApplyPage() {
             value={videoLink}
             onChange={(e) => setVideoLink(e.target.value)}
           />
-          <p className="font-poppins sm:text-xs text-xs text-gray-500 dark:text-gray-300 mt-1 mb-4">
+          <p className="font-poppins sm:text-xs text-xs text-gray-500 mt-1 mb-4">
             Google Drive, YouTube, Vimeo
           </p>
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple block">
             Upload Additional Attachments
           </div>
-          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500 dark:text-gray-300">
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
             Please attach any additional links for further review (i.e. website
             link, server/database link, research articles, etc).
           </p>

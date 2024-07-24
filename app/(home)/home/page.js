@@ -100,7 +100,7 @@ export default function HomePage() {
     <div className="flex flex-row max-w-full max-h-full">
       <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
         <div className="flex w-6/12 max-w-6/12">
-          <p className="font-poppins mt-1 text-dark-gray font-normal text-lg">
+          <p className="font-poppins mt-1 text-dark-gray font-normal text-md sm:text-lg">
             Challenges for you
           </p>
         </div>
@@ -141,10 +141,10 @@ export default function HomePage() {
                             <div></div>
                           )}
                         </div>
-                        <div className="font-poppins lg:text-xl text-lg font-semibold text-logo-purple">
+                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
                           {event["Event Name"]}
                         </div>
-                        <div className="font-poppins lg:flex lg:text-xs hidden text-gray-500">
+                        <div className="font-poppins text-xs text-gray-500">
                           Deadline: {event["Deadline"]}
                         </div>
                       </div>

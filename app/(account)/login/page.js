@@ -9,7 +9,7 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, db } from "../../../lib/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -36,7 +36,7 @@ export default function LoginPage() {
           .toLocaleDateString("en-US", options)
           .split(", ")[0];
         const currTime = new Date().toLocaleTimeString("en-US", options);
-        await setDoc(doc(db, "User Information", email), {
+        await updateDoc(doc(db, "User Information", email), {
           "Last Login": currDate + ", " + currTime,
         });
         setError("");

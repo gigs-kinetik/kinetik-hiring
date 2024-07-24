@@ -12,6 +12,8 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../../lib/firebaseConfig";
 
 export default function LoginPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,6 +39,8 @@ export default function LoginPage() {
         .split(", ")[0];
       const currTime = new Date().toLocaleTimeString("en-US", options);
       await setDoc(doc(db, "User Information", email), {
+        "First Name": firstName,
+        "Last Name": lastName,
         "Last Login": currDate + ", " + currTime,
       });
       auth.signOut();
@@ -90,12 +94,52 @@ export default function LoginPage() {
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
               <form className="space-y-6" onSubmit={handleSignUp}>
+                <div className="flex space-x-4">
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-semibold leading-6 text-off-white"
+                    >
+                      First Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-1/2">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-semibold leading-6 text-off-white"
+                    >
+                      Last Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div>
                   <label
                     htmlFor="email"
                     className="block text-sm font-semibold leading-6 text-off-white"
                   >
-                    Email address
+                    Email Address
                   </label>
                   <div className="mt-2">
                     <input
