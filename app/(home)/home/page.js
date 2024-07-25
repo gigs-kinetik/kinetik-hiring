@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { StarIcon } from "@heroicons/react/16/solid";
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
@@ -10,13 +9,11 @@ import { getDocs, collection, query } from "firebase/firestore";
 export default function HomePage() {
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [filteredEvents, setFilteredEvents] = useState([]);
 
   useEffect(() => {
     fetchSubmissionIds().then((ids) => {
       setSubmissionIds(ids);
-      setIsLoading(false);
     });
     const filteredEventsFromStorage = JSON.parse(
       sessionStorage.getItem("filteredEvents") || "[]"
@@ -40,47 +37,6 @@ export default function HomePage() {
     const querySnapshot = await getDocs(q);
     const ids = querySnapshot.docs.map((doc) => doc.id);
     return ids;
-  };
-
-  const timeToStars = (timeStr) => {
-    const timeParts = timeStr.split(" ");
-    let minutes = 0;
-    for (let i = 0; i < timeParts.length; i += 2) {
-      const value = parseInt(timeParts[i]);
-      const unit = timeParts[i + 1];
-      if (unit.startsWith("mins")) {
-        minutes += value;
-      } else if (unit.startsWith("hours")) {
-        minutes += value * 60;
-      }
-    }
-    if (minutes <= 120) {
-      return 1;
-    } else if (minutes <= 240) {
-      return 2;
-    } else if (minutes <= 360) {
-      return 3;
-    } else if (minutes <= 480) {
-      return 4;
-    } else {
-      return 5;
-    }
-  };
-
-  const generateStars = (starCount) => {
-    const totalStars = 5;
-    const filledStars = Math.min(Math.max(starCount, 0), totalStars);
-    const emptyStars = totalStars - filledStars;
-    return (
-      <div className="flex flex-row">
-        {[...Array(filledStars)].map((_, index) => (
-          <StarIcon key={index} className="size-5 fill-logo-purple/85" />
-        ))}
-        {[...Array(emptyStars)].map((_, index) => (
-          <StarIcon key={index} className="size-5 fill-gray-400" />
-        ))}
-      </div>
-    );
   };
 
   const handleApplyClick = async (event) => {
@@ -136,11 +92,11 @@ export default function HomePage() {
                             <div></div>
                           )}
                         </div>
+                        <div className="font-poppins text-sm text-gray-500">
+                          {event["Company"]}
+                        </div>
                         <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
                           {event["Event Name"]}
-                        </div>
-                        <div className="font-poppins text-xs text-gray-500">
-                          Deadline: {event["Deadline"]}
                         </div>
                       </div>
                       <Link
@@ -169,12 +125,8 @@ export default function HomePage() {
                       {event["Short Description"] || "No description available"}
                     </div>
                     <div className="lg:flex hidden flex-row justify-between">
-                      <div className="flex flex-row mt-1 items-center">
-                        {generateStars(timeToStars(event["Time Needed"]))}
-                        <div className="font-poppins text-xs pr-2 text-gray-500">
-                          &nbsp; Difficulty&nbsp; / ~ {event["Time Needed"]} of
-                          work
-                        </div>
+                      <div className="font-poppins text-sm text-gray-500">
+                        Submit by {event["Deadline"]}
                       </div>
                       <div className="font-poppins text-sm pr-2 text-gray-500">
                         {event["Required Skills"]}

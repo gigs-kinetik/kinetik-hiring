@@ -113,7 +113,7 @@ export default function HomeLayout({ children }) {
               @2024 Kinetik. All Rights Reserved.
             </div>
             <div className="flex flex-col text-right self-center">
-              <div>kinetik.gigs@gmail.com</div>
+              <div>info@kinetikgigs.com</div>
             </div>
           </div>
         </div>

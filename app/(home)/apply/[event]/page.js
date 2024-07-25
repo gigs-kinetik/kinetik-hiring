@@ -97,11 +97,14 @@ export default function ApplyPage() {
         <div className="flex flex-col bg-white rounded-lg p-5">
           <div className="flex flex-row justify-between">
             <div className="flex flex-col">
+              <div className="font-poppins mb-2 lg:flex lg:text-sm hidden text-gray-500">
+                Sponsored by {event["Company"]}
+              </div>
               <div className="font-poppins lg:text-3xl text-xl font-semibold text-logo-purple">
                 {event["Event Name"]}
               </div>
               <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
-                Deadline: {event["Deadline"]}
+                Submit by {event["Deadline"]}
               </div>
             </div>
           </div>
@@ -111,21 +114,50 @@ export default function ApplyPage() {
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
             {event["Long Description"]}
           </div>
+          <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
+            Please contact {event["Contact"]} for any questions.
+          </div>
+          {event["Features"] && event["Features"].length > 0 && (
+            <div>
+              <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
+                Features
+              </div>
+              <ul
+                className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
+                style={{
+                  listStyleType: "disc",
+                  paddingLeft: "20px",
+                }}
+              >
+                {event["Features"].map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Prize Pool
           </div>
-          <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {event["Prize List"] &&
-              event["Prize List"].map((prize, index) => (
-                <div key={index}>{prize}</div>
-              ))}
-          </div>
-          <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
-            Difficulty
-          </div>
-          <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            This project will take around {event["Time Needed"]} to complete.
-          </div>
+          {event["Prizes Description"] ? (
+            <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
+              {event["Prizes Description"]}
+            </div>
+          ) : (
+            event["Prize List"] &&
+            event["Prize List"].length > 0 && (
+              <ul
+                className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
+                style={{
+                  listStyleType: "disc",
+                  paddingLeft: "20px",
+                }}
+              >
+                {event["Prize List"].map((prize, index) => (
+                  <li key={index}>{prize}</li>
+                ))}
+              </ul>
+            )
+          )}
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Skill Requirements
           </div>
