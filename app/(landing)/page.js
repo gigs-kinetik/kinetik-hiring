@@ -19,8 +19,16 @@ export default function LandingPage() {
     if (email) {
       try {
         const docRef = doc(db, "Company Information", "Interested Customers");
+        const options = { timeZone: "America/Chicago", timeZoneName: "short" };
+        const currDate = new Date()
+          .toLocaleDateString("en-US", options)
+          .split(", ")[0];
+        const currTime = new Date().toLocaleTimeString("en-US", options);
         await updateDoc(docRef, {
-          emails: arrayUnion(email),
+          emails: arrayUnion({
+            email: email,
+            timestamp: currDate + ", " + currTime,
+          }),
         });
         setEmail("");
         alert("Email has been added to the waitlist.");
