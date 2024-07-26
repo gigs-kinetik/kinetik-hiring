@@ -165,14 +165,14 @@ export default function TermsPage() {
           </p>
         </section>
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">
-            5. Prize Disbursement Fee
-          </h2>
+          <h2 className="text-2xl font-semibold mb-4">5. Liability</h2>
           <p className="text-gray-700 leading-relaxed">
-            <strong>5.1 Kinetik's Commission:</strong> Kinetik will take 10% of
-            the disbursed prize, whether it is a cash prize or a portion of the
-            job salary for any employment opportunities facilitated through the
-            Hackathon.
+            <strong>5.1 Liability of Kinetik:</strong> Kinetik shall not be
+            liable for any failure by the Partner to disburse prizes or for any
+            changes made by the Partner to the requirements or prizes. The
+            Partner will be solely responsible for disbursing any prizes,
+            internships, etc. If you have any disputes with the prizes, please
+            address them with the Partner directly.
           </p>
         </section>
         <section className="mb-8">
