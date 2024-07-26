@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   createUserWithEmailAndPassword,
@@ -20,10 +20,35 @@ export default function LoginPage() {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedFirstName = sessionStorage.getItem("firstName");
+    const savedLastName = sessionStorage.getItem("lastName");
+    const savedEmail = sessionStorage.getItem("email");
+    const savedPassword = sessionStorage.getItem("password");
+    const savedTermsAccepted =
+      sessionStorage.getItem("termsAccepted") === "true";
+
+    if (savedFirstName) setFirstName(savedFirstName);
+    if (savedLastName) setLastName(savedLastName);
+    if (savedEmail) setEmail(savedEmail);
+    if (savedPassword) setPassword(savedPassword);
+    setTermsAccepted(savedTermsAccepted);
+  }, []);
+
+  const handleInputChange = (setter, fieldName, value) => {
+    setter(value);
+    sessionStorage.setItem(fieldName, value);
+  };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (!termsAccepted) {
+      setError("You must accept the terms and conditions to sign up.");
+      return;
+    }
     setIsLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -45,6 +70,7 @@ export default function LoginPage() {
       });
       auth.signOut();
       setError("");
+      sessionStorage.clear();
       router.push("/login");
       alert("An email verification has been sent to " + email);
     } catch (error) {
@@ -108,7 +134,13 @@ export default function LoginPage() {
                         name="firstName"
                         type="text"
                         value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setFirstName,
+                            "firstName",
+                            e.target.value
+                          )
+                        }
                         required
                         className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                       />
@@ -127,7 +159,13 @@ export default function LoginPage() {
                         name="lastName"
                         type="text"
                         value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setLastName,
+                            "lastName",
+                            e.target.value
+                          )
+                        }
                         required
                         className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                       />
@@ -148,7 +186,9 @@ export default function LoginPage() {
                       type="email"
                       autoComplete="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange(setEmail, "email", e.target.value)
+                      }
                       required
                       className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                     />
@@ -171,7 +211,13 @@ export default function LoginPage() {
                       type={passwordVisible ? "text" : "password"}
                       autoComplete="current-password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange(
+                          setPassword,
+                          "password",
+                          e.target.value
+                        )
+                      }
                       required
                       className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                     />
@@ -186,6 +232,31 @@ export default function LoginPage() {
                       )}
                     </span>
                   </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <input
+                    id="terms"
+                    name="terms"
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={() => {
+                      setTermsAccepted(!termsAccepted);
+                      sessionStorage.setItem("termsAccepted", !termsAccepted);
+                    }}
+                    className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="ml-2 block text-sm text-off-white"
+                  >
+                    I agree to the{" "}
+                    <Link
+                      href="/terms"
+                      className="text-logo-purple/75 underline font-semibold"
+                    >
+                      terms and conditions
+                    </Link>
+                  </label>
                 </div>
                 <div>
                   <button
