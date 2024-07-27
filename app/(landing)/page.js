@@ -183,7 +183,7 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-full pb-20 pt-14 bg-white">
+      <div className="flex flex-col w-full pb-16 pt-14 bg-white">
         <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
           How does Kinetik work?
         </div>
