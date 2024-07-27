@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { db } from "../../lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { FaInstagram, FaDiscord } from "react-icons/fa";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -89,28 +90,44 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center mt-28 mb-20">
-          <form
-            className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
-            onSubmit={handleSubmit}
-          >
-            <input
-              type="email"
-              placeholder="Your work email"
-              className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
+        <div className="flex flex-col md:flex-row justify-center mt-24 mb-20 space-y-8 md:space-y-0 md:space-x-12">
+          <div className="flex flex-col items-center md:items-start">
+            <div className="text-md font-medium text-logo-purple mb-2">
+              Developers
+            </div>
+            <a
+              href="https://discord.gg/h6FtYkfB"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center bg-logo-purple/60 text-off-white px-4 py-2 sm:px-6 sm:py-4 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
             >
-              Interested
-            </button>
-          </form>
-          <small className="text-off-white mt-4">
-            *if you are a company, please sign up for updates
-          </small>
+              <FaDiscord className="text-white mr-2 text-xl sm:text-2xl" />
+              <span className="text-sm sm:text-base">Join the Community</span>
+            </a>
+          </div>
+          <div className="flex flex-col items-center md:items-start">
+            <div className="text-md font-medium text-logo-purple mb-2">
+              Companies
+            </div>
+            <form
+              className="flex items-center bg-off-white rounded-2xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs md:mt-0"
+              onSubmit={handleSubmit}
+            >
+              <input
+                type="email"
+                placeholder="Your work email"
+                className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-xl hover:bg-logo-purple/90 transition duration-300"
+              >
+                Interested
+              </button>
+            </form>
+          </div>
         </div>
         <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
           <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
@@ -325,14 +342,32 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-center sm:justify-between">
-        <div className="md:flex hidden self-center">
-          Please contact for any inquiries.
+      <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
+        <div className="flex flex-col items-start justify-center">
+          <div className="pb-1">@2024 Kinetik.</div>
+          <div>All Rights Reserved.</div>
         </div>
-        <div className="sm:flex hidden text-center self-center">
-          @2024 Kinetik. All Rights Reserved.
+        <div className="flex flex-col items-center justify-center">
+          <div className="pb-2">Follow us at</div>
+          <div className="flex">
+            <a
+              href="https://www.instagram.com/kinetikgigs/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaInstagram className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+            </a>
+            <a
+              href="https://discord.gg/h6FtYkfB"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col text-right self-center">
+        <div className="flex flex-col items-end justify-center">
+          <div className="pb-1">Contact us at</div>
           <div>info@kinetikgigs.com</div>
         </div>
       </div>

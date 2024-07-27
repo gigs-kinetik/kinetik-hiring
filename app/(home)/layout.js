@@ -14,6 +14,7 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
+import { FaInstagram, FaDiscord } from "react-icons/fa";
 
 export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
@@ -104,17 +105,33 @@ export default function HomeLayout({ children }) {
           </div>
         </nav>
         <div className="flex-grow">{children}</div>
-        <div>
-          <div className="flex flex-row text-xs sm:text-sm px-10 py-5 text-off-white bg-logo-purple/85 h-20 justify-between font-poppins">
-            <div className="md:flex hidden self-center">
-              Please contact for any inquiries.
+        <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
+          <div className="flex flex-col items-start justify-center">
+            <div className="pb-1">@2024 Kinetik.</div>
+            <div>All Rights Reserved.</div>
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <div className="pb-2">Follow us at</div>
+            <div className="flex">
+              <a
+                href="https://www.instagram.com/kinetikgigs/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaInstagram className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+              </a>
+              <a
+                href="https://discord.gg/h6FtYkfB"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+              </a>
             </div>
-            <div className="text-center self-center">
-              @2024 Kinetik. All Rights Reserved.
-            </div>
-            <div className="flex flex-col text-right self-center">
-              <div>info@kinetikgigs.com</div>
-            </div>
+          </div>
+          <div className="flex flex-col items-end justify-center">
+            <div className="pb-1">Contact us at</div>
+            <div>info@kinetikgigs.com</div>
           </div>
         </div>
       </div>
