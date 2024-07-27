@@ -70,38 +70,51 @@ export default function HomeLayout({ children }) {
                 </div>
               </div>
             </div>
-            <Menu>
-              <MenuButton className="ml-8 justify-end font-semibold">
-                <UserCircleIcon className="lg:size-11 size-8" />
-              </MenuButton>
-              <Transition
-                enter="transition ease-out duration-75"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+            <div className="flex items-center space-x-4">
+              <a
+                href="https://discord.gg/h6FtYkfB"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center bg-logo-purple/85 text-off-white px-4 py-1 sm:px-6 sm:py-3 rounded-xl hover:bg-logo-purple/90 transition duration-300"
               >
-                <MenuItems
-                  anchor="bottom end"
-                  className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
+                <FaDiscord className="hidden sm:block text-white mr-3 text-lg sm:text-2xl" />
+                <span className="text-xs md:text-base font-medium">
+                  Join the Community
+                </span>
+              </a>
+              <Menu>
+                <MenuButton className="ml-8 justify-end font-semibold">
+                  <UserCircleIcon className="lg:size-11 size-8 fill-logo-purple/90" />
+                </MenuButton>
+                <Transition
+                  enter="transition ease-out duration-75"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
                 >
-                  <MenuItem>
-                    <div className="group w-full font-semibold items-center gap-2 py-3 px-3 overflow-hidden border-box border-b-2 border-off-white">
-                      Welcome, {email}!
-                    </div>
-                  </MenuItem>
-                  <MenuItem>
-                    <button
-                      className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold"
-                      onClick={handleSignOut}
-                    >
-                      Sign Out
-                    </button>
-                  </MenuItem>
-                </MenuItems>
-              </Transition>
-            </Menu>
+                  <MenuItems
+                    anchor="bottom end"
+                    className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
+                  >
+                    <MenuItem>
+                      <div className="group w-full font-semibold items-center gap-2 py-3 px-3 overflow-hidden border-box border-b-2 border-off-white">
+                        Welcome, {email}!
+                      </div>
+                    </MenuItem>
+                    <MenuItem>
+                      <button
+                        className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold"
+                        onClick={handleSignOut}
+                      >
+                        Sign Out
+                      </button>
+                    </MenuItem>
+                  </MenuItems>
+                </Transition>
+              </Menu>
+            </div>
           </div>
         </nav>
         <div className="flex-grow">{children}</div>

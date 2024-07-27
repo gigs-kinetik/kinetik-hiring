@@ -92,7 +92,7 @@ export default function HomePage() {
                             <div></div>
                           )}
                         </div>
-                        <div className="font-poppins text-sm text-gray-500">
+                        <div className="font-poppins text-xs md:text-sm text-gray-500">
                           {event["Company"]}
                         </div>
                         <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
