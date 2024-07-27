@@ -309,7 +309,7 @@ export default function LandingPage() {
                 <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
               </div>
               <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Credits, swag, or other exclusive company benefits.
+                Credits, swag, and other exclusive company benefits.
               </div>
             </div>
           </div>
