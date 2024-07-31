@@ -15,6 +15,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { FaInstagram, FaDiscord } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
@@ -139,6 +140,13 @@ export default function HomeLayout({ children }) {
                 rel="noopener noreferrer"
               >
                 <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+              </a>
+              <a
+                href="https://x.com/KinetikGigs"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaXTwitter className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
               </a>
             </div>
           </div>
