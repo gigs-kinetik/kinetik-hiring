@@ -14,6 +14,11 @@ import { FaInstagram, FaDiscord } from "react-icons/fa";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
+  const [isDevelopers, setIsDevelopers] = useState(false);
+
+  const handleToggle = () => {
+    setIsDevelopers((prevState) => !prevState);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -77,6 +82,19 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col items-center justify-start pt-24">
           <div className="flex flex-col items-center text-center space-y-6">
+            <div class="flex items-center space-x-4">
+              <span class="text-sm font-medium text-logo-purple/90">
+                COMPANIES
+              </span>
+              <input
+                type="checkbox"
+                class="relative w-[3.25rem] h-7 p-px bg-gray-300 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none checked:text-logo-purple before:inline-block before:size-6 before:bg-white focus:ring-0 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:transition before:ease-in-out before:duration-200"
+                onChange={handleToggle}
+              />
+              <span class="text-sm font-medium text-logo-purple/90">
+                DEVELOPERS
+              </span>
+            </div>
             <div className="md:text-6xl text-3xl font-bold text-logo-purple">
               <div className="flex flex-row">
                 <div className="md:text-6xl text-3xl font-bold text-logo-purple">
@@ -129,6 +147,8 @@ export default function LandingPage() {
             </form>
           </div>
         </div>
+      </div>
+      {isDevelopers ? (
         <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
           <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
             Why Kinetik?
@@ -182,6 +202,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+<<<<<<< Updated upstream
       </div>
       <div className="flex flex-col w-full pb-20 pt-14 bg-white">
         <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
@@ -202,61 +223,169 @@ export default function LandingPage() {
               Decide what technologies you are looking to use and what kind of
               product you are looking to build.
             </div>
+=======
+      ) : (
+        <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
+          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+            How does Kinetik work?
+>>>>>>> Stashed changes
           </div>
-          <div className="flex flex-row flex-wrap justify-around w-full">
-            <div className="flex flex-col items-center m-4">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Technical Projects
+          <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+            It is very simple.
+          </div>
+          <div className="flex justify-center">
+            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-6"></div>
+          </div>
+          <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+            <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+              <div className="flex text-2xl font-medium text-logo-purple justify-center text-center">
+                Specify Requirements
               </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-center mb-4">
-                  <img className="w-16" src="/aws-logo.webp" />
-                </div>
-                <div className="flex justify-around">
-                  <img className="w-12" src="/react-logo.png" />
-                  <img className="w-12" src="/gpt-logo.png" />
-                </div>
-              </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Mobile Apps, Web Apps, AI Agents, LLM Dev
+              <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+                Decide what technologies you are looking to use and what kind of
+                product you are looking to build.
               </div>
             </div>
-            <div className="flex flex-col items-center m-4">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Business Projects
-              </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-around mb-4">
-                  <img className="w-14" src="/excel-logo.png" />
-                  <img className="w-14" src="/powerbi-logo.png" />
+            <div className="flex flex-row flex-wrap justify-around w-full">
+              <div className="flex flex-col items-center m-4">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Technical Projects
                 </div>
-                <div className="flex justify-center">
-                  <img className="w-16" src="/powerpoint-logo.png" />
+                <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex justify-center mb-4">
+                    <img className="w-16" src="/aws-logo.webp" />
+                  </div>
+                  <div className="flex justify-around">
+                    <img className="w-12" src="/react-logo.png" />
+                    <img className="w-12" src="/gpt-logo.png" />
+                  </div>
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Mobile Apps, Web Apps, AI Agents, LLM Dev
                 </div>
               </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Strategy Decks, Business Plans, Case Studies
+              <div className="flex flex-col items-center m-4">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Business Projects
+                </div>
+                <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex justify-around mb-4">
+                    <img className="w-14" src="/excel-logo.png" />
+                    <img className="w-14" src="/powerbi-logo.png" />
+                  </div>
+                  <div className="flex justify-center">
+                    <img className="w-16" src="/powerpoint-logo.png" />
+                  </div>
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Strategy Decks, Business Plans, Case Studies
+                </div>
+              </div>
+              <div className="flex flex-col items-center m-4">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Design Projects
+                </div>
+                <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex justify-center mb-4">
+                    <img className="w-16" src="/figma-logo.webp" />
+                  </div>
+                  <div className="flex justify-around">
+                    <img className="w-12" src="/canva-logo.png" />
+                    <img className="w-12" src="/photoshop-logo.png" />
+                  </div>
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Creative Designs, Logos, CX, Social Media Marketing
+                </div>
               </div>
             </div>
-            <div className="flex flex-col items-center m-4">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Design Projects
+          </div>
+          <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+            <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+              <div className="flex text-2xl font-medium text-logo-purple justify-center">
+                Provide Incentives
               </div>
-              <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                <div className="flex justify-center mb-4">
-                  <img className="w-16" src="/figma-logo.webp" />
+              <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+                Offer prizes for the developers: you choose how you want to
+                allocate them.
+              </div>
+            </div>
+            <div className="flex flex-row flex-wrap justify-around w-full">
+              <div className="flex flex-col items-center m-4 justify-center">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Cash
                 </div>
-                <div className="flex justify-around">
-                  <img className="w-12" src="/canva-logo.png" />
-                  <img className="w-12" src="/photoshop-logo.png" />
+                <div className="flex w-52 p-5 justify-center">
+                  <CurrencyDollarIcon className="fill-logo-purple/95 size-20" />
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Monetary rewards for best MVPs.
                 </div>
               </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Creative Designs, Logos, CX, Social Media Marketing
+              <div className="flex flex-col items-center m-4 justify-center">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Hire
+                </div>
+                <div className="flex w-52 p-5 justify-center">
+                  <BriefcaseIcon className="fill-logo-purple/95 size-20" />
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Internships, gigs, or job offers for top developers.
+                </div>
+              </div>
+              <div className="flex flex-col items-center m-4 justify-center">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Equity
+                </div>
+                <div className="flex w-52 p-5 justify-center">
+                  <NewspaperIcon className="fill-logo-purple/95 size-20" />
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Buy-off MVP or sign stake for stunning mockups.
+                </div>
+              </div>
+              <div className="flex flex-col items-center m-4 justify-center">
+                <div className="text-center font-medium text-logo-purple mb-2">
+                  Company Perks
+                </div>
+                <div className="flex w-52 p-5 justify-center">
+                  <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
+                </div>
+                <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+                  Credits, swag, and other exclusive company benefits.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+            <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+              <div className="flex text-2xl font-medium text-logo-purple justify-center">
+                Host a Challenge
+              </div>
+              <div className="flex text-md mt-4 text-gray-500 justify-center">
+                That's it!
+              </div>
+            </div>
+            <div className="flex flex-row justify-center w-full">
+              <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
+                <img className="rounded-xl" src="/altora-challenge.png" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-row ml-10 mr-10 mt-10 text-off-white justify-center">
+            <div className="flex flex-col p-10">
+              <div className="flex text-2xl font-medium text-logo-purple text-center justify-center">
+                Finally, wait for Kinetik's comprehensive report on the
+                submissions!
+              </div>
+              <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+                You will receive all the submissions as well as Kinetik's
+                assessment of the work.
               </div>
             </div>
           </div>
         </div>
+<<<<<<< Updated upstream
         <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
           <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
             <div className="flex text-2xl font-medium text-logo-purple justify-center">
@@ -342,6 +471,9 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+=======
+      )}
+>>>>>>> Stashed changes
       <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
         <div className="flex flex-col items-start justify-center">
           <div className="pb-1">@2024 Kinetik.</div>
