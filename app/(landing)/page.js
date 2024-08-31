@@ -11,6 +11,7 @@ import {
 import { db } from "../../lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { FaInstagram, FaDiscord } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -46,7 +47,7 @@ export default function LandingPage() {
 
   return (
     <div className="font-poppins h-full flex flex-col">
-      <div className="bg-gradient-to-tl from-logo-purple/95 via-mid-purple/40 via-65% to-transparent">
+      <div className="bg-gradient-to-tl from-logo-purple/95 via-mid-purple/50 via-65% to-transparent">
         <div className="flex justify-between p-5 mx-8 mt-5">
           <div className="text-logo-purple flex-shrink-0">
             <img
@@ -82,16 +83,16 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col items-center justify-start pt-24">
           <div className="flex flex-col items-center text-center space-y-6">
-            <div class="flex items-center space-x-4">
-              <span class="text-sm font-medium text-logo-purple/90">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm font-medium text-logo-purple/90">
                 COMPANIES
               </span>
               <input
                 type="checkbox"
-                class="relative w-[3.25rem] h-7 p-px bg-gray-300 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none checked:text-logo-purple before:inline-block before:size-6 before:bg-white focus:ring-0 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:transition before:ease-in-out before:duration-200"
+                className="relative w-[3.25rem] h-7 p-px bg-gray-300 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none checked:text-logo-purple before:inline-block before:size-6 before:bg-white focus:ring-0 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:transition before:ease-in-out before:duration-200"
                 onChange={handleToggle}
               />
-              <span class="text-sm font-medium text-logo-purple/90">
+              <span className="text-sm font-medium text-logo-purple/90">
                 DEVELOPERS
               </span>
             </div>
@@ -99,7 +100,7 @@ export default function LandingPage() {
               <div className="flex flex-row">
                 <div className="md:text-6xl text-3xl font-bold text-logo-purple">
                   <span className="text-off-white/90">Visualize </span>
-                  <span>your ideas at scale</span>
+                  <span>your ideas at scale.</span>
                 </div>
               </div>
             </div>
@@ -108,44 +109,28 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-center mt-24 mb-20 space-y-8 md:space-y-0 md:space-x-12">
-          <div className="flex flex-col items-center md:items-start">
-            <div className="text-md font-medium text-logo-purple mb-2">
-              Developers
-            </div>
-            <a
-              href="https://discord.gg/h6FtYkfB"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center bg-logo-purple/60 text-off-white px-4 py-2 sm:px-6 sm:py-4 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
+        <div className="flex flex-col items-center mt-28 mb-20">
+          <form
+            className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
+            onSubmit={handleSubmit}
+          >
+            <input
+              type="email"
+              placeholder="Your work email"
+              className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
             >
-              <FaDiscord className="text-white mr-2 text-xl sm:text-2xl" />
-              <span className="text-sm sm:text-base">Join the Community</span>
-            </a>
-          </div>
-          <div className="flex flex-col items-center md:items-start">
-            <div className="text-md font-medium text-logo-purple mb-2">
-              Companies
-            </div>
-            <form
-              className="flex items-center bg-off-white rounded-2xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs md:mt-0"
-              onSubmit={handleSubmit}
-            >
-              <input
-                type="email"
-                placeholder="Your work email"
-                className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-xl hover:bg-logo-purple/90 transition duration-300"
-              >
-                Interested
-              </button>
-            </form>
-          </div>
+              Interested
+            </button>
+          </form>
+          <small className="text-off-white mt-4">
+            *if you are a company, please sign up for updates
+          </small>
         </div>
       </div>
       {isDevelopers ? (
@@ -154,8 +139,8 @@ export default function LandingPage() {
             Why Kinetik?
           </div>
           <div className="flex text-gray-500 font-normal sm:text-lg text-md text-center justify-center mb-8 mx-8">
-            Move fast and agile with quality. Operationalize your MVPs in little
-            to no time.
+            Produce multiple quality MVPs for your engineering, business, and
+            design ideas.
           </div>
           <div className="flex justify-center">
             <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mb-14"></div>
@@ -202,33 +187,10 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-<<<<<<< Updated upstream
-      </div>
-      <div className="flex flex-col w-full pb-20 pt-14 bg-white">
-        <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-          How does Kinetik work?
-        </div>
-        <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-          It is very simple.
-        </div>
-        <div className="flex justify-center">
-          <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-6"></div>
-        </div>
-        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-            <div className="flex text-2xl font-medium text-logo-purple justify-center text-center">
-              Specify Requirements
-            </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-              Decide what technologies you are looking to use and what kind of
-              product you are looking to build.
-            </div>
-=======
       ) : (
         <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
           <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
             How does Kinetik work?
->>>>>>> Stashed changes
           </div>
           <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
             It is very simple.
@@ -385,95 +347,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-<<<<<<< Updated upstream
-        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-            <div className="flex text-2xl font-medium text-logo-purple justify-center">
-              Provide Incentives
-            </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-              Offer prizes for the developers: you choose how you want to
-              allocate them.
-            </div>
-          </div>
-          <div className="flex flex-row flex-wrap justify-around w-full">
-            <div className="flex flex-col items-center m-4 justify-center">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Cash
-              </div>
-              <div className="flex w-52 p-5 justify-center">
-                <CurrencyDollarIcon className="fill-logo-purple/95 size-20" />
-              </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Monetary rewards for best MVPs.
-              </div>
-            </div>
-            <div className="flex flex-col items-center m-4 justify-center">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Hire
-              </div>
-              <div className="flex w-52 p-5 justify-center">
-                <BriefcaseIcon className="fill-logo-purple/95 size-20" />
-              </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Internships, gigs, or job offers for top developers.
-              </div>
-            </div>
-            <div className="flex flex-col items-center m-4 justify-center">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Equity
-              </div>
-              <div className="flex w-52 p-5 justify-center">
-                <NewspaperIcon className="fill-logo-purple/95 size-20" />
-              </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Buy-off MVP or sign stake for stunning mockups.
-              </div>
-            </div>
-            <div className="flex flex-col items-center m-4 justify-center">
-              <div className="text-center font-medium text-logo-purple mb-2">
-                Company Perks
-              </div>
-              <div className="flex w-52 p-5 justify-center">
-                <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
-              </div>
-              <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                Credits, swag, or other exclusive company benefits.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-          <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-            <div className="flex text-2xl font-medium text-logo-purple justify-center">
-              Host a Challenge
-            </div>
-            <div className="flex text-md mt-4 text-gray-500 justify-center">
-              That's it!
-            </div>
-          </div>
-          <div className="flex flex-row justify-center w-full">
-            <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
-              <img className="rounded-xl" src="/altora-challenge.png" />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-row ml-10 mr-10 mt-10 text-off-white justify-center">
-          <div className="flex flex-col p-10">
-            <div className="flex text-2xl font-medium text-logo-purple text-center justify-center">
-              Finally, wait for Kinetik's comprehensive report on the
-              submissions!
-            </div>
-            <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-              You will receive all the submissions as well as Kinetik's
-              assessment of the work.
-            </div>
-          </div>
-        </div>
-      </div>
-=======
       )}
->>>>>>> Stashed changes
       <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
         <div className="flex flex-col items-start justify-center">
           <div className="pb-1">@2024 Kinetik.</div>
@@ -495,6 +369,13 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+            </a>
+            <a
+              href="https://x.com/KinetikGigs"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaXTwitter className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
             </a>
           </div>
         </div>
