@@ -12,7 +12,6 @@ import { db } from "../../lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { FaInstagram, FaDiscord } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { FaXTwitter } from "react-icons/fa6";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -48,7 +47,7 @@ export default function LandingPage() {
 
   return (
     <div className="font-poppins h-full flex flex-col">
-      <div className="bg-gradient-to-tl from-logo-purple/95 via-mid-purple/50 via-65% to-transparent">
+      {/* Top Section */}
       <div className="bg-gradient-to-tl from-logo-purple/95 via-mid-purple/50 via-65% to-transparent">
         <div className="flex justify-between p-5 mx-8 mt-5">
           <div className="text-logo-purple flex-shrink-0">
@@ -85,16 +84,16 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col items-center justify-start pt-24">
           <div className="flex flex-col items-center text-center space-y-6">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-logo-purple/90">
+            <div class="flex items-center space-x-4">
+              <span class="text-sm font-medium text-logo-purple/90">
                 COMPANIES
               </span>
               <input
                 type="checkbox"
-                className="relative w-[3.25rem] h-7 p-px bg-gray-300 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none checked:text-logo-purple before:inline-block before:size-6 before:bg-white focus:ring-0 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:transition before:ease-in-out before:duration-200"
+                class="relative w-[3.25rem] h-7 p-px bg-gray-300 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none checked:text-logo-purple before:inline-block before:size-6 before:bg-white focus:ring-0 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:transition before:ease-in-out before:duration-200"
                 onChange={handleToggle}
               />
-              <span className="text-sm font-medium text-logo-purple/90">
+              <span class="text-sm font-medium text-logo-purple/90">
                 DEVELOPERS
               </span>
             </div>
@@ -102,7 +101,6 @@ export default function LandingPage() {
               <div className="flex flex-row">
                 <div className="md:text-6xl text-3xl font-bold text-logo-purple">
                   <span className="text-off-white/90">Visualize </span>
-                  <span>your ideas at scale.</span>
                   <span>your ideas at scale.</span>
                 </div>
               </div>
@@ -134,38 +132,16 @@ export default function LandingPage() {
           <small className="text-off-white mt-4">
             *if you are a company, please sign up for updates
           </small>
-        <div className="flex flex-col items-center mt-28 mb-20">
-          <form
-            className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
-            onSubmit={handleSubmit}
-          >
-            <input
-              type="email"
-              placeholder="Your work email"
-              className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
-            >
-              Interested
-            </button>
-          </form>
-          <small className="text-off-white mt-4">
-            *if you are a company, please sign up for updates
-          </small>
         </div>
       </div>
+
+      {/* Conditional Content Rendering */}
       {isDevelopers ? (
         <div className="flex flex-col bg-off-white w-full pb-20 pt-14 px-8">
           <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
             Why Kinetik?
           </div>
           <div className="flex text-gray-500 font-normal sm:text-lg text-md text-center justify-center mb-8 mx-8">
-            Produce multiple quality MVPs for your engineering, business, and
-            design ideas.
             Produce multiple quality MVPs for your engineering, business, and
             design ideas.
           </div>
@@ -396,13 +372,6 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
-            </a>
-            <a
-              href="https://x.com/KinetikGigs"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaXTwitter className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
             </a>
             <a
               href="https://x.com/KinetikGigs"
