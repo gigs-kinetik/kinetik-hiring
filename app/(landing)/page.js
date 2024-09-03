@@ -112,9 +112,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2 md:text-2xl text-md font-semibold text-off-white/70">
-                  <div>
-                    Win Cash, Gigs, and Jobs at Top Companies while building.
-                  </div>
+                  <div>Build for Top Companies to Win Cash and Gigs.</div>
                 </div>
               </div>
             </div>
@@ -134,11 +132,11 @@ export default function LandingPage() {
                   type="submit"
                   className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
                 >
-                  I'm Interested
+                  Interested
                 </button>
               </form>
               <small className="text-off-white mt-4">
-                *Join our developer newsletter
+                *join our developer newsletter
               </small>
             </div>
           </div>
