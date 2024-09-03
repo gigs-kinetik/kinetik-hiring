@@ -100,206 +100,192 @@ export default function LandingPage() {
                   ></div>
                 </label>
                 <span className="text-sm font-semibold text-off-white">
-                  Developers
-                </span>
-              </div>
-              <div className="flex flex-col items-center text-center space-y-6">
-                <div className="md:text-6xl text-3xl font-bold text-logo-purple">
-                  <div className="flex flex-row">
-                    <div className="md:text-6xl text-3xl font-bold text-off-white">
-                      <span>Win Prizes by Completing Gigs.</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex space-x-2 md:text-2xl text-md font-semibold text-off-white/70">
-                  <div>Get Money, Internships, and Badges.</div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center mt-24 mb-44">
-              <form
-                className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
-                onSubmit={handleSubmit}
-              >
-                <input
-                  type="email"
-                  placeholder="Your personal email"
-                  className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
-                >
-                  Interested
-                </button>
-              </form>
-              <small className="text-off-white mt-4">
-                *join our developer newsletter
-              </small>
-            </div>
+  Developers
+</span>
+</div>
+<div className="flex flex-col items-center text-center space-y-6">
+  <div className="md:text-6xl text-3xl font-bold text-logo-purple">
+    <div className="flex flex-row">
+      <div className="md:text-6xl text-3xl font-bold text-off-white">
+        <span>Complete Gigs and Win Prizes.</span>
+      </div>
+    </div>
+  </div>
+  <div className="flex space-x-2 md:text-2xl text-md font-semibold text-off-white/70">
+    <div>Win Cash, Gigs, and Jobs at Top Companies while building.</div>
+  </div>
+</div>
+</div>
+<div className="flex flex-col items-center mt-24 mb-44">
+  <form
+    className="flex items-center bg-off-white rounded-3xl px-2 py-1.5 md:w-full max-w-lg justify-between space-x-4 md:text-lg text-xs"
+    onSubmit={handleSubmit}
+  >
+    <input
+      type="email"
+      placeholder="Your personal email"
+      className="flex-grow border-none bg-transparent focus:ring-0 md:text-lg text-xs"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+    />
+    <button
+      type="submit"
+      className="bg-logo-purple/70 text-off-white px-6 py-2 rounded-2xl hover:bg-logo-purple/90 transition duration-300"
+    >
+      I'm Interested
+    </button>
+  </form>
+  <small className="text-off-white mt-4">
+    *Join our developer newsletter
+  </small>
+</div>
+</div>
+<div className="flex flex-col w-full pb-16 pt-14 bg-white">
+  <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+    How does Kinetik work?
+  </div>
+  <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+    It's very simple.
+  </div>
+  <div className="flex justify-center">
+    <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-6"></div>
+  </div>
+  <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+    <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+      <div className="flex text-2xl font-medium text-logo-purple justify-center text-center">
+        Choose Your Projects. Spend 4 days. Build.
+      </div>
+      <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+        Select the technologies you want to work with and the type of product you want to build.
+      </div>
+    </div>
+    <div className="flex flex-row flex-wrap justify-around w-full">
+      <div className="flex flex-col items-center m-4">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Technical Projects
+        </div>
+        <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+          <div className="flex justify-center mb-4">
+            <img className="w-16" src="/aws-logo.webp" />
           </div>
-          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
-            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-              How does Kinetik work?
-            </div>
-            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-              It is very simple.
-            </div>
-            <div className="flex justify-center">
-              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-6"></div>
-            </div>
-            <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-              <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-                <div className="flex text-2xl font-medium text-logo-purple justify-center text-center">
-                  Specify Requirements
-                </div>
-                <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-                  Decide what technologies you are looking to use and what kind
-                  of product you are looking to build.
-                </div>
-              </div>
-              <div className="flex flex-row flex-wrap justify-around w-full">
-                <div className="flex flex-col items-center m-4">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Technical Projects
-                  </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                    <div className="flex justify-center mb-4">
-                      <img className="w-16" src="/aws-logo.webp" />
-                    </div>
-                    <div className="flex justify-around">
-                      <img className="w-12" src="/react-logo.png" />
-                      <img className="w-12" src="/gpt-logo.png" />
-                    </div>
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Mobile Apps, Web Apps, AI Agents, LLM Dev
-                  </div>
-                </div>
-                <div className="flex flex-col items-center m-4">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Business Projects
-                  </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                    <div className="flex justify-around mb-4">
-                      <img className="w-14" src="/excel-logo.png" />
-                      <img className="w-14" src="/powerbi-logo.png" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img className="w-16" src="/powerpoint-logo.png" />
-                    </div>
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Strategy Decks, Business Plans, Case Studies
-                  </div>
-                </div>
-                <div className="flex flex-col items-center m-4">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Design Projects
-                  </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
-                    <div className="flex justify-center mb-4">
-                      <img className="w-16" src="/figma-logo.webp" />
-                    </div>
-                    <div className="flex justify-around">
-                      <img className="w-12" src="/canva-logo.png" />
-                      <img className="w-12" src="/photoshop-logo.png" />
-                    </div>
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Creative Designs, Logos, CX, Social Media Marketing
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-              <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-                <div className="flex text-2xl font-medium text-logo-purple justify-center">
-                  Provide Incentives
-                </div>
-                <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-                  Offer prizes for the developers: you choose how you want to
-                  allocate them.
-                </div>
-              </div>
-              <div className="flex flex-row flex-wrap justify-around w-full">
-                <div className="flex flex-col items-center m-4 justify-center">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Cash
-                  </div>
-                  <div className="flex w-52 p-5 justify-center">
-                    <CurrencyDollarIcon className="fill-logo-purple/95 size-20" />
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Monetary rewards for best MVPs.
-                  </div>
-                </div>
-                <div className="flex flex-col items-center m-4 justify-center">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Hire
-                  </div>
-                  <div className="flex w-52 p-5 justify-center">
-                    <BriefcaseIcon className="fill-logo-purple/95 size-20" />
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Internships, gigs, or job offers for top developers.
-                  </div>
-                </div>
-                <div className="flex flex-col items-center m-4 justify-center">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Equity
-                  </div>
-                  <div className="flex w-52 p-5 justify-center">
-                    <NewspaperIcon className="fill-logo-purple/95 size-20" />
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Buy-off MVP or sign stake for stunning mockups.
-                  </div>
-                </div>
-                <div className="flex flex-col items-center m-4 justify-center">
-                  <div className="text-center font-medium text-logo-purple mb-2">
-                    Company Perks
-                  </div>
-                  <div className="flex w-52 p-5 justify-center">
-                    <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
-                  </div>
-                  <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Credits, swag, and other exclusive company benefits.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
-              <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-                <div className="flex text-2xl font-medium text-logo-purple justify-center">
-                  Host a Challenge
-                </div>
-                <div className="flex text-md mt-4 text-gray-500 justify-center">
-                  That's it!
-                </div>
-              </div>
-              <div className="flex flex-row justify-center w-full">
-                <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
-                  <img className="rounded-xl" src="/altora-challenge.png" />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row ml-10 mr-10 mt-10 text-off-white justify-center">
-              <div className="flex flex-col p-10">
-                <div className="flex text-2xl font-medium text-logo-purple text-center justify-center">
-                  Finally, wait for Kinetik's comprehensive report on the
-                  submissions!
-                </div>
-                <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
-                  You will receive all the submissions as well as Kinetik's
-                  assessment of the work.
-                </div>
-              </div>
-            </div>
+          <div className="flex justify-around">
+            <img className="w-12" src="/react-logo.png" />
+            <img className="w-12" src="/gpt-logo.png" />
           </div>
         </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Mobile Apps, Web Apps, AI Agents, LLM Dev
+        </div>
+      </div>
+      <div className="flex flex-col items-center m-4">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Business Projects
+        </div>
+        <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+          <div className="flex justify-around mb-4">
+            <img className="w-14" src="/excel-logo.png" />
+            <img className="w-14" src="/powerbi-logo.png" />
+          </div>
+          <div className="flex justify-center">
+            <img className="w-16" src="/powerpoint-logo.png" />
+          </div>
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Strategy Decks, Business Plans, Case Studies
+        </div>
+      </div>
+      <div className="flex flex-col items-center m-4">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Design Projects
+        </div>
+        <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+          <div className="flex justify-center mb-4">
+            <img className="w-16" src="/figma-logo.webp" />
+          </div>
+          <div className="flex justify-around">
+            <img className="w-12" src="/canva-logo.png" />
+            <img className="w-12" src="/photoshop-logo.png" />
+          </div>
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Creative Designs, Logos, CX, Social Media Marketing
+        </div>
+      </div>
+    </div>
+  </div>
+  <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+    <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+      <div className="flex text-2xl font-medium text-logo-purple justify-center">
+        Earn Rewards
+      </div>
+      <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
+        Win prizes by completing projects!
+      </div>
+    </div>
+    <div className="flex flex-row flex-wrap justify-around w-full">
+      <div className="flex flex-col items-center m-4 justify-center">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Cash
+        </div>
+        <div className="flex w-52 p-5 justify-center">
+          <CurrencyDollarIcon className="fill-logo-purple/95 size-20" />
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Monetary rewards for all MVPs that fit the submission criteria, with higher rewards for better quality submissions.
+        </div>
+      </div>
+      <div className="flex flex-col items-center m-4 justify-center">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Gigs & Jobs
+        </div>
+        <div className="flex w-52 p-5 justify-center">
+          <BriefcaseIcon className="fill-logo-purple/95 size-20" />
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Land internships, gigs, or job offers for top performance.
+        </div>
+      </div>
+      <div className="flex flex-col items-center m-4 justify-center">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Company Perks
+        </div>
+        <div className="flex w-52 p-5 justify-center">
+          <CursorArrowRaysIcon className="fill-logo-purple/95 size-20" />
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Access exclusive company perks, swag, and more.
+        </div>
+      </div>
+      <div className="flex flex-col items-center m-4 justify-center">
+        <div className="text-center font-medium text-logo-purple mb-2">
+          Experience
+        </div>
+        <div className="flex w-52 p-5 justify-center">
+          <NewspaperIcon className="fill-logo-purple/95 size-20" />
+        </div>
+        <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
+          Externship Certification will be provided for all qualifying submissions. 
+        </div>
+      </div>
+    </div>
+  </div>
+  <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
+    <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+      <div className="flex text-2xl font-medium text-logo-purple justify-center">
+        Join a Challenge
+      </div>
+      <div className="flex text-md mt-4 text-gray-500 justify-center">
+        And start building!
+      </div>
+    </div>
+    <div className="flex flex-row justify-center w-full">
+      <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
+        <img className="rounded-xl" src="/altora-challenge.png" />
+      </div>
+    </div>
+  </div>
+</div>
+</div>
       ) : (
         <div className="font-poppins h-full flex flex-col">
           <div className="bg-gradient-to-tl from-logo-purple/95 via-mid-purple/50 via-45% to-transparent">
@@ -363,7 +349,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2 md:text-2xl text-md font-semibold text-logo-purple/70">
-                  <div>Design, Build, and Test at Lightning Speeds.</div>
+                  <div>Design, Build, and Hire at Lightning Speeds.</div>
                 </div>
               </div>
             </div>
@@ -429,7 +415,7 @@ export default function LandingPage() {
                 </div>
                 <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
                   We have the highest standards. We prioritize our client's
-                  happiness.
+                  happiness. Dont like the submissions. No need to pay!
                 </div>
               </div>
               <div className="flex flex-col bg-white p-6 md:p-8 text-logo-purple rounded-xl shadow-md flex-1">
@@ -443,7 +429,7 @@ export default function LandingPage() {
                   <span className="text-sm md:text-md ml-2">developers</span>
                 </div>
                 <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
-                  We have the most skilled developers from T20 universities in
+                  We have the most skilled developers from IVY League + T20 universities in
                   our network.
                 </div>
               </div>
@@ -452,7 +438,7 @@ export default function LandingPage() {
           <div className="lg:p-10">
             <div className="flex flex-col w-full pb-16 pt-14 bg-white lg:rounded-2xl lg:drop-shadow-2xl">
               <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-                Just 3 Steps.
+                Just 4 Steps.
               </div>
               <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
                 Minimal to no work from your side.
@@ -509,6 +495,22 @@ export default function LandingPage() {
                     </div>
                     <div className="mt-6 sm:mt-8">
                       <BiSolidReport className="fill-logo-purple/85 text-4xl sm:text-6xl" />
+                    </div>
+                  </div>
+                </div>
+                <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
+                    4
+                  </div>
+                  <div className="flex-grow flex flex-col items-center justify-center">
+                    <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
+                      Choose your MVP
+                    </div>
+                    <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
+                      Obtain all Submissions, and select the best one for your needs. Move forward with the developers by offering them a gig, job or internships.
+                    </div>
+                    <div className="mt-6 sm:mt-8">
+                      <FaListCheck className="fill-logo-purple/85 text-4xl sm:text-6xl" />
                     </div>
                   </div>
                 </div>
@@ -589,6 +591,40 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="p-10">
+  <div className="flex flex-col w-full pb-16 pt-14 bg-white rounded-2xl drop-shadow-2xl">
+    <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+      Why Choose Kinetik?
+    </div>
+    <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+      Maximize your outcomes with Kinetik’s unique advantages.
+    </div>
+    <div className="flex justify-center">
+      <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+    </div>
+    <div className="flex flex-col lg:flex-row justify-around items-center space-y-6 lg:space-y-0 p-8 text-off-white">
+      <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
+        <div className="text-2xl font-bold mb-2 text-center">Multiple High-Quality Submissions</div>
+        <div className="text-center text-gray-200">
+          Get a variety of innovative solutions from top talent. Evaluate multiple high-quality submissions to find the perfect fit for your needs.
+        </div>
+      </div>
+      <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
+        <div className="text-2xl font-bold mb-2 text-center">Hire Through Contests</div>
+        <div className="text-center text-gray-200">
+          Meritocracy at its finest. Identify and hire the best developers by assessing their real-world solutions and performance in challenges.
+        </div>
+      </div>
+      <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
+        <div className="text-2xl font-bold mb-2 text-center">Variable Pricing</div>
+        <div className="text-center text-gray-200">
+          Customize your prize pool based on the complexity and importance of your challenge. Flexibility that aligns with your budget and goals.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+          <div className="p-10">
             <div className="flex flex-col w-full pb-16 pt-14 bg-white rounded-2xl drop-shadow-2xl">
               <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
                 Affordable Pricing.
@@ -603,12 +639,8 @@ export default function LandingPage() {
                 <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
                   <div className="text-3xl font-bold mb-2">Basic</div>
                   <div className="text-4xl font-bold mb-2">FREE</div>
-                  <div className="text-sm text-gray-400 mb-4">
-                    Billed Yearly
-                  </div>
                   <ul className="space-y-3 mb-6 text-xs text-left w-full">
-                    <li>- Host One Challenge</li>
-                    <li>- Access Basic Developer Pool</li>
+                    <li>- Host One Challenge per month</li>
                     <li>- No Reporting on Submissions</li>
                     <li>- 100% Upfront on Challenge Fee</li>
                   </ul>
@@ -627,8 +659,8 @@ export default function LandingPage() {
                   <ul className="space-y-3 mb-6 text-xs text-left w-full">
                     <li>- Host Unlimited Challenges</li>
                     <li>- Access Our Best Developer Pool</li>
-                    <li>- Reporting on Submissions</li>
-                    <li>- 10% Upfront on Challenge Fee</li>
+                    <li>- Kinetik's Reporting on Submissions</li>
+                    <li>- 10% Upfront on Challenge Fee and 90% refund satisfaction gaurantee</li>
                   </ul>
                   <button className="w-full py-2 bg-white font-semibold rounded-lg text-logo-purple">
                     Get Started
@@ -643,10 +675,9 @@ export default function LandingPage() {
                     Billed Yearly
                   </div>
                   <ul className="space-y-3 mb-6 text-xs text-left w-full">
-                    <li>- Host Three Challenges</li>
-                    <li>- Access Intermediate Developer Pool </li>
+                    <li>- Host Three Challenges per month</li>
                     <li>- Reporting on Submissions</li>
-                    <li>- 100% Upfront on Challenge Fee</li>
+                    <li>- 10% Upfront on Challenge Fee and 90% refund satisfaction gaurantee</li>
                   </ul>
                   <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
                     Get Started
