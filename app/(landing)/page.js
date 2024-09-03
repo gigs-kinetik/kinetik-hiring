@@ -493,8 +493,8 @@ export default function LandingPage() {
                       Host Your Challenge
                     </div>
                     <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                      That's it! Now, just wait for Kinetik's comprehensive
-                      report on the submissions!
+                      That's it! Now, just wait for our comprehensive report on
+                      the submissions!
                     </div>
                     <div className="mt-6 sm:mt-8">
                       <BiSolidReport className="fill-logo-purple/85 text-4xl sm:text-6xl" />
