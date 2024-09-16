@@ -270,6 +270,29 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            <div className="flex flex-col items-center w-full mt-8">
+            <div className="text-center font-semibold text-logo-purple mb-4">
+              What Developers Are Saying
+            </div>
+            <div className="flex flex-wrap justify-around w-full">
+              <div className="flex flex-col items-center m-4 max-w-xs">
+                <div className="text-center font-light text-logo-purple mb-2 p-4 border rounded-lg shadow-md">
+                  "Working with Kinetik was a great experience! They were really helpful and responsive, making the process much easier and enjoyable than I expected. I highly recommend them to anyone looking for quality work and excellent outcomes."
+                </div>
+                <div className="font-medium text-logo-purple">
+                  - Eda E.
+                </div>
+              </div>
+              <div className="flex flex-col items-center m-4 max-w-xs">
+                <div className="text-center font-light text-logo-purple mb-2 p-4 border rounded-lg shadow-md">
+                  "The overall experience was great and all and generally speaking the whole process is smooth . I had a great time during the hackathon and the challenges that were given."
+                </div>
+                <div className="font-medium text-logo-purple">
+                  - James A.
+                </div>
+              </div>
+            </div>
+          </div>
             <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white">
               <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
                 <div className="flex text-2xl font-medium text-logo-purple justify-center">
@@ -593,6 +616,20 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+          <div className="flex flex-col items-center w-full mt-8">
+          <div className="text-center font-semibold text-logo-purple mb-4">
+            What Companies Are Saying
+          </div>
+          <div className="flex flex-col items-center max-w-md mx-4">
+            <div className="text-center font-light text-logo-purple mb-4 p-6 border rounded-lg shadow-md">
+              "This platform has been amazing. Fast, high quality work, and great way to recruit top talent. I highly recommend Kinetik to anyone looking to get quality work done."
+            </div>
+            <div class="font-medium text-logo-purple">
+              - Benny J. Sonic Bids/Advance Music
+            </div>
+          </div>
+        </div>
+
           <div className="p-10">
             <div className="flex flex-col w-full pb-16 pt-14 bg-white rounded-2xl drop-shadow-2xl">
               <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
@@ -659,9 +696,11 @@ export default function LandingPage() {
                     <li>- No Reporting on Submissions</li>
                     <li>- 100% Upfront on Challenge Fee</li>
                   </ul>
-                  <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
-                    Get Started
-                  </button>
+                  <Link href="/login">
+                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
+                      Get Started
+                    </button>
+                  </Link>
                 </div>
                 <div className="flex flex-col items-center p-6 w-80 bg-logo-purple text-white rounded-xl shadow-lg transform scale-110">
                   <div className="text-3xl font-bold mb-2">Unlimited</div>
@@ -680,9 +719,11 @@ export default function LandingPage() {
                       gaurantee
                     </li>
                   </ul>
-                  <button className="w-full py-2 bg-white font-semibold rounded-lg text-logo-purple">
-                    Get Started
-                  </button>
+                  <Link href="/login">
+                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
+                      Get Started
+                    </button>
+                  </Link>
                 </div>
                 <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
                   <div className="text-3xl font-bold mb-2">Premium</div>
@@ -700,9 +741,11 @@ export default function LandingPage() {
                       gaurantee
                     </li>
                   </ul>
-                  <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
-                    Get Started
-                  </button>
+                  <Link href="/login">
+                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
+                      Get Started
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -723,20 +766,6 @@ export default function LandingPage() {
               rel="noopener noreferrer"
             >
               <FaInstagram className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
-            </a>
-            <a
-              href="https://discord.gg/h6FtYkfB"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
-            </a>
-            <a
-              href="https://x.com/KinetikGigs"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaXTwitter className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
             </a>
           </div>
         </div>
