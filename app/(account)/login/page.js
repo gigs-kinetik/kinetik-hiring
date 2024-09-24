@@ -9,13 +9,12 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, db } from "../../../lib/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loggedInEmail, setLoggedInEmail] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const router = useRouter();
 
@@ -30,13 +29,22 @@ export default function LoginPage() {
       const user = userCredential.user;
       if (user.emailVerified) {
         sessionStorage.setItem("userEmail", email);
-        setLoggedInEmail(email);
+        const userDocRef = doc(db, "User Information", email);
+        const userDoc = await getDoc(userDocRef);
+        let userType = "Developer";
+        const userData = userDoc.data();
+        if (!userData.Type) {
+          await updateDoc(userDocRef, { Type: "Developer" });
+        } else {
+          userType = userData.Type;
+        }
+        sessionStorage.setItem("userType", userType);
         const options = { timeZone: "America/Chicago", timeZoneName: "short" };
         const currDate = new Date()
           .toLocaleDateString("en-US", options)
           .split(", ")[0];
         const currTime = new Date().toLocaleTimeString("en-US", options);
-        await updateDoc(doc(db, "User Information", email), {
+        await updateDoc(userDocRef, {
           "Last Login": currDate + ", " + currTime,
         });
         setError("");
