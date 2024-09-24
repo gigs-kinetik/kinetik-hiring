@@ -21,6 +21,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [userType, setUserType] = useState("Developer");
+  const [companyName, setCompanyName] = useState("");
+  const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,7 +33,6 @@ export default function LoginPage() {
     const savedPassword = sessionStorage.getItem("password");
     const savedTermsAccepted =
       sessionStorage.getItem("termsAccepted") === "true";
-
     if (savedFirstName) setFirstName(savedFirstName);
     if (savedLastName) setLastName(savedLastName);
     if (savedEmail) setEmail(savedEmail);
@@ -47,6 +49,10 @@ export default function LoginPage() {
     e.preventDefault();
     if (!termsAccepted) {
       setError("You must accept the terms and conditions to sign up.");
+      return;
+    }
+    if (userType === "Company" && !companyTermsAccepted) {
+      setError("You must accept the company-specific terms and conditions.");
       return;
     }
     setIsLoading(true);
@@ -67,6 +73,8 @@ export default function LoginPage() {
         "First Name": firstName,
         "Last Name": lastName,
         "Last Login": currDate + ", " + currTime,
+        Type: userType,
+        ...(userType === "Company" && { "Company Name": companyName }),
       });
       auth.signOut();
       setError("");
@@ -120,6 +128,59 @@ export default function LoginPage() {
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
               <form className="space-y-6" onSubmit={handleSignUp}>
+                <div>
+                  <div className="flex space-x-4 mt-2 justify-center">
+                    <label className="flex items-center text-off-white">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="Developer"
+                        checked={userType === "Developer"}
+                        onChange={() => setUserType("Developer")}
+                        className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
+                      />
+                      <span className="ml-2">Developer</span>
+                    </label>
+                    <label className="flex items-center text-off-white">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="Company"
+                        checked={userType === "Company"}
+                        onChange={() => setUserType("Company")}
+                        className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
+                      />
+                      <span className="ml-2">Company</span>
+                    </label>
+                  </div>
+                </div>
+                {userType === "Company" && (
+                  <div>
+                    <label
+                      htmlFor="companyName"
+                      className="block text-sm font-semibold leading-6 text-off-white"
+                    >
+                      Company Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="companyName"
+                        name="companyName"
+                        type="text"
+                        value={companyName}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setCompanyName,
+                            "companyName",
+                            e.target.value
+                          )
+                        }
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="flex space-x-4">
                   <div className="w-1/2">
                     <label
@@ -202,7 +263,6 @@ export default function LoginPage() {
                     >
                       Password
                     </label>
-                    <div className="text-sm"></div>
                   </div>
                   <div className="mt-2 relative">
                     <input
@@ -233,7 +293,28 @@ export default function LoginPage() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-center">
+                {userType === "Company" && (
+                  <div className="flex items-center justify-center">
+                    <input
+                      id="companyTerms"
+                      name="companyTerms"
+                      type="checkbox"
+                      checked={companyTermsAccepted}
+                      onChange={() =>
+                        setCompanyTermsAccepted(!companyTermsAccepted)
+                      }
+                      className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
+                    />
+                    <label
+                      htmlFor="companyTerms"
+                      className="ml-2 block text-sm text-off-white"
+                    >
+                      I confirm that I am an authorized employee from the
+                      company stated above.
+                    </label>
+                  </div>
+                )}
+                <div className="flex">
                   <input
                     id="terms"
                     name="terms"

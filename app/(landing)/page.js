@@ -34,10 +34,15 @@ export default function LandingPage() {
           .toLocaleDateString("en-US", options)
           .split(", ")[0];
         const currTime = new Date().toLocaleTimeString("en-US", options);
+        var userNote = "Company";
+        if (isDevelopers) {
+          userNote = "Developer";
+        }
         await updateDoc(docRef, {
-          emails: arrayUnion({
-            email: email,
-            timestamp: currDate + ", " + currTime,
+          Emails: arrayUnion({
+            Email: email,
+            Timestamp: currDate + ", " + currTime,
+            Type: userNote,
           }),
         });
         setEmail("");
@@ -738,7 +743,7 @@ export default function LandingPage() {
                   <li>- No Reporting on Submissions</li>
                   <li>- 100% Upfront on Challenge Fee</li>
                 </ul>
-                <Link href="/login">
+                <Link href="/signup">
                   <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
                     Get Started
                   </button>
@@ -756,7 +761,7 @@ export default function LandingPage() {
                   <li>- Get Reporting on Submissions</li>
                   <li>- 90% refund satisfaction guarantee</li>
                 </ul>
-                <Link href="/login">
+                <Link href="/signup">
                   <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
                     Get Started
                   </button>
@@ -773,7 +778,7 @@ export default function LandingPage() {
                   <li>- No Reporting on Submissions</li>
                   <li>- 90% refund satisfaction guarantee</li>
                 </ul>
-                <Link href="/login">
+                <Link href="/signup">
                   <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
                     Get Started
                   </button>
