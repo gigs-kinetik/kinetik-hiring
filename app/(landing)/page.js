@@ -10,8 +10,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { db } from "../../lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { FaInstagram, FaDiscord } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaInstagram, FaQuoteLeft } from "react-icons/fa";
 import { FaListCheck } from "react-icons/fa6";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { BiSolidReport } from "react-icons/bi";
@@ -140,12 +139,55 @@ export default function LandingPage() {
               </small>
             </div>
           </div>
-          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+          <div className="flex flex-col w-full pb-16 pt-14">
             <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-              How does Kinetik work?
+              Kinetik's Track Record.
             </div>
             <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-              It's very simple.
+              See what developers have to say about us.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  Working with Kinetik was a great experience! They were helpful
+                  and responsive, making the process much easier and enjoyable
+                  than I expected. I highly recommend them to anyone looking to
+                  develop quality work.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">Eda Eren</div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  The overall experience was great, and the whole process was
+                  smooth. I had a great time during the competition and was able
+                  to contribute to a company mission while learning some new
+                  skills.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    James Avila
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Simple Process.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              It's very easy.
             </div>
             <div className="flex justify-center">
               <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-6"></div>
@@ -217,6 +259,21 @@ export default function LandingPage() {
             <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white border-b-2">
               <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
                 <div className="flex text-2xl font-medium text-logo-purple justify-center">
+                  Join a Challenge
+                </div>
+                <div className="flex text-md mt-4 text-gray-500 justify-center">
+                  And start building!
+                </div>
+              </div>
+              <div className="flex flex-row justify-center w-full">
+                <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
+                  <img className="rounded-xl" src="/altora-challenge.png" />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white">
+              <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
+                <div className="flex text-2xl font-medium text-logo-purple justify-center">
                   Earn Rewards
                 </div>
                 <div className="flex text-md mt-4 text-gray-500 text-center justify-center px-4">
@@ -267,44 +324,6 @@ export default function LandingPage() {
                   <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
                     Get Externship Certification for a qualifying submissions.
                   </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center w-full mt-8">
-            <div className="text-center font-semibold text-logo-purple mb-4">
-              What Developers Are Saying
-            </div>
-            <div className="flex flex-wrap justify-around w-full">
-              <div className="flex flex-col items-center m-4 max-w-xs">
-                <div className="text-center font-light text-logo-purple mb-2 p-4 border rounded-lg shadow-md">
-                  "Working with Kinetik was a great experience! They were really helpful and responsive, making the process much easier and enjoyable than I expected. I highly recommend them to anyone looking for quality work and excellent outcomes."
-                </div>
-                <div className="font-medium text-logo-purple">
-                  - Eda E.
-                </div>
-              </div>
-              <div className="flex flex-col items-center m-4 max-w-xs">
-                <div className="text-center font-light text-logo-purple mb-2 p-4 border rounded-lg shadow-md">
-                  "The overall experience was great and all and generally speaking the whole process is smooth . I had a great time during the hackathon and the challenges that were given."
-                </div>
-                <div className="font-medium text-logo-purple">
-                  - James A.
-                </div>
-              </div>
-            </div>
-          </div>
-            <div className="flex flex-col xl:flex-row mt-14 mx-14 pb-14 text-off-white">
-              <div className="flex flex-col justify-center w-full xl:w-96 mb-4 xl:mb-0 xl:pr-8">
-                <div className="flex text-2xl font-medium text-logo-purple justify-center">
-                  Join a Challenge
-                </div>
-                <div className="flex text-md mt-4 text-gray-500 justify-center">
-                  And start building!
-                </div>
-              </div>
-              <div className="flex flex-row justify-center w-full">
-                <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
-                  <img className="rounded-xl" src="/altora-challenge.png" />
                 </div>
               </div>
             </div>
@@ -459,294 +478,306 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="lg:p-10">
-            <div className="flex flex-col w-full pb-16 pt-14 bg-white lg:rounded-2xl lg:drop-shadow-2xl">
-              <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-                Just 4 Steps.
-              </div>
-              <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-                Minimal to no work from your side.
-              </div>
-              <div className="flex justify-center">
-                <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-              </div>
-              <div className="flex flex-col lg:flex-row justify-center items-center w-full space-y-16 lg:space-y-0 lg:space-x-8 px-4">
-                <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                    1
-                  </div>
-                  <div className="flex-grow flex flex-col items-center justify-center">
-                    <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                      List Your Needs
-                    </div>
-                    <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                      Specify what technologies you want and what kind of
-                      product you are looking to build.
-                    </div>
-                    <div className="mt-6 sm:mt-8">
-                      <FaListCheck className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                    </div>
-                  </div>
-                </div>
-                <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                    2
-                  </div>
-                  <div className="flex-grow flex flex-col items-center justify-center">
-                    <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                      Select Your Incentives
-                    </div>
-                    <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                      Specify how much money you want to allocate to complete
-                      the gig.
-                    </div>
-                    <div className="mt-6 sm:mt-8">
-                      <FaMoneyCheckDollar className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                    </div>
-                  </div>
-                </div>
-                <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                    3
-                  </div>
-                  <div className="flex-grow flex flex-col items-center justify-center">
-                    <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                      Host Your Challenge
-                    </div>
-                    <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                      That's it! Now, just wait for our comprehensive report on
-                      the submissions!
-                    </div>
-                    <div className="mt-6 sm:mt-8">
-                      <BiSolidReport className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                    </div>
-                  </div>
-                </div>
-                <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                    4
-                  </div>
-                  <div className="flex-grow flex flex-col items-center justify-center">
-                    <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                      Choose your MVP
-                    </div>
-                    <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                      Obtain all submissions, and select the best one for your
-                      needs. Move forward with the developers by offering them a
-                      gig job.
-                    </div>
-                    <div className="mt-6 sm:mt-8">
-                      <BsPersonWorkspace className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row justify-center w-full mt-20 pl-4 pr-4">
-                <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
-                  <img className="rounded-xl" src="/altora-challenge.png" />
-                </div>
-              </div>
+          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Just 4 Steps.
             </div>
-          </div>
-          <div className="p-10">
-            <div className="flex flex-col w-full pb-16 pt-14 lg:bg-white lg:rounded-2xl lg:drop-shadow-2xl">
-              <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-                Vast Product Scope.
-              </div>
-              <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-                Everything. Here are some examples of what we have worked with.
-              </div>
-              <div className="flex justify-center">
-                <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-              </div>
-              <div className="flex flex-col xl:flex-row text-off-white">
-                <div className="flex flex-row xl:space-y-0 flex-wrap justify-around w-full">
-                  <div className="flex flex-col items-center pb-10">
-                    <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                      Technical Projects
-                    </div>
-                    <div className="flex flex-col w-72 p-6 rounded-xl h-52 bg-white">
-                      <div className="flex justify-center mb-5">
-                        <img className="w-20" src="/aws-logo.webp" />
-                      </div>
-                      <div className="flex justify-around">
-                        <img className="w-14" src="/react-logo.png" />
-                        <img className="w-14" src="/gpt-logo.png" />
-                      </div>
-                    </div>
-                    <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                      Mobile Apps, Web Apps, AI Agents, LLM Dev
-                    </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              Minimal to no work from your side.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full space-y-16 lg:space-y-0 lg:space-x-8 px-4">
+              <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
+                  1
+                </div>
+                <div className="flex-grow flex flex-col items-center justify-center">
+                  <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
+                    List Your Needs
                   </div>
-                  <div className="flex flex-col items-center pb-10">
-                    <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                      Business Projects
-                    </div>
-                    <div className="flex flex-col w-72 p-6 rounded-xl h-52 bg-white">
-                      <div className="flex justify-around mb-5">
-                        <img className="w-16" src="/excel-logo.png" />
-                        <img className="w-16" src="/powerbi-logo.png" />
-                      </div>
-                      <div className="flex justify-center">
-                        <img className="w-20" src="/powerpoint-logo.png" />
-                      </div>
-                    </div>
-                    <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                      Strategy Decks, Business Plans, Case Studies
-                    </div>
+                  <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
+                    Specify what technologies you want and what kind of product
+                    you are looking to build.
                   </div>
-                  <div className="flex flex-col items-center pb-10">
-                    <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                      Design Projects
-                    </div>
-                    <div className="flex flex-col w-72 p-6 rounded-xl h-52 bg-white">
-                      <div className="flex justify-center mb-5">
-                        <img className="w-20" src="/figma-logo.webp" />
-                      </div>
-                      <div className="flex justify-around">
-                        <img className="w-14" src="/canva-logo.png" />
-                        <img className="w-14" src="/photoshop-logo.png" />
-                      </div>
-                    </div>
-                    <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                      Creative Designs, Logos, CX, Social Media Marketing
-                    </div>
+                  <div className="mt-6 sm:mt-8">
+                    <FaListCheck className="fill-logo-purple/85 text-4xl sm:text-6xl" />
+                  </div>
+                </div>
+              </div>
+              <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
+                  2
+                </div>
+                <div className="flex-grow flex flex-col items-center justify-center">
+                  <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
+                    Select Your Incentives
+                  </div>
+                  <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
+                    Specify how much money you want to allocate to complete the
+                    gig.
+                  </div>
+                  <div className="mt-6 sm:mt-8">
+                    <FaMoneyCheckDollar className="fill-logo-purple/85 text-4xl sm:text-6xl" />
+                  </div>
+                </div>
+              </div>
+              <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
+                  3
+                </div>
+                <div className="flex-grow flex flex-col items-center justify-center">
+                  <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
+                    Host Your Challenge
+                  </div>
+                  <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
+                    That's it! Now, just wait for our comprehensive report on
+                    the submissions!
+                  </div>
+                  <div className="mt-6 sm:mt-8">
+                    <BiSolidReport className="fill-logo-purple/85 text-4xl sm:text-6xl" />
+                  </div>
+                </div>
+              </div>
+              <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
+                  4
+                </div>
+                <div className="flex-grow flex flex-col items-center justify-center">
+                  <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
+                    Choose your MVP
+                  </div>
+                  <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
+                    Of all submissions select the best one for your needs.
+                    Proceed with the developers by offering a gig.
+                  </div>
+                  <div className="mt-6 sm:mt-8">
+                    <BsPersonWorkspace className="fill-logo-purple/85 text-4xl sm:text-6xl" />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center w-full mt-8">
-          <div className="text-center font-semibold text-logo-purple mb-4">
-            What Companies Are Saying
-          </div>
-          <div className="flex flex-col items-center max-w-md mx-4">
-            <div className="text-center font-light text-logo-purple mb-4 p-6 border rounded-lg shadow-md">
-              "This platform has been amazing. Fast, high quality work, and great way to recruit top talent. I highly recommend Kinetik to anyone looking to get quality work done."
-            </div>
-            <div class="font-medium text-logo-purple">
-              - Benny J. Sonic Bids/Advance Music
-            </div>
-          </div>
-        </div>
-
-          <div className="p-10">
-            <div className="flex flex-col w-full pb-16 pt-14 bg-white rounded-2xl drop-shadow-2xl">
-              <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-                Unique Advantages.
-              </div>
-              <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-                Maximize your outcomes with Kinetik’s novel outlook.
-              </div>
-              <div className="flex justify-center">
-                <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-              </div>
-              <div className="flex flex-col lg:flex-row justify-around items-center space-y-6 lg:space-y-0 p-8 text-off-white">
-                <div className="flex flex-col justify-between p-6 w-80 bg-logo-purple/85 rounded-xl h-64">
-                  <div className="text-2xl font-semibold mb-2 text-center">
-                    Multiple Quality MVPs
-                  </div>
-                  <div className="text-center text-gray-200">
-                    Get a variety of innovative solutions from top talent.
-                    Evaluate multiple high-quality submissions to find the
-                    perfect fit for your needs.
-                  </div>
-                </div>
-                <div className="flex flex-col justify-between p-6 w-80 bg-logo-purple/85 rounded-xl h-64">
-                  <div className="text-2xl font-semibold mb-2 text-center">
-                    Hire Through Contests
-                  </div>
-                  <div className="text-center text-gray-200">
-                    Meritocracy at its finest. Identify and hire the best
-                    developers by assessing their real-world solutions and
-                    performance in challenges.
-                  </div>
-                </div>
-                <div className="flex flex-col justify-between p-6 w-80 bg-logo-purple/85 rounded-xl h-64">
-                  <div className="text-2xl font-semibold mb-2 text-center">
-                    Variable Pricing
-                  </div>
-                  <div className="text-center text-gray-200">
-                    Customize your prize pool based on the complexity and
-                    importance of your challenge. Flexibility that aligns with
-                    your budget and goals.
-                  </div>
-                </div>
+            <div className="flex flex-row justify-center w-full mt-20 pl-4 pr-4">
+              <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
+                <img className="rounded-xl" src="/altora-challenge.png" />
               </div>
             </div>
           </div>
-
-          <div className="p-10">
-            <div className="flex flex-col w-full pb-16 pt-14 bg-white rounded-2xl drop-shadow-2xl">
-              <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-                Affordable Pricing.
-              </div>
-              <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-                Get access to all reporting and Kinetik features.
-              </div>
-              <div className="flex justify-center">
-                <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-              </div>
-              <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6 p-8 text-off-white">
-                <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
-                  <div className="text-3xl font-bold mb-2">Basic</div>
-                  <div className="text-4xl font-bold mb-2">FREE</div>
-                  <ul className="space-y-3 mb-6 text-xs text-left w-full">
-                    <li>- Host One Challenge per month</li>
-                    <li>- No Reporting on Submissions</li>
-                    <li>- 100% Upfront on Challenge Fee</li>
-                  </ul>
-                  <Link href="/login">
-                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
-                      Get Started
-                    </button>
-                  </Link>
+          <div className="flex flex-col w-full pb-16 pt-14">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Vast Product Scope.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              Everything. Here are some examples of what we have worked with.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col xl:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-16 px-4">
+              <div className="flex flex-col items-center">
+                <div className="text-center font-normal text-logo-purple mb-3 text-lg">
+                  Technical Projects
                 </div>
-                <div className="flex flex-col items-center p-6 w-80 bg-logo-purple text-white rounded-xl shadow-lg transform scale-110">
-                  <div className="text-3xl font-bold mb-2">Unlimited</div>
-                  <div className="text-4xl font-bold mb-2">
-                    $29.99 <span className="text-xl">/ month</span>
+                <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
+                  <div className="flex justify-center mb-5">
+                    <img className="w-20" src="/aws-logo.webp" />
                   </div>
-                  <div className="text-sm text-gray-200 mb-4">
-                    Billed Yearly
+                  <div className="flex justify-around">
+                    <img className="w-14" src="/react-logo.png" />
+                    <img className="w-14" src="/gpt-logo.png" />
                   </div>
-                  <ul className="space-y-3 mb-6 text-xs text-left w-full">
-                    <li>- Host Unlimited Challenges</li>
-                    <li>- Access Our Best Developer Pool</li>
-                    <li>- Kinetik's Reporting on Submissions</li>
-                    <li>
-                      - 10% Upfront on Challenge Fee and 90% refund satisfaction
-                      gaurantee
-                    </li>
-                  </ul>
-                  <Link href="/login">
-                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
-                      Get Started
-                    </button>
-                  </Link>
                 </div>
-                <div className="flex flex-col items-center p-6 w-80 bg-logo-purple/85 rounded-xl">
-                  <div className="text-3xl font-bold mb-2">Premium</div>
-                  <div className="text-4xl font-bold mb-2">
-                    $19.99 <span className="text-xl">/ month</span>
-                  </div>
-                  <div className="text-sm text-gray-400 mb-4">
-                    Billed Yearly
-                  </div>
-                  <ul className="space-y-3 mb-6 text-xs text-left w-full">
-                    <li>- Host Three Challenges per month</li>
-                    <li>- Reporting on Submissions</li>
-                    <li>
-                      - 10% Upfront on Challenge Fee and 90% refund satisfaction
-                      gaurantee
-                    </li>
-                  </ul>
-                  <Link href="/login">
-                    <button className="w-full py-2 bg-white text-logo-purple font-semibold rounded-lg">
-                      Get Started
-                    </button>
-                  </Link>
+                <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
+                  Mobile Apps, Web Apps, AI Agents, LLM Dev
                 </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-center font-normal text-logo-purple mb-3 text-lg">
+                  Business Projects
+                </div>
+                <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
+                  <div className="flex justify-around mb-5">
+                    <img className="w-16" src="/excel-logo.png" />
+                    <img className="w-16" src="/powerbi-logo.png" />
+                  </div>
+                  <div className="flex justify-center">
+                    <img className="w-20" src="/powerpoint-logo.png" />
+                  </div>
+                </div>
+                <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
+                  Strategy Decks, Business Plans, Case Studies
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-center font-normal text-logo-purple mb-3 text-lg">
+                  Design Projects
+                </div>
+                <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
+                  <div className="flex justify-center mb-5">
+                    <img className="w-20" src="/figma-logo.webp" />
+                  </div>
+                  <div className="flex justify-around">
+                    <img className="w-14" src="/canva-logo.png" />
+                    <img className="w-14" src="/photoshop-logo.png" />
+                  </div>
+                </div>
+                <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
+                  Creative Designs, Logos, CX, Social Media Marketing
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Unique Advantages.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              Maximize your outcomes with Kinetik’s novel outlook.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-16"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8 text-black">
+              <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
+                <div className="text-2xl font-medium mb-2 text-center">
+                  Multiple Quality MVPs
+                </div>
+                <div className="text-center text-gray-700">
+                  Get a variety of innovative solutions from top talent.
+                  Evaluate multiple high-quality submissions to find the perfect
+                  fit for your needs.
+                </div>
+              </div>
+              <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
+                <div className="text-2xl font-medium mb-2 text-center">
+                  Hire Through Contests
+                </div>
+                <div className="text-center text-gray-700">
+                  Meritocracy at its finest. Identify and hire the best
+                  developers by assessing their real-world solutions and
+                  performance in challenges.
+                </div>
+              </div>
+              <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
+                <div className="text-2xl font-medium mb-2 text-center">
+                  Variable Pricing
+                </div>
+                <div className="text-center text-gray-700">
+                  Customize your prize pool based on the complexity and
+                  importance of your challenge. Flexibility that aligns with
+                  your budget and goals.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full pb-16 pt-14">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Impactful Track Record.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              See what others have to say about us.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  Kinetik helped us go from idea to MVP within days. Loved the
+                  experience and highly recommend Kinetik for anyone trying to
+                  build or hire quickly.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    Benny Johnson
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Sonicbids & Advance Music Tech
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  Kinetik has been a game-changer for us. Fast, high-quality
+                  work just the way we wanted. We've seen great success since
+                  using this platform.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    Anonymous
+                  </div>
+                  <div className="text-sm text-gray-500">ChatSMB</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Affordable Pricing.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              Get access to all reporting and Kinetik features.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6 p-4 lg:p-8 text-off-white">
+              <div className="flex flex-col items-center p-6 w-full max-w-xs bg-logo-purple/85 rounded-xl shadow-md">
+                <div className="text-3xl font-bold mb-2">Basic</div>
+                <div className="text-4xl font-bold mb-2">FREE</div>
+                <div className="text-sm text-logo-purple/5 mb-6"></div>
+                <ul className="space-y-3 mb-6 text-sm text-left w-full">
+                  <li>- Host One Challenge per month</li>
+                  <li>- No Reporting on Submissions</li>
+                  <li>- 100% Upfront on Challenge Fee</li>
+                </ul>
+                <Link href="/login">
+                  <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
+                    Get Started
+                  </button>
+                </Link>
+              </div>
+              <div className="flex flex-col items-center p-6 w-full max-w-xs bg-logo-purple text-white rounded-xl shadow-lg transform scale-110">
+                <div className="text-3xl font-bold mb-2">Unlimited</div>
+                <div className="text-4xl font-bold mb-2">
+                  $29.99 <span className="text-xl">/ month</span>
+                </div>
+                <div className="text-sm text-gray-400 mb-4">Billed Yearly</div>
+                <ul className="space-y-3 mb-6 text-sm text-left w-full">
+                  <li>- Host Unlimited Challenges</li>
+                  <li>- Access Our Best Developer Pool</li>
+                  <li>- Get Reporting on Submissions</li>
+                  <li>- 90% refund satisfaction guarantee</li>
+                </ul>
+                <Link href="/login">
+                  <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
+                    Get Started
+                  </button>
+                </Link>
+              </div>
+              <div className="flex flex-col items-center p-6 w-full max-w-xs bg-logo-purple/85 rounded-xl shadow-md">
+                <div className="text-3xl font-bold mb-2">Premium</div>
+                <div className="text-4xl font-bold mb-2">
+                  $19.99 <span className="text-xl">/ month</span>
+                </div>
+                <div className="text-sm text-gray-400 mb-4">Billed Yearly</div>
+                <ul className="space-y-3 mb-6 text-sm text-left w-full">
+                  <li>- Host Three Challenges per month</li>
+                  <li>- No Reporting on Submissions</li>
+                  <li>- 90% refund satisfaction guarantee</li>
+                </ul>
+                <Link href="/login">
+                  <button className="w-full p-2 bg-white text-logo-purple font-semibold rounded-lg">
+                    Get Started
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
