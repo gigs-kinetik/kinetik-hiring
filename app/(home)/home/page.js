@@ -10,8 +10,12 @@ export default function HomePage() {
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [userType, setUserType] = useState(null);
 
   useEffect(() => {
+    const type = sessionStorage.getItem("userType");
+    setUserType(type);
+    console.log(userType);
     fetchSubmissionIds().then((ids) => {
       setSubmissionIds(ids);
     });
@@ -47,194 +51,213 @@ export default function HomePage() {
     return submissionIds.includes(eventId);
   };
 
-  return (
-    <div className="flex flex-row max-w-full max-h-full">
-      <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
-        <div className="flex w-6/12 max-w-6/12">
-          <p className="font-poppins mt-1 text-dark-gray font-normal text-md sm:text-lg">
-            Challenges for you
-          </p>
-        </div>
-        <div className="w-full mt-4 space-y-4">
-          {events.map((event) => {
-            if (filteredEvents.includes(event["Event ID"])) {
-              return (
-                <div
-                  key={event["Event Name"]}
-                  className="bg-white h-fit rounded-lg p-5"
-                >
-                  <div className="flex flex-col">
-                    <div className="flex flex-row justify-between">
-                      <div className="flex flex-col">
-                        <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                          {event["Prize List"] &&
-                          event["Prize List"].length > 0 ? (
-                            <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                              {event["Prize List"][0]}
-                            </div>
-                          ) : (
-                            <div></div>
-                          )}
-                          {event["Prize List"] &&
-                          event["Prize List"].length > 1 ? (
-                            <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                              {event["Prize List"][1]}
-                            </div>
-                          ) : (
-                            <div></div>
-                          )}
-                          {event["Prize List"] &&
-                          event["Prize List"].length > 2 ? (
-                            <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                              {event["Prize List"][2]}
-                            </div>
-                          ) : (
-                            <div></div>
-                          )}
+  // If userType is still being determined, show a loading spinner or null
+  if (userType === null) {
+    return <div></div>;
+  }
+
+  // If the user is a Developer, render Developer page
+  if (userType === "Developer") {
+    return (
+      <div className="flex flex-row max-w-full max-h-full">
+        <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
+          <div className="flex w-6/12 max-w-6/12">
+            <p className="font-poppins mt-1 text-dark-gray font-normal text-md sm:text-lg">
+              Challenges for you
+            </p>
+          </div>
+          <div className="w-full mt-4 space-y-4">
+            {events.map((event) => {
+              if (filteredEvents.includes(event["Event ID"])) {
+                return (
+                  <div
+                    key={event["Event Name"]}
+                    className="bg-white h-fit rounded-lg p-5"
+                  >
+                    <div className="flex flex-col">
+                      <div className="flex flex-row justify-between">
+                        <div className="flex flex-col">
+                          <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                            {event["Prize List"] &&
+                            event["Prize List"].length > 0 ? (
+                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                                {event["Prize List"][0]}
+                              </div>
+                            ) : (
+                              <div></div>
+                            )}
+                            {event["Prize List"] &&
+                            event["Prize List"].length > 1 ? (
+                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                                {event["Prize List"][1]}
+                              </div>
+                            ) : (
+                              <div></div>
+                            )}
+                            {event["Prize List"] &&
+                            event["Prize List"].length > 2 ? (
+                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
+                                {event["Prize List"][2]}
+                              </div>
+                            ) : (
+                              <div></div>
+                            )}
+                          </div>
+                          <div className="font-poppins text-xs md:text-sm text-gray-500">
+                            {event["Company"]}
+                          </div>
+                          <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                            {event["Event Name"]}
+                          </div>
                         </div>
-                        <div className="font-poppins text-xs md:text-sm text-gray-500">
-                          {event["Company"]}
-                        </div>
-                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                          {event["Event Name"]}
-                        </div>
-                      </div>
-                      <Link
-                        href={`/apply/${encodeURIComponent(
-                          event["Event Name"]
-                        )}`}
-                        className="w-fit h-fit rounded-lg"
-                      >
-                        <button
-                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                            isApplied(event["Event ID"])
-                              ? "bg-green-600/90 cursor-not-allowed"
-                              : "bg-logo-purple/85 hover:bg-logo-purple"
-                          }`}
-                          onClick={() =>
-                            !isApplied(event["Event ID"]) &&
-                            handleApplyClick(event)
-                          }
-                          disabled={isApplied(event["Event ID"])}
+                        <Link
+                          href={`/apply/${encodeURIComponent(
+                            event["Event Name"]
+                          )}`}
+                          className="w-fit h-fit rounded-lg"
                         >
-                          {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                      {event["Short Description"] || "No description available"}
-                    </div>
-                    <div className="lg:flex hidden flex-row justify-between">
-                      <div className="font-poppins text-sm text-gray-500">
-                        Submit by {event["Deadline"]}
+                          <button
+                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                              isApplied(event["Event ID"])
+                                ? "bg-green-600/90 cursor-not-allowed"
+                                : "bg-logo-purple/85 hover:bg-logo-purple"
+                            }`}
+                            onClick={() =>
+                              !isApplied(event["Event ID"]) &&
+                              handleApplyClick(event)
+                            }
+                            disabled={isApplied(event["Event ID"])}
+                          >
+                            {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
+                          </button>
+                        </Link>
                       </div>
-                      <div className="font-poppins text-sm pr-2 text-gray-500">
-                        {event["Required Skills"]}
+                      <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                        {event["Short Description"] ||
+                          "No description available"}
+                      </div>
+                      <div className="lg:flex hidden flex-row justify-between">
+                        <div className="font-poppins text-sm text-gray-500">
+                          Submit by {event["Deadline"]}
+                        </div>
+                        <div className="font-poppins text-sm pr-2 text-gray-500">
+                          {event["Required Skills"]}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            }
-          })}
-        </div>
-      </div>
-      <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
-        <p className="font-poppins mt-1 text-gray-600 font-normal text-lg">
-          Filters
-        </p>
-        <div className="mt-4 rounded-lg bg-white h-full">
-          <div className="ml-4 mt-6 font-poppins font-semibold">
-            Challenge Difficulty
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="easy-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="easy-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              Easy (1-2 star)
-            </label>
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="medium-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="medium-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              Medium (3 star)
-            </label>
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="hard-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="hard-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              Hard (4-5 star)
-            </label>
-          </div>
-          <div className="ml-4 mt-6 font-poppins font-semibold">
-            Skill Requirement
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="less-than-2-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="less-than-2-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              &lt; 2 skills
-            </label>
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="between-2-and-4-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="between-2-and-4-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              2 to 4 skills
-            </label>
-          </div>
-          <div className="ml-8 mt-2 font-poppins">
-            <input
-              id="more-than-4-checkbox"
-              type="checkbox"
-              className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-            />
-            <label
-              htmlFor="more-than-4-checkbox"
-              className="ms-2 lg:text-sm text-xs text-gray-900"
-            >
-              &gt; 4 skills
-            </label>
-          </div>
-          <div className="flex w-full justify-end mb-4">
-            <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
-              Filter
-            </button>
+                );
+              }
+            })}
           </div>
         </div>
+        <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
+          <p className="font-poppins mt-1 text-gray-600 font-normal text-lg">
+            Filters
+          </p>
+          <div className="mt-4 rounded-lg bg-white h-full">
+            <div className="ml-4 mt-6 font-poppins font-semibold">
+              Challenge Difficulty
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="easy-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="easy-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                Easy (1-2 star)
+              </label>
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="medium-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="medium-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                Medium (3 star)
+              </label>
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="hard-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="hard-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                Hard (4-5 star)
+              </label>
+            </div>
+            <div className="ml-4 mt-6 font-poppins font-semibold">
+              Skill Requirement
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="less-than-2-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="less-than-2-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                &lt; 2 skills
+              </label>
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="between-2-and-4-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="between-2-and-4-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                2 to 4 skills
+              </label>
+            </div>
+            <div className="ml-8 mt-2 font-poppins">
+              <input
+                id="more-than-4-checkbox"
+                type="checkbox"
+                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
+              />
+              <label
+                htmlFor="more-than-4-checkbox"
+                className="ms-2 lg:text-sm text-xs text-gray-900"
+              >
+                &gt; 4 skills
+              </label>
+            </div>
+            <div className="flex w-full justify-end mb-4">
+              <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
+                Filter
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (userType === "Company") {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-2xl font-bold">Welcome, Company!</h1>
+      </div>
+    );
+  }
+
+  return null;
 }
