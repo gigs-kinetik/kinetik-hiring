@@ -4,7 +4,19 @@ import Link from "next/link";
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
-import { getDocs, collection, doc, query } from "firebase/firestore";
+import { TrashIcon } from "@heroicons/react/24/solid";
+import {
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  doc,
+  query,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 
 export default function HomePage() {
   const events = useEvents();
@@ -12,6 +24,15 @@ export default function HomePage() {
   const [userType, setUserType] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deadline, setDeadline] = useState("");
+  const [deadlineTime, setDeadlineTime] = useState("");
+  const [eventName, setEventName] = useState("");
+  const [companyName, setCompanyName] = useState([]);
+  const [longDescription, setLongDescription] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [prizeList, setPrizeList] = useState("");
+  const [requiredSkills, setRequiredSkills] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const userEmail = sessionStorage.getItem("userEmail");
 
   useEffect(() => {
@@ -20,14 +41,18 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (userType === "Developer") {
-      fetchSubmissionIds().then((ids) => {
+    const fetchData = async () => {
+      if (userType === "Company") {
+        const updatedChallenges = await fetchChallenges();
+        setChallenges(updatedChallenges);
+        setLoading(false);
+      } else if (userType === "Developer") {
+        const ids = await fetchSubmissionIds();
         setSubmissionIds(ids);
         setLoading(false);
-      });
-    } else if (userType === "Company") {
-      fetchChallenges().then(() => setLoading(false));
-    }
+      }
+    };
+    fetchData();
   }, [userType]);
 
   useEffect(() => {
@@ -35,7 +60,6 @@ export default function HomePage() {
   }, [submissionIds]);
 
   const fetchSubmissionIds = async () => {
-    if (!userEmail) return [];
     const submissionsRef = collection(
       db,
       "User Information",
@@ -48,96 +72,219 @@ export default function HomePage() {
   };
 
   const fetchChallenges = async () => {
-    if (!userEmail) return [];
     const userDocRef = doc(db, "User Information", userEmail);
-    const challengesRef = collection(userDocRef, "Challenges");
-    const challengeSnapshot = await getDocs(challengesRef);
-    if (!challengeSnapshot.empty) {
-      const fetchedChallenges = challengeSnapshot.docs.map((doc) => doc.data());
-      setChallenges(fetchedChallenges);
+    const userDocSnap = await getDoc(userDocRef);
+    const userData = userDocSnap.data();
+    setCompanyName(userData["Company Name"]);
+    const eventIds = userData["Events"];
+    if (!eventIds || eventIds.length === 0) {
+      return [];
     }
+    const fetchedChallenges = [];
+    for (let eventId of eventIds) {
+      const eventDocRef = doc(db, "Events", eventId);
+      const eventDocSnap = await getDoc(eventDocRef);
+      fetchedChallenges.push(eventDocSnap.data());
+    }
+    return fetchedChallenges;
   };
 
   const handleApplyClick = (event) => {
     sessionStorage.setItem("currentEvent", JSON.stringify(event));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const [hours, minutes] = deadlineTime.split(":");
+    const combinedDateTime = new Date(deadline);
+    combinedDateTime.setHours(hours, minutes, 0, 0);
+    const pstDateTime = new Date(
+      combinedDateTime.toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+      })
+    );
+    const prizes = prizeList.split(";").map((prize) => prize.trim());
+    const skills = requiredSkills.split(";").map((skill) => skill.trim());
+    const userDocRef = doc(db, "User Information", userEmail);
+    const userDocSnap = await getDoc(userDocRef);
+    const numEvents = userDocSnap.data()["Num Events"] + 1;
+    await updateDoc(userDocRef, {
+      "Num Events": numEvents,
+    });
+    const eventId = `${userEmail}${numEvents}`;
+    const eventsCollectionRef = collection(db, "Events");
+    const newEventDocRef = doc(eventsCollectionRef, eventId);
+    await setDoc(newEventDocRef, {
+      Paid: "False",
+      "Event ID": eventId,
+      Company: companyName,
+      Contact: userEmail,
+      Deadline: pstDateTime,
+      "Event Name": eventName,
+      "Long Description": longDescription,
+      "Short Description": shortDescription,
+      "Prize List": prizes,
+      "Required Skills": skills,
+    });
+    await updateDoc(userDocRef, {
+      Events: arrayUnion(eventId),
+    });
+    setDeadline("");
+    setDeadlineTime("");
+    setEventName("");
+    setLongDescription("");
+    setShortDescription("");
+    setPrizeList("");
+    setRequiredSkills("");
+    setIsModalOpen(false);
+    const updatedChallenges = await fetchChallenges();
+    setChallenges(updatedChallenges);
+  };
+
+  const handleDelete = async (eventId) => {
+    const userEmail = sessionStorage.getItem("userEmail");
+    const eventDocRefInUserInfo = doc(
+      db,
+      "User Information",
+      userEmail,
+      "Events",
+      eventId
+    );
+    await deleteDoc(eventDocRefInUserInfo);
+    const eventDocRefInEventsCollection = doc(db, "Events", eventId);
+    await deleteDoc(eventDocRefInEventsCollection);
+    const userDocRef = doc(db, "User Information", userEmail);
+    await updateDoc(userDocRef, {
+      Events: arrayRemove(eventId),
+    });
+    const updatedChallenges = await fetchChallenges();
+    setChallenges(updatedChallenges);
+  };
+
   const isApplied = (eventId) => {
     return submissionIds.includes(eventId);
   };
+
+  const handlePay = async (eventId) => {
+    const eventDocRef = doc(db, "Events", eventId);
+    // add stuff here to process the payment and then only update to true if they end up paying
+    await updateDoc(eventDocRef, {
+      Paid: "True",
+    });
+    const updatedChallenges = await fetchChallenges();
+    setChallenges(updatedChallenges);
+  };
+
+  useEffect(() => {
+    fetchChallenges();
+  }, []);
 
   if (userType === "Developer" && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
         <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
           <div className="flex w-6/12 max-w-6/12">
-            <p className="font-poppins mt-1 text-dark-gray font-normal text-md sm:text-lg">
+            <p className="font-poppins mt-2 text-dark-gray font-normal text-md sm:text-lg">
               Challenges for you
             </p>
           </div>
           <div className="w-full mt-4 space-y-4">
-            {events.map((event) => (
-              <div
-                key={event["Event Name"]}
-                className="bg-white h-fit rounded-lg p-5"
-              >
-                <div className="flex flex-col">
-                  <div className="flex flex-row justify-between">
-                    <div className="flex flex-col">
-                      <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                        {event["Prize List"] &&
-                          event["Prize List"]
-                            .slice(0, 3)
-                            .map((prize, index) => (
-                              <div
-                                key={index}
-                                className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
-                              >
-                                {prize}
-                              </div>
-                            ))}
+            {events
+              .filter((event) => {
+                if (
+                  event.Paid === "True" &&
+                  event["Deadline"] &&
+                  event["Deadline"]["_seconds"]
+                ) {
+                  const eventDate = new Date(
+                    event["Deadline"]["_seconds"] * 1000
+                  );
+                  return eventDate > new Date();
+                }
+                return false;
+              })
+              .map((event) => (
+                <div
+                  key={event["Event Name"]}
+                  className="bg-white h-fit rounded-lg p-5"
+                >
+                  <div className="flex flex-col">
+                    <div className="flex flex-row justify-between">
+                      <div className="flex flex-col">
+                        <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                          {event["Prize List"] &&
+                            event["Prize List"]
+                              .slice(0, 3)
+                              .map((prize, index) => (
+                                <div
+                                  key={index}
+                                  className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                                >
+                                  {prize}
+                                </div>
+                              ))}
+                        </div>
+                        <div className="font-poppins text-xs md:text-sm text-gray-500">
+                          {event["Company"]}
+                        </div>
+                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                          {event["Event Name"]}
+                        </div>
                       </div>
-                      <div className="font-poppins text-xs md:text-sm text-gray-500">
-                        {event["Company"]}
-                      </div>
-                      <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                        {event["Event Name"]}
-                      </div>
-                    </div>
-                    <Link
-                      href={`/apply/${encodeURIComponent(event["Event Name"])}`}
-                      className="w-fit h-fit rounded-lg"
-                    >
-                      <button
-                        className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                          isApplied(event["Event ID"])
-                            ? "bg-green-600/90 cursor-not-allowed"
-                            : "bg-logo-purple/85 hover:bg-logo-purple"
-                        }`}
-                        onClick={() =>
-                          !isApplied(event["Event ID"]) &&
-                          handleApplyClick(event)
-                        }
-                        disabled={isApplied(event["Event ID"])}
+                      <Link
+                        href={`/apply/${encodeURIComponent(
+                          event["Event Name"]
+                        )}`}
+                        className="w-fit h-fit rounded-lg"
                       >
-                        {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
-                      </button>
-                    </Link>
-                  </div>
-                  <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                    {event["Short Description"] || "No description available"}
-                  </div>
-                  <div className="lg:flex hidden flex-row justify-between">
-                    <div className="font-poppins text-sm text-gray-500">
-                      Submit by {event["Deadline"]}
+                        <button
+                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                            isApplied(event["Event ID"])
+                              ? "bg-green-600/90 cursor-not-allowed"
+                              : "bg-logo-purple/85 hover:bg-logo-purple"
+                          }`}
+                          onClick={() =>
+                            !isApplied(event["Event ID"]) &&
+                            handleApplyClick(event)
+                          }
+                          disabled={isApplied(event["Event ID"])}
+                        >
+                          {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
+                        </button>
+                      </Link>
                     </div>
-                    <div className="font-poppins text-sm pr-2 text-gray-500">
-                      {event["Required Skills"]}
+                    <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                      {event["Short Description"] || "No description available"}
+                    </div>
+                    <div className="lg:flex hidden flex-row justify-between">
+                      <div className="font-poppins text-sm text-gray-500">
+                        Submit by{" "}
+                        {event["Deadline"] &&
+                          new Date(
+                            event["Deadline"]["_seconds"] * 1000
+                          ).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            timeZone: "America/Los_Angeles",
+                            timeZoneName: "short",
+                          })}{" "}
+                        on{" "}
+                        {event["Deadline"] &&
+                          new Date(
+                            event["Deadline"]["_seconds"] * 1000
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                      </div>
+                      <div className="font-poppins text-sm pr-2 text-gray-500">
+                        {event["Required Skills"]}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
         <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
@@ -246,11 +393,14 @@ export default function HomePage() {
         <div className="flex flex-row max-w-full max-h-full">
           <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
             <div className="flex justify-between w-full">
-              <p className="font-poppins text-dark-gray font-normal text-md sm:text-lg">
+              <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
                 Your Dashboard
               </p>
-              <button className="rounded-lg bg-green-600 text-white font-poppins pt-2 pb-2 pl-4 pr-4 font-medium text-sm">
-                Create New Challenge
+              <button
+                className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
+                onClick={() => setIsModalOpen(true)}
+              >
+                +
               </button>
             </div>
             <div className="w-full mt-4 space-y-4">
@@ -284,15 +434,33 @@ export default function HomePage() {
                       </div>
                       <div className="flex space-x-2">
                         <Link href="" className="w-fit h-fit rounded-lg">
-                          <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
-                            Pay
+                          <button
+                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                              event.Paid === "True"
+                                ? "bg-green-600/90 cursor-not-allowed"
+                                : "bg-logo-purple/85 hover:bg-logo-purple"
+                            }`}
+                            onClick={() => {
+                              if (event.Paid !== "True") {
+                                handlePay(event["Event ID"]);
+                              }
+                            }}
+                            disabled={event.Paid === "True"}
+                          >
+                            {event.Paid === "True" ? "Paid" : "Pay"}
                           </button>
                         </Link>
                         <Link href="" className="w-fit h-fit rounded-lg">
                           <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
-                            View
+                            See Report
                           </button>
                         </Link>
+                        <button
+                          onClick={() => handleDelete(event["Event ID"])}
+                          className="w-10 h-10 flex items-center justify-center"
+                        >
+                          <TrashIcon className="w-6 h-6 text-gray-500 hover:text-red-500 transition-colors duration-300" />
+                        </button>
                       </div>
                     </div>
                     <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
@@ -300,10 +468,28 @@ export default function HomePage() {
                     </div>
                     <div className="lg:flex hidden flex-row justify-between">
                       <div className="font-poppins text-sm text-gray-500">
-                        Submit by {event["Deadline"]}
+                        Deadline set for{" "}
+                        {event["Deadline"] &&
+                          event["Deadline"]
+                            .toDate()
+                            .toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZone: "America/Los_Angeles",
+                              timeZoneName: "short",
+                            })}{" "}
+                        on{" "}
+                        {event["Deadline"] &&
+                          event["Deadline"]
+                            .toDate()
+                            .toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                       </div>
                       <div className="font-poppins text-sm pr-2 text-gray-500">
-                        {event["Required Skills"]}
+                        {event["Required Skills"]?.join(", ")}
                       </div>
                     </div>
                   </div>
@@ -311,6 +497,106 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <div
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                  Add New Event
+                </h2>
+                <form onSubmit={handleSubmit}>
+                  <div className="font-poppins text-sm mt-4 text-gray-600">
+                    <label className="block mb-2">
+                      Event Name <span className="text-red-500">*</span>
+                      <input
+                        type="text"
+                        value={eventName}
+                        onChange={(e) => setEventName(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Deadline Date <span className="text-red-500">*</span>
+                      <input
+                        type="date"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Deadline Time (PST){" "}
+                      <span className="text-red-500">*</span>
+                      <input
+                        type="time"
+                        value={deadlineTime}
+                        onChange={(e) => setDeadlineTime(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Short Description <span className="text-red-500">*</span>
+                      <textarea
+                        value={shortDescription}
+                        placeholder="Enter a quick synopsis of what you need."
+                        onChange={(e) => setShortDescription(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Long Description <span className="text-red-500">*</span>
+                      <textarea
+                        value={longDescription}
+                        placeholder="Enter the complete requirements for your project."
+                        onChange={(e) => setLongDescription(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Prize List (semicolon-separated){" "}
+                      <span className="text-red-500">*</span>
+                      <input
+                        type="text"
+                        value={prizeList}
+                        onChange={(e) => setPrizeList(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-4">
+                      Required Skills (semicolon-separated){" "}
+                      <span className="text-red-500">*</span>
+                      <input
+                        type="text"
+                        value={requiredSkills}
+                        onChange={(e) => setRequiredSkills(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <div className="flex justify-center">
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-6"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       );
     } else {

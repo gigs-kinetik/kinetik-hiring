@@ -75,6 +75,8 @@ export default function LoginPage() {
         "Last Login": currDate + ", " + currTime,
         Type: userType,
         ...(userType === "Company" && { "Company Name": companyName }),
+        "Num Events": 0,
+        Events: [],
       });
       auth.signOut();
       setError("");

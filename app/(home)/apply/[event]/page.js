@@ -9,7 +9,6 @@ import { doc, setDoc, collection } from "firebase/firestore";
 
 export default function ApplyPage() {
   const router = useRouter();
-  const [error, setError] = useState(null);
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
   const [videoLink, setVideoLink] = useState("");
@@ -104,7 +103,25 @@ export default function ApplyPage() {
                 {event["Event Name"]}
               </div>
               <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
-                Submit by {event["Deadline"]}
+                Submit by{" "}
+                {event["Deadline"] &&
+                  new Date(
+                    event["Deadline"]["_seconds"] * 1000
+                  ).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    timeZone: "America/Los_Angeles",
+                    timeZoneName: "short",
+                  })}{" "}
+                on{" "}
+                {event["Deadline"] &&
+                  new Date(
+                    event["Deadline"]["_seconds"] * 1000
+                  ).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
               </div>
             </div>
           </div>
@@ -253,11 +270,6 @@ export default function ApplyPage() {
           </div>
         </div>
       </form>
-      {error && (
-        <p className="font-poppins text-red-700 font-medium text-sm mt-4">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
