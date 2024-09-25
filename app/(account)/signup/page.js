@@ -127,7 +127,7 @@ export default function LoginPage() {
               </h2>
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form className="space-y-6" onSubmit={handleSignUp}>
+              <form className="space-y-3" onSubmit={handleSignUp}>
                 <div>
                   <div className="flex space-x-4 mt-2 justify-center">
                     <label className="flex items-center text-off-white">
@@ -349,7 +349,7 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {error && (
-                  <p className="text-red-700 font-medium text-md text-center">
+                  <p className="text-red-700 font-medium text-sm text-center">
                     {error}
                   </p>
                 )}

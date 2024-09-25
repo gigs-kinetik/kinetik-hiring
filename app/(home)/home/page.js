@@ -4,33 +4,38 @@ import Link from "next/link";
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
-import { getDocs, collection, query } from "firebase/firestore";
+import { getDocs, collection, doc, query } from "firebase/firestore";
 
 export default function HomePage() {
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
   const [userType, setUserType] = useState(null);
+  const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const userEmail = sessionStorage.getItem("userEmail");
 
   useEffect(() => {
     const type = sessionStorage.getItem("userType");
     setUserType(type);
-    console.log(userType);
-    fetchSubmissionIds().then((ids) => {
-      setSubmissionIds(ids);
-    });
-    const filteredEventsFromStorage = JSON.parse(
-      sessionStorage.getItem("filteredEvents") || "[]"
-    );
-    setFilteredEvents(filteredEventsFromStorage);
   }, []);
+
+  useEffect(() => {
+    if (userType === "Developer") {
+      fetchSubmissionIds().then((ids) => {
+        setSubmissionIds(ids);
+        setLoading(false);
+      });
+    } else if (userType === "Company") {
+      fetchChallenges().then(() => setLoading(false));
+    }
+  }, [userType]);
 
   useEffect(() => {
     sessionStorage.setItem("submissionIds", JSON.stringify(submissionIds));
   }, [submissionIds]);
 
   const fetchSubmissionIds = async () => {
-    const userEmail = sessionStorage.getItem("userEmail");
+    if (!userEmail) return [];
     const submissionsRef = collection(
       db,
       "User Information",
@@ -39,11 +44,21 @@ export default function HomePage() {
     );
     const q = query(submissionsRef);
     const querySnapshot = await getDocs(q);
-    const ids = querySnapshot.docs.map((doc) => doc.id);
-    return ids;
+    return querySnapshot.docs.map((doc) => doc.id);
   };
 
-  const handleApplyClick = async (event) => {
+  const fetchChallenges = async () => {
+    if (!userEmail) return [];
+    const userDocRef = doc(db, "User Information", userEmail);
+    const challengesRef = collection(userDocRef, "Challenges");
+    const challengeSnapshot = await getDocs(challengesRef);
+    if (!challengeSnapshot.empty) {
+      const fetchedChallenges = challengeSnapshot.docs.map((doc) => doc.data());
+      setChallenges(fetchedChallenges);
+    }
+  };
+
+  const handleApplyClick = (event) => {
     sessionStorage.setItem("currentEvent", JSON.stringify(event));
   };
 
@@ -51,13 +66,7 @@ export default function HomePage() {
     return submissionIds.includes(eventId);
   };
 
-  // If userType is still being determined, show a loading spinner or null
-  if (userType === null) {
-    return <div></div>;
-  }
-
-  // If the user is a Developer, render Developer page
-  if (userType === "Developer") {
+  if (userType === "Developer" && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
         <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
@@ -67,88 +76,68 @@ export default function HomePage() {
             </p>
           </div>
           <div className="w-full mt-4 space-y-4">
-            {events.map((event) => {
-              if (filteredEvents.includes(event["Event ID"])) {
-                return (
-                  <div
-                    key={event["Event Name"]}
-                    className="bg-white h-fit rounded-lg p-5"
-                  >
+            {events.map((event) => (
+              <div
+                key={event["Event Name"]}
+                className="bg-white h-fit rounded-lg p-5"
+              >
+                <div className="flex flex-col">
+                  <div className="flex flex-row justify-between">
                     <div className="flex flex-col">
-                      <div className="flex flex-row justify-between">
-                        <div className="flex flex-col">
-                          <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                            {event["Prize List"] &&
-                            event["Prize List"].length > 0 ? (
-                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                                {event["Prize List"][0]}
+                      <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                        {event["Prize List"] &&
+                          event["Prize List"]
+                            .slice(0, 3)
+                            .map((prize, index) => (
+                              <div
+                                key={index}
+                                className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                              >
+                                {prize}
                               </div>
-                            ) : (
-                              <div></div>
-                            )}
-                            {event["Prize List"] &&
-                            event["Prize List"].length > 1 ? (
-                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                                {event["Prize List"][1]}
-                              </div>
-                            ) : (
-                              <div></div>
-                            )}
-                            {event["Prize List"] &&
-                            event["Prize List"].length > 2 ? (
-                              <div className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white">
-                                {event["Prize List"][2]}
-                              </div>
-                            ) : (
-                              <div></div>
-                            )}
-                          </div>
-                          <div className="font-poppins text-xs md:text-sm text-gray-500">
-                            {event["Company"]}
-                          </div>
-                          <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                            {event["Event Name"]}
-                          </div>
-                        </div>
-                        <Link
-                          href={`/apply/${encodeURIComponent(
-                            event["Event Name"]
-                          )}`}
-                          className="w-fit h-fit rounded-lg"
-                        >
-                          <button
-                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              isApplied(event["Event ID"])
-                                ? "bg-green-600/90 cursor-not-allowed"
-                                : "bg-logo-purple/85 hover:bg-logo-purple"
-                            }`}
-                            onClick={() =>
-                              !isApplied(event["Event ID"]) &&
-                              handleApplyClick(event)
-                            }
-                            disabled={isApplied(event["Event ID"])}
-                          >
-                            {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
-                          </button>
-                        </Link>
+                            ))}
                       </div>
-                      <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                        {event["Short Description"] ||
-                          "No description available"}
+                      <div className="font-poppins text-xs md:text-sm text-gray-500">
+                        {event["Company"]}
                       </div>
-                      <div className="lg:flex hidden flex-row justify-between">
-                        <div className="font-poppins text-sm text-gray-500">
-                          Submit by {event["Deadline"]}
-                        </div>
-                        <div className="font-poppins text-sm pr-2 text-gray-500">
-                          {event["Required Skills"]}
-                        </div>
+                      <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                        {event["Event Name"]}
                       </div>
                     </div>
+                    <Link
+                      href={`/apply/${encodeURIComponent(event["Event Name"])}`}
+                      className="w-fit h-fit rounded-lg"
+                    >
+                      <button
+                        className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                          isApplied(event["Event ID"])
+                            ? "bg-green-600/90 cursor-not-allowed"
+                            : "bg-logo-purple/85 hover:bg-logo-purple"
+                        }`}
+                        onClick={() =>
+                          !isApplied(event["Event ID"]) &&
+                          handleApplyClick(event)
+                        }
+                        disabled={isApplied(event["Event ID"])}
+                      >
+                        {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
+                      </button>
+                    </Link>
                   </div>
-                );
-              }
-            })}
+                  <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                    {event["Short Description"] || "No description available"}
+                  </div>
+                  <div className="lg:flex hidden flex-row justify-between">
+                    <div className="font-poppins text-sm text-gray-500">
+                      Submit by {event["Deadline"]}
+                    </div>
+                    <div className="font-poppins text-sm pr-2 text-gray-500">
+                      {event["Required Skills"]}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
@@ -251,13 +240,83 @@ export default function HomePage() {
     );
   }
 
-  if (userType === "Company") {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold">Welcome, Company!</h1>
-      </div>
-    );
+  if (userType === "Company" && !loading) {
+    if (!challenges.empty) {
+      return (
+        <div className="flex flex-row max-w-full max-h-full">
+          <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
+            <div className="flex justify-between w-full">
+              <p className="font-poppins text-dark-gray font-normal text-md sm:text-lg">
+                Your Dashboard
+              </p>
+              <button className="rounded-lg bg-green-600 text-white font-poppins pt-2 pb-2 pl-4 pr-4 font-medium text-sm">
+                Create New Challenge
+              </button>
+            </div>
+            <div className="w-full mt-4 space-y-4">
+              {challenges.map((event) => (
+                <div
+                  key={event["Event Name"]}
+                  className="bg-white h-fit rounded-lg p-5"
+                >
+                  <div className="flex flex-col">
+                    <div className="flex flex-row justify-between">
+                      <div className="flex flex-col">
+                        <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                          {event["Prize List"] &&
+                            event["Prize List"]
+                              .slice(0, 3)
+                              .map((prize, index) => (
+                                <div
+                                  key={index}
+                                  className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                                >
+                                  {prize}
+                                </div>
+                              ))}
+                        </div>
+                        <div className="font-poppins text-xs md:text-sm text-gray-500">
+                          {event["Company"]}
+                        </div>
+                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                          {event["Event Name"]}
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Link href="" className="w-fit h-fit rounded-lg">
+                          <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
+                            Pay
+                          </button>
+                        </Link>
+                        <Link href="" className="w-fit h-fit rounded-lg">
+                          <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
+                            View
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                      {event["Short Description"] || "No description available"}
+                    </div>
+                    <div className="lg:flex hidden flex-row justify-between">
+                      <div className="font-poppins text-sm text-gray-500">
+                        Submit by {event["Deadline"]}
+                      </div>
+                      <div className="font-poppins text-sm pr-2 text-gray-500">
+                        {event["Required Skills"]}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   }
 
-  return null;
+  return <div></div>;
 }
