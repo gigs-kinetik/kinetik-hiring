@@ -180,7 +180,12 @@ export default function ApplyPage() {
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
             This challenge will require you to utilize the following skills to
-            the best of your ability: {event["Required Skills"]}.
+            the best of your ability:{" "}
+            {event["Required Skills"] && (
+              <span className="font-poppins text-sm pr-2 text-logo-purple">
+                {event["Required Skills"].join(", ")}.
+              </span>
+            )}
           </div>
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
             Upload Project Submission <span className="text-red-500">*</span>

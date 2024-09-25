@@ -279,7 +279,7 @@ export default function HomePage() {
                           })}
                       </div>
                       <div className="font-poppins text-sm pr-2 text-gray-500">
-                        {event["Required Skills"]}
+                        {event["Required Skills"]?.join(", ")}
                       </div>
                     </div>
                   </div>
