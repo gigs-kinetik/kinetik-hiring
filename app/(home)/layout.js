@@ -14,8 +14,7 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { FaInstagram, FaDiscord } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa";
 
 export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
@@ -72,17 +71,6 @@ export default function HomeLayout({ children }) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <a
-                href="https://discord.gg/h6FtYkfB"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center bg-logo-purple/85 text-off-white px-4 py-1 sm:px-6 sm:py-3 rounded-xl hover:bg-logo-purple/90 transition duration-300"
-              >
-                <FaDiscord className="hidden sm:block text-white mr-3 text-lg sm:text-2xl" />
-                <span className="text-xs md:text-base font-medium">
-                  Join the Community
-                </span>
-              </a>
               <Menu>
                 <MenuButton className="ml-8 justify-end font-semibold">
                   <UserCircleIcon className="lg:size-11 size-8 fill-logo-purple/90" />
@@ -121,7 +109,7 @@ export default function HomeLayout({ children }) {
         <div className="flex-grow">{children}</div>
         <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
           <div className="flex flex-col items-start justify-center">
-            <div className="pb-1">@2024 Kinetik.</div>
+            <div className="pb-1">@2024 Kinetik Tech, LLC.</div>
             <div>All Rights Reserved.</div>
           </div>
           <div className="flex flex-col items-center justify-center">
@@ -133,20 +121,6 @@ export default function HomeLayout({ children }) {
                 rel="noopener noreferrer"
               >
                 <FaInstagram className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
-              </a>
-              <a
-                href="https://discord.gg/h6FtYkfB"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaDiscord className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
-              </a>
-              <a
-                href="https://x.com/KinetikGigs"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaXTwitter className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
               </a>
             </div>
           </div>

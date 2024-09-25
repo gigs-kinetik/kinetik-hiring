@@ -48,7 +48,7 @@ export default function LoginPage() {
           "Last Login": currDate + ", " + currTime,
         });
         setError("");
-        router.push("/info");
+        router.push("/home");
       } else {
         setError(
           "Email not verified. Please check your inbox for the verification email."
@@ -100,7 +100,7 @@ export default function LoginPage() {
           </h2>
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-3" onSubmit={handleLogin}>
             <div>
               <label
                 htmlFor="email"
@@ -162,11 +162,6 @@ export default function LoginPage() {
                 </span>
               </div>
             </div>
-            {error && (
-              <p className="text-red-700 font-medium text-md text-center">
-                {error}
-              </p>
-            )}
             <div>
               <button
                 type="submit"
@@ -175,6 +170,11 @@ export default function LoginPage() {
                 Sign In
               </button>
             </div>
+            {error && (
+              <p className="text-red-700 font-medium text-sm text-center">
+                {error}
+              </p>
+            )}
           </form>
         </div>
       </div>
