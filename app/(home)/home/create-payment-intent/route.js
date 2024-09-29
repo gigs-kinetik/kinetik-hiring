@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe('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');
+const stripe = new Stripe('sk_test_51Psqxk2NzaRLv3FP8yub2iweMS0thMguUu18oOZYWVGR5LuTXTIPt1QqhghCIK7akZy0I2rWql0RjEpZImaYXtEF00qYkABKMQ');
 
 export async function POST(req) {
     try {
-      const { eventId } = await req.json();
+      const { eventId, prizeAmount } = await req.json();
+
+      // Convert prize amount to cents and ensure it's at least $1
+      const amount = Math.max(Math.round(prizeAmount * 100), 100);
   
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -16,14 +19,14 @@ export async function POST(req) {
               product_data: {
                 name: 'Event Registration Fee',
               },
-              unit_amount: 2000, // $20.00 in cents
+              unit_amount: amount,
             },
             quantity: 1,
           },
         ],
         mode: 'payment',
-        success_url: `${req.headers.get('origin')}`,
-        cancel_url: `${req.headers.get('origin')}`,
+        success_url: `${req.headers.get('origin')}/home`,
+        cancel_url: `${req.headers.get('origin')}/home`,
       });
   
       return NextResponse.json({ id: session.id, url: session.url });

@@ -104,6 +104,11 @@ export default function HomePage() {
         timeZone: "America/Los_Angeles",
       })
     );
+    const prizeAmount = parseFloat(prizeList.split(';')[0]);
+    if (isNaN(prizeAmount)) {
+      alert('Invalid prize amount. Please enter a valid number.');
+      return;
+    }
     const prizes = prizeList.split(";").map((prize) => prize.trim());
     const skills = requiredSkills.split(";").map((skill) => skill.trim());
     const userDocRef = doc(db, "User Information", userEmail);
@@ -126,6 +131,7 @@ export default function HomePage() {
       "Short Description": shortDescription,
       "Prize List": prizes,
       "Required Skills": skills,
+      "Prize Amount": prizeAmount,
     });
     await updateDoc(userDocRef, {
       Events: arrayUnion(eventId),
@@ -165,8 +171,8 @@ export default function HomePage() {
   const isApplied = (eventId) => {
     return submissionIds.includes(eventId);
   };
-  const stripePromise = loadStripe("pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc");
-  const handlePay = async (eventId) => {
+  const stripePromise = loadStripe("pk_test_51Psqxk2NzaRLv3FP3VqfYabYKqr3FdV2xyMQoW0LzqIG8d02OF56I089eUuVxYsgM6G1B7OSEkkhcBbC2wcypsac00jKULsfeG");
+  const handlePay = async (eventId, prizeAmount) => {
     try {
       const stripe = await stripePromise;
       const response = await fetch('/home/create-payment-intent', {
@@ -174,7 +180,7 @@ export default function HomePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ eventId }),
+        body: JSON.stringify({ eventId, prizeAmount }),
       });
   
       const data = await response.json();
@@ -198,6 +204,7 @@ export default function HomePage() {
       alert('An unexpected error occurred. Please try again.');
     }
   };
+  
 
   
   
@@ -457,21 +464,21 @@ export default function HomePage() {
                       </div>
                       <div className="flex space-x-2">
                         <Link href="" className="w-fit h-fit rounded-lg">
-                          <button
-                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              event.Paid === "True"
-                                ? "bg-green-600/90 cursor-not-allowed"
-                                : "bg-logo-purple/85 hover:bg-logo-purple"
-                            }`}
-                            onClick={() => {
-                              if (event.Paid !== "True") {
-                                handlePay(event["Event ID"]);
-                              }
-                            }}
-                            disabled={event.Paid === "True"}
-                          >
-                            {event.Paid === "True" ? "Paid" : "Pay"}
-                          </button>
+                        <button
+                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                            event.Paid === "True"
+                              ? "bg-green-600/90 cursor-not-allowed"
+                              : "bg-logo-purple/85 hover:bg-logo-purple"
+                          }`}
+                          onClick={() => {
+                            if (event.Paid !== "True") {
+                              handlePay(event["Event ID"], event["Prize Amount"]);
+                            }
+                          }}
+                          disabled={event.Paid === "True"}
+                        >
+                          {event.Paid === "True" ? "Paid" : "Pay"}
+                        </button>
                         </Link>
                         <Link href="" className="w-fit h-fit rounded-lg">
                           <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
