@@ -5,6 +5,7 @@ import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import { loadStripe } from '@stripe/stripe-js';
 import {
   getDocs,
   getDoc,
@@ -164,20 +165,42 @@ export default function HomePage() {
   const isApplied = (eventId) => {
     return submissionIds.includes(eventId);
   };
-
+  const stripePromise = loadStripe("pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc");
   const handlePay = async (eventId) => {
-    const eventDocRef = doc(db, "Events", eventId);
-    // add stuff here to process the payment and then only update to true if they end up paying
-    await updateDoc(eventDocRef, {
-      Paid: "True",
-    });
-    const updatedChallenges = await fetchChallenges();
-    setChallenges(updatedChallenges);
+    try {
+      const stripe = await stripePromise;
+      const response = await fetch('/home/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventId }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Redirect to Stripe Checkout
+        const result = await stripe.redirectToCheckout({
+          sessionId: data.id,
+        });
+  
+        if (result.error) {
+          console.error('Stripe redirect error:', result.error);
+          alert('Payment failed. Please try again.');
+        }
+      } else {
+        console.error('Server error:', data.error);
+        alert('An error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Client error:', error);
+      alert('An unexpected error occurred. Please try again.');
+    }
   };
 
-  useEffect(() => {
-    fetchChallenges();
-  }, []);
+  
+  
 
   if (userType === "Developer" && !loading) {
     return (
@@ -563,7 +586,7 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-2">
-                      Prize List (semicolon-separated){" "}
+                      Cash Prize ex.(400.00), all prices in USD, no special formatting{" "}
                       <span className="text-red-500">*</span>
                       <input
                         type="text"
