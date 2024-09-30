@@ -1,3 +1,3 @@
 # gig-app
 
-Reinventing the search for technical projects through Kinetik
+Reinventing the search for technical projects via Kinetik
