@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
   return (
     <html className="h-full w-full bg-off-white">
       <head>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/logo-bg-white.png" />
       </head>
       <body className="h-full w-full">
         {children}

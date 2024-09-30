@@ -144,50 +144,7 @@ export default function LandingPage() {
               </small>
             </div>
           </div>
-          <div className="flex flex-col w-full pb-16 pt-14">
-            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-              Kinetik's Track Record.
-            </div>
-            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-              See what developers have to say about us.
-            </div>
-            <div className="flex justify-center">
-              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-            </div>
-            <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
-              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
-                <div className="flex items-center mb-4">
-                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
-                </div>
-                <div className="text-center text-gray-700 italic">
-                  Working with Kinetik was a great experience! They were helpful
-                  and responsive, making the process much easier and enjoyable
-                  than I expected. I highly recommend them to anyone looking to
-                  develop quality work.
-                </div>
-                <div className="text-center mt-4">
-                  <div className="font-semibold text-logo-purple">Eda Eren</div>
-                </div>
-              </div>
-              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
-                <div className="flex items-center mb-4">
-                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
-                </div>
-                <div className="text-center text-gray-700 italic">
-                  The overall experience was great, and the whole process was
-                  smooth. I had a great time during the competition and was able
-                  to contribute to a company mission while learning some new
-                  skills.
-                </div>
-                <div className="text-center mt-4">
-                  <div className="font-semibold text-logo-purple">
-                    James Avila
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+          <div className="flex flex-col w-full pb-16 pt-14 bg-off-white">
             <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
               Simple Process.
             </div>
@@ -212,7 +169,7 @@ export default function LandingPage() {
                   <div className="text-center font-medium text-logo-purple mb-2">
                     Technical Projects
                   </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex flex-col w-52 p-5 rounded-xl bg-white h-44">
                     <div className="flex justify-center mb-4">
                       <img className="w-16" src="/aws-logo.webp" />
                     </div>
@@ -229,7 +186,7 @@ export default function LandingPage() {
                   <div className="text-center font-medium text-logo-purple mb-2">
                     Business Projects
                   </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex flex-col w-52 p-5 rounded-xl bg-white h-44">
                     <div className="flex justify-around mb-4">
                       <img className="w-14" src="/excel-logo.png" />
                       <img className="w-14" src="/powerbi-logo.png" />
@@ -246,7 +203,7 @@ export default function LandingPage() {
                   <div className="text-center font-medium text-logo-purple mb-2">
                     Design Projects
                   </div>
-                  <div className="flex flex-col w-52 p-5 rounded-xl bg-off-white h-44">
+                  <div className="flex flex-col w-52 p-5 rounded-xl bg-white h-44">
                     <div className="flex justify-center mb-4">
                       <img className="w-16" src="/figma-logo.webp" />
                     </div>
@@ -327,7 +284,50 @@ export default function LandingPage() {
                     <NewspaperIcon className="fill-logo-purple/95 size-20" />
                   </div>
                   <div className="text-center font-light text-logo-purple mt-2 w-52 text-sm">
-                    Get Externship Certification for a qualifying submissions.
+                    Get externship certification for a qualifying submission.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+            <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
+              Trusted Track Record.
+            </div>
+            <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
+              See what others have to say about us.
+            </div>
+            <div className="flex justify-center">
+              <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-off-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  Working with Kinetik was a great experience! They were helpful
+                  and responsive, making the process much easier and enjoyable
+                  than I expected. I highly recommend them to anyone looking to
+                  develop quality work.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">Eda Eren</div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-off-white rounded-xl shadow-md h-auto">
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
+                </div>
+                <div className="text-center text-gray-700 italic">
+                  The overall experience was great, and the whole process was
+                  smooth. I had a great time during the competition and was able
+                  to contribute to a company mission while learning some new
+                  skills.
+                </div>
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    James Avila
                   </div>
                 </div>
               </div>
@@ -477,7 +477,7 @@ export default function LandingPage() {
                   <span className="text-sm md:text-md ml-2">developers</span>
                 </div>
                 <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
-                  We have the most skilled developers from IVY League + T20
+                  We have the most skilled developers from Ivy League + T20
                   universities in our network.
                 </div>
               </div>
@@ -579,7 +579,7 @@ export default function LandingPage() {
             <div className="flex justify-center">
               <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
             </div>
-            <div className="flex flex-col xl:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-16 px-4">
+            <div className="flex flex-col xl:flex-row justify-center items-center space-y-16 xl:space-y-0 xl:space-x-16 px-4">
               <div className="flex flex-col items-center">
                 <div className="text-center font-normal text-logo-purple mb-3 text-lg">
                   Technical Projects
@@ -723,7 +723,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full pb-16 pt-14 bg-white">
+          {/* <div className="flex flex-col w-full pb-16 pt-14 bg-white">
             <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
               Affordable Pricing.
             </div>
@@ -785,7 +785,7 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       )}
       <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
