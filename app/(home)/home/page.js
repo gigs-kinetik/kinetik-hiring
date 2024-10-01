@@ -39,7 +39,7 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const stripePromise = loadStripe(
-    "pk_test_51Psqxk2NzaRLv3FP3VqfYabYKqr3FdV2xyMQoW0LzqIG8d02OF56I089eUuVxYsgM6G1B7OSEkkhcBbC2wcypsac00jKULsfeG"
+    "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export default function HomePage() {
     return submissionIds.includes(eventId);
   };
 
-  const handlePay = async (eventId, prizeAmount) => {
+  const handlePay = async (eventId, prizeAmount,percentage) => {
     const userDocRef = doc(db, "Events", eventId);
     await updateDoc(userDocRef, {
       Paid: "Pending",
@@ -199,7 +199,7 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId, prizeAmount }),
+        body: JSON.stringify({ eventId, prizeAmount,percentage }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -502,7 +502,8 @@ export default function HomePage() {
                               ) {
                                 handlePay(
                                   event["Event ID"],
-                                  event["Prize Amount"]
+                                  event["Prize Amount"],
+                                  10
                                 );
                               }
                             }}
@@ -516,10 +517,29 @@ export default function HomePage() {
                           </button>
                         </Link>
                         <Link href="" className="w-fit h-fit rounded-lg">
-                          <button className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white">
+                          <button 
+                            className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white"
+                            onClick={() => alert("Report has not been released yet. Please wait up to 24 hours after your issued challenge has ended to receive the report.")}
+                          >
                             See Report
                           </button>
                         </Link>
+                        <Link href="" className="w-fit h-fit rounded-lg">
+                            <button
+                              className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                                event.Paid === "Approved"
+                                  ? "bg-green-600/90 cursor-not-allowed"
+                                  : "bg-logo-purple/85 hover:bg-logo-purple"
+                              }`}
+                              onClick={() => {
+                                  handlePay(event["Event ID"], event["Prize Amount"], 90);
+            
+                              }}
+                            >
+                              Disburse
+                            </button>
+                          </Link>
+
                         <button
                           onClick={() => handleDelete(event["Event ID"])}
                           className="w-10 h-10 flex items-center justify-center"

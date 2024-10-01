@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(
-  "sk_test_51Psqxk2NzaRLv3FP8yub2iweMS0thMguUu18oOZYWVGR5LuTXTIPt1QqhghCIK7akZy0I2rWql0RjEpZImaYXtEF00qYkABKMQ"
+  "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"
 );
 
 export async function POST(req) {
   try {
-    const { eventId, prizeAmount } = await req.json();
-    const amount = Math.max(Math.round(prizeAmount * 10), 100);
+    const { eventId, prizeAmount,percentage } = await req.json();
+    const amount = Math.max(Math.round(percentage * prizeAmount), 100);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -18,7 +18,7 @@ export async function POST(req) {
             product_data: {
               name: "Kinetik Event Registration",
               description:
-                "We are charging you 10% now. After the completion of the challenge, if you like the report and want access to the MVPs, you will be pay the remaining 90% then.",
+                "We are charging you 10% intitially for Event registration. After the completion of the challenge, if you like the report and want access to the MVPs, you can pay the remaining 90%.",
             },
             unit_amount: amount,
           },
