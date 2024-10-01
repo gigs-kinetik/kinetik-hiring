@@ -5,6 +5,7 @@ import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   getDocs,
   getDoc,
@@ -30,10 +31,16 @@ export default function HomePage() {
   const [companyName, setCompanyName] = useState([]);
   const [longDescription, setLongDescription] = useState("");
   const [shortDescription, setShortDescription] = useState("");
+  const [cashAmount, setCashAmount] = useState("");
   const [prizeList, setPrizeList] = useState("");
   const [requiredSkills, setRequiredSkills] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const userEmail = sessionStorage.getItem("userEmail");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const stripePromise = loadStripe(
+    "pk_test_51Psqxk2NzaRLv3FP3VqfYabYKqr3FdV2xyMQoW0LzqIG8d02OF56I089eUuVxYsgM6G1B7OSEkkhcBbC2wcypsac00jKULsfeG"
+  );
 
   useEffect(() => {
     const type = sessionStorage.getItem("userType");
@@ -95,6 +102,11 @@ export default function HomePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    if (isNaN(cashAmount)) {
+      alert("Please enter a valid number.");
+      return;
+    }
     const [hours, minutes] = deadlineTime.split(":");
     const combinedDateTime = new Date(deadline);
     combinedDateTime.setHours(hours, minutes, 0, 0);
@@ -104,6 +116,11 @@ export default function HomePage() {
       })
     );
     const prizes = prizeList.split(";").map((prize) => prize.trim());
+    if (prizes == "") {
+      prizes[0] = "$" + cashAmount + " Cash Prize";
+    } else {
+      prizes.unshift("$" + cashAmount + " Cash Prize");
+    }
     const skills = requiredSkills.split(";").map((skill) => skill.trim());
     const userDocRef = doc(db, "User Information", userEmail);
     const userDocSnap = await getDoc(userDocRef);
@@ -115,7 +132,7 @@ export default function HomePage() {
     const eventsCollectionRef = collection(db, "Events");
     const newEventDocRef = doc(eventsCollectionRef, eventId);
     await setDoc(newEventDocRef, {
-      Paid: "False",
+      Paid: "Pay",
       "Event ID": eventId,
       Company: companyName,
       Contact: userEmail,
@@ -125,6 +142,7 @@ export default function HomePage() {
       "Short Description": shortDescription,
       "Prize List": prizes,
       "Required Skills": skills,
+      "Prize Amount": cashAmount,
     });
     await updateDoc(userDocRef, {
       Events: arrayUnion(eventId),
@@ -134,14 +152,17 @@ export default function HomePage() {
     setEventName("");
     setLongDescription("");
     setShortDescription("");
+    setCashAmount("");
     setPrizeList("");
     setRequiredSkills("");
     setIsModalOpen(false);
     const updatedChallenges = await fetchChallenges();
     setChallenges(updatedChallenges);
+    setIsSubmitting(false);
   };
 
   const handleDelete = async (eventId) => {
+    setIsDeleting(true);
     const userEmail = sessionStorage.getItem("userEmail");
     const eventDocRefInUserInfo = doc(
       db,
@@ -159,25 +180,39 @@ export default function HomePage() {
     });
     const updatedChallenges = await fetchChallenges();
     setChallenges(updatedChallenges);
+    setIsDeleting(false);
   };
 
   const isApplied = (eventId) => {
     return submissionIds.includes(eventId);
   };
 
-  const handlePay = async (eventId) => {
-    const eventDocRef = doc(db, "Events", eventId);
-    // add stuff here to process the payment and then only update to true if they end up paying
-    await updateDoc(eventDocRef, {
-      Paid: "True",
+  const handlePay = async (eventId, prizeAmount) => {
+    const userDocRef = doc(db, "Events", eventId);
+    await updateDoc(userDocRef, {
+      Paid: "Pending",
     });
-    const updatedChallenges = await fetchChallenges();
-    setChallenges(updatedChallenges);
+    try {
+      const stripe = await stripePromise;
+      const response = await fetch("/home/create-payment-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ eventId, prizeAmount }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        await stripe.redirectToCheckout({
+          sessionId: data.id,
+        });
+      } else {
+        alert("An error occurred. Please try again.");
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+    }
   };
-
-  useEffect(() => {
-    fetchChallenges();
-  }, []);
 
   if (userType === "Developer" && !loading) {
     return (
@@ -192,7 +227,7 @@ export default function HomePage() {
             {events
               .filter((event) => {
                 if (
-                  event.Paid === "True" &&
+                  event.Paid === "Approved" &&
                   event["Deadline"] &&
                   event["Deadline"]["_seconds"]
                 ) {
@@ -391,17 +426,35 @@ export default function HomePage() {
     if (!challenges.empty) {
       return (
         <div className="flex flex-row max-w-full max-h-full">
+          {isDeleting && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="text-white text-lg">Deleting...</div>
+            </div>
+          )}
           <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
             <div className="flex justify-between w-full">
-              <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
-                Your Dashboard
-              </p>
-              <button
-                className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
-                onClick={() => setIsModalOpen(true)}
-              >
-                +
-              </button>
+              <div className="flex justify-between w-full items-center">
+                <div className="flex items-center space-x-2">
+                  <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
+                    Your Dashboard
+                  </p>
+                  <a
+                    href="https://firebasestorage.googleapis.com/v0/b/gigapp-8cc4b.appspot.com/o/Kinetik%20x%20Sponsors.pdf?alt=media&token=2f8e537c-2dfe-484e-8e23-b89e156b4f54"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button className="rounded-full border border-logo-purple text-logo-purple font-poppins font-medium text-sm h-5 w-5 flex items-center justify-center mt-1.5">
+                      i
+                    </button>
+                  </a>
+                </div>
+                <button
+                  className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="w-full mt-4 space-y-4">
               {challenges.map((event) => (
@@ -436,18 +489,30 @@ export default function HomePage() {
                         <Link href="" className="w-fit h-fit rounded-lg">
                           <button
                             className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              event.Paid === "True"
+                              event.Paid === "Approved"
                                 ? "bg-green-600/90 cursor-not-allowed"
+                                : event.Paid === "Pending"
+                                ? "bg-orange-500/90"
                                 : "bg-logo-purple/85 hover:bg-logo-purple"
                             }`}
                             onClick={() => {
-                              if (event.Paid !== "True") {
-                                handlePay(event["Event ID"]);
+                              if (
+                                event.Paid === "Pay" ||
+                                event.Paid === "Pending"
+                              ) {
+                                handlePay(
+                                  event["Event ID"],
+                                  event["Prize Amount"]
+                                );
                               }
                             }}
-                            disabled={event.Paid === "True"}
+                            disabled={event.Paid === "Approved"}
                           >
-                            {event.Paid === "True" ? "Paid" : "Pay"}
+                            {event.Paid === "Approved"
+                              ? "Approved"
+                              : event.Paid === "Pending"
+                              ? "Pending"
+                              : "Pay"}
                           </button>
                         </Link>
                         <Link href="" className="w-fit h-fit rounded-lg">
@@ -503,14 +568,14 @@ export default function HomePage() {
               onClick={() => setIsModalOpen(false)}
             >
               <div
-                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg max-h-[80vh] overflow-y-auto"
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg max-h-[75vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
                   Add New Event
                 </h2>
                 <form onSubmit={handleSubmit}>
-                  <div className="font-poppins text-sm mt-4 text-gray-600">
+                  <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
                     <label className="block mb-2">
                       Event Name <span className="text-red-500">*</span>
                       <input
@@ -563,12 +628,12 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-2">
-                      Prize List (semicolon-separated){" "}
+                      Total Cash Amount (in USD){" "}
                       <span className="text-red-500">*</span>
                       <input
-                        type="text"
-                        value={prizeList}
-                        onChange={(e) => setPrizeList(e.target.value)}
+                        value={cashAmount}
+                        placeholder="Enter just the number with no commas (ex: 5000)."
+                        onChange={(e) => setCashAmount(e.target.value)}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -584,12 +649,22 @@ export default function HomePage() {
                         required
                       />
                     </label>
+                    <label className="block mb-2">
+                      Other Prizes/Incentives (semicolon-separated){" "}
+                      <input
+                        type="text"
+                        value={prizeList}
+                        onChange={(e) => setPrizeList(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                      />
+                    </label>
                     <div className="flex justify-center">
                       <button
                         type="submit"
-                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-6"
+                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
+                        disabled={isSubmitting}
                       >
-                        Submit
+                        {isSubmitting ? "Submitting..." : "Submit"}
                       </button>
                     </div>
                   </div>
