@@ -132,7 +132,8 @@ export default function HomePage() {
     const eventsCollectionRef = collection(db, "Events");
     const newEventDocRef = doc(eventsCollectionRef, eventId);
     await setDoc(newEventDocRef, {
-      Paid: "Pay",
+      InitPaid: "Pay",
+      FinalPaid: "Pay",
       "Event ID": eventId,
       Company: companyName,
       Contact: userEmail,
@@ -143,6 +144,7 @@ export default function HomePage() {
       "Prize List": prizes,
       "Required Skills": skills,
       "Prize Amount": cashAmount,
+      "Report URL": "",
     });
     await updateDoc(userDocRef, {
       Events: arrayUnion(eventId),
@@ -187,11 +189,18 @@ export default function HomePage() {
     return submissionIds.includes(eventId);
   };
 
-  const handlePay = async (eventId, prizeAmount,percentage) => {
-    const userDocRef = doc(db, "Events", eventId);
-    await updateDoc(userDocRef, {
-      Paid: "Pending",
-    });
+  const handlePay = async (eventId, prizeAmount, percentage) => {
+    if (percentage == 10) {
+      const userDocRef = doc(db, "Events", eventId);
+      await updateDoc(userDocRef, {
+        InitPaid: "Pending",
+      });
+    } else if (percentage == 90) {
+      const userDocRef = doc(db, "Events", eventId);
+      await updateDoc(userDocRef, {
+        FinalPaid: "Pending",
+      });
+    }
     try {
       const stripe = await stripePromise;
       const response = await fetch("/home/create-payment-intent", {
@@ -199,7 +208,7 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId, prizeAmount,percentage }),
+        body: JSON.stringify({ eventId, prizeAmount, percentage }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -227,7 +236,7 @@ export default function HomePage() {
             {events
               .filter((event) => {
                 if (
-                  event.Paid === "Approved" &&
+                  event.InitPaid === "Approved" &&
                   event["Deadline"] &&
                   event["Deadline"]["_seconds"]
                 ) {
@@ -489,16 +498,17 @@ export default function HomePage() {
                         <Link href="" className="w-fit h-fit rounded-lg">
                           <button
                             className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              event.Paid === "Approved"
+                              event.InitPaid === "Approved" ||
+                              event.InitPaid === "Completed"
                                 ? "bg-green-600/90 cursor-not-allowed"
-                                : event.Paid === "Pending"
+                                : event.InitPaid === "Pending"
                                 ? "bg-orange-500/90"
                                 : "bg-logo-purple/85 hover:bg-logo-purple"
                             }`}
                             onClick={() => {
                               if (
-                                event.Paid === "Pay" ||
-                                event.Paid === "Pending"
+                                event.InitPaid === "Pay" ||
+                                event.InitPaid === "Pending"
                               ) {
                                 handlePay(
                                   event["Event ID"],
@@ -507,39 +517,81 @@ export default function HomePage() {
                                 );
                               }
                             }}
-                            disabled={event.Paid === "Approved"}
+                            disabled={
+                              event.InitPaid === "Approved" ||
+                              event.InitPaid === "Completed"
+                            }
                           >
-                            {event.Paid === "Approved"
+                            {event.InitPaid === "Approved" ||
+                            event.InitPaid === "Completed"
                               ? "Approved"
-                              : event.Paid === "Pending"
+                              : event.InitPaid === "Pending"
                               ? "Pending"
                               : "Pay"}
                           </button>
                         </Link>
-                        <Link href="" className="w-fit h-fit rounded-lg">
-                          <button 
-                            className="rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium bg-logo-purple/85 hover:bg-logo-purple text-white"
-                            onClick={() => alert("Report has not been released yet. Please wait up to 24 hours after your issued challenge has ended to receive the report.")}
+                        <a
+                          href={event["Report URL"] || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            if (!event["Report URL"]) {
+                              e.preventDefault();
+                              alert(
+                                "Report is not available yet. Please check 24 hours after the completion of the event."
+                              );
+                            }
+                          }}
+                        >
+                          <button
+                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                              event["Report URL"]
+                                ? "bg-logo-purple/85 hover:bg-logo-purple"
+                                : "cursor-not-allowed opacity-50 bg-gray-400"
+                            }`}
                           >
                             See Report
                           </button>
-                        </Link>
-                        <Link href="" className="w-fit h-fit rounded-lg">
-                            <button
-                              className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                                event.Paid === "Approved"
-                                  ? "bg-green-600/90 cursor-not-allowed"
-                                  : "bg-logo-purple/85 hover:bg-logo-purple"
-                              }`}
-                              onClick={() => {
-                                  handlePay(event["Event ID"], event["Prize Amount"], 90);
-            
-                              }}
-                            >
-                              Disburse
-                            </button>
-                          </Link>
-
+                        </a>
+                        <button
+                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                            event.FinalPaid === "Completed" ||
+                            event.FinalPaid === "Approved"
+                              ? "bg-green-600/90 cursor-not-allowed"
+                              : event.FinalPaid === "Pending"
+                              ? "bg-orange-500/90 hover:bg-orange-600"
+                              : (event.InitPaid === "Pay" ||
+                                  event.InitPaid === "Approved") &&
+                                event["Report URL"]
+                              ? "bg-logo-purple/85 hover:bg-logo-purple"
+                              : "cursor-not-allowed opacity-50 bg-gray-400"
+                          }`}
+                          onClick={() => {
+                            if (
+                              (event.InitPaid === "Pay" ||
+                                event.InitPaid === "Approved") &&
+                              event["Report URL"] !== ""
+                            ) {
+                              handlePay(
+                                event["Event ID"],
+                                event["Prize Amount"],
+                                90
+                              );
+                            }
+                          }}
+                          disabled={
+                            event.FinalPaid === "Completed" ||
+                            event.FinalPaid === "Approved" ||
+                            !event["Report URL"]
+                          }
+                        >
+                          {event.FinalPaid === "Completed" ||
+                          event.FinalPaid === "Approved"
+                            ? "Completed"
+                            : event.FinalPaid === "Pending"
+                            ? "Pending"
+                            : "Disburse"}
+                        </button>
                         <button
                           onClick={() => handleDelete(event["Event ID"])}
                           className="w-10 h-10 flex items-center justify-center"
