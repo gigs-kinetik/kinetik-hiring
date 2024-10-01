@@ -16,8 +16,9 @@ export async function POST(req) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "Event Registration Fee",
-              description: "Hello",
+              name: "Kinetik Event Registration",
+              description:
+                "We are charging you 10% now. After the completion of the challenge, if you like the report and want access to the MVPs, you will be pay the remaining 90% then.",
             },
             unit_amount: amount,
           },

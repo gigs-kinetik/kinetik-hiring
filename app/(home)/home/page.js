@@ -433,15 +433,28 @@ export default function HomePage() {
           )}
           <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
             <div className="flex justify-between w-full">
-              <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
-                Your Dashboard
-              </p>
-              <button
-                className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
-                onClick={() => setIsModalOpen(true)}
-              >
-                +
-              </button>
+              <div className="flex justify-between w-full items-center">
+                <div className="flex items-center space-x-2">
+                  <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
+                    Your Dashboard
+                  </p>
+                  <a
+                    href="https://firebasestorage.googleapis.com/v0/b/gigapp-8cc4b.appspot.com/o/Kinetik%20x%20Sponsors.pdf?alt=media&token=2f8e537c-2dfe-484e-8e23-b89e156b4f54"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button className="rounded-full border border-logo-purple text-logo-purple font-poppins font-medium text-sm h-5 w-5 flex items-center justify-center mt-1.5">
+                      i
+                    </button>
+                  </a>
+                </div>
+                <button
+                  className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="w-full mt-4 space-y-4">
               {challenges.map((event) => (
