@@ -102,11 +102,11 @@ export default function HomePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     if (isNaN(cashAmount)) {
-      alert("Please enter a valid number.");
+      alert("Please enter a valid cash amount number.");
       return;
     }
+    setIsSubmitting(true);
     const [hours, minutes] = deadlineTime.split(":");
     const combinedDateTime = new Date(deadline);
     combinedDateTime.setHours(hours, minutes, 0, 0);
@@ -542,16 +542,13 @@ export default function HomePage() {
                               );
                             }
                           }}
+                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white flex items-center justify-center ${
+                            event["Report URL"]
+                              ? "bg-logo-purple/85 hover:bg-logo-purple"
+                              : "cursor-not-allowed opacity-50 bg-gray-400"
+                          }`}
                         >
-                          <button
-                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              event["Report URL"]
-                                ? "bg-logo-purple/85 hover:bg-logo-purple"
-                                : "cursor-not-allowed opacity-50 bg-gray-400"
-                            }`}
-                          >
-                            See Report
-                          </button>
+                          See Report
                         </a>
                         <button
                           className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
