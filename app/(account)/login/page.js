@@ -48,7 +48,11 @@ export default function LoginPage() {
           "Last Login": currDate + ", " + currTime,
         });
         setError("");
-        router.push("/home");
+        if (userType == "Developer") {
+          router.push("/info");
+        } else {
+          router.push("/home");
+        }
       } else {
         setError(
           "Email not verified. Please check your inbox for the verification email."

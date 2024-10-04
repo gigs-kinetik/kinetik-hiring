@@ -22,6 +22,7 @@ import {
 export default function HomePage() {
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [userType, setUserType] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +55,10 @@ export default function HomePage() {
         setChallenges(updatedChallenges);
         setLoading(false);
       } else if (userType === "Developer") {
+        const filteredEventsFromStorage = JSON.parse(
+          sessionStorage.getItem("filteredEvents") || "[]"
+        );
+        setFilteredEvents(filteredEventsFromStorage);
         const ids = await fetchSubmissionIds();
         setSubmissionIds(ids);
         setLoading(false);
@@ -226,15 +231,16 @@ export default function HomePage() {
   if (userType === "Developer" && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
-        <div className="flex flex-col m-4 mb-10 pl-6 pr-6 lg:w-[75%]">
+        <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
           <div className="flex w-6/12 max-w-6/12">
             <p className="font-poppins mt-2 text-dark-gray font-normal text-md sm:text-lg">
               Challenges for you
             </p>
           </div>
           <div className="w-full mt-4 space-y-4">
-            {events
-              .filter((event) => {
+            {events.map((event) => {
+              console.log(filteredEvents, event);
+              if (filteredEvents.includes(event["Event ID"])) {
                 if (
                   event.InitPaid === "Approved" &&
                   event["Deadline"] &&
@@ -243,188 +249,97 @@ export default function HomePage() {
                   const eventDate = new Date(
                     event["Deadline"]["_seconds"] * 1000
                   );
-                  return eventDate > new Date();
-                }
-                return false;
-              })
-              .map((event) => (
-                <div
-                  key={event["Event Name"]}
-                  className="bg-white h-fit rounded-lg p-5"
-                >
-                  <div className="flex flex-col">
-                    <div className="flex flex-row justify-between">
-                      <div className="flex flex-col">
-                        <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                          {event["Prize List"] &&
-                            event["Prize List"]
-                              .slice(0, 3)
-                              .map((prize, index) => (
-                                <div
-                                  key={index}
-                                  className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
-                                >
-                                  {prize}
-                                </div>
-                              ))}
-                        </div>
-                        <div className="font-poppins text-xs md:text-sm text-gray-500">
-                          {event["Company"]}
-                        </div>
-                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                          {event["Event Name"]}
-                        </div>
-                      </div>
-                      <Link
-                        href={`/apply/${encodeURIComponent(
-                          event["Event Name"]
-                        )}`}
-                        className="w-fit h-fit rounded-lg"
+                  if (eventDate > new Date()) {
+                    return (
+                      <div
+                        key={event["Event Name"]}
+                        className="bg-white h-fit rounded-lg p-5"
                       >
-                        <button
-                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                            isApplied(event["Event ID"])
-                              ? "bg-green-600/90 cursor-not-allowed"
-                              : "bg-logo-purple/85 hover:bg-logo-purple"
-                          }`}
-                          onClick={() =>
-                            !isApplied(event["Event ID"]) &&
-                            handleApplyClick(event)
-                          }
-                          disabled={isApplied(event["Event ID"])}
-                        >
-                          {isApplied(event["Event ID"]) ? "Applied" : "Apply"}
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                      {event["Short Description"] || "No description available"}
-                    </div>
-                    <div className="lg:flex hidden flex-row justify-between">
-                      <div className="font-poppins text-sm text-gray-500">
-                        Submit by{" "}
-                        {event["Deadline"] &&
-                          new Date(
-                            event["Deadline"]["_seconds"] * 1000
-                          ).toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            timeZone: "America/Los_Angeles",
-                            timeZoneName: "short",
-                          })}{" "}
-                        on{" "}
-                        {event["Deadline"] &&
-                          new Date(
-                            event["Deadline"]["_seconds"] * 1000
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                        <div className="flex flex-col">
+                          <div className="flex flex-row justify-between">
+                            <div className="flex flex-col">
+                              <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                                {event["Prize List"] &&
+                                  event["Prize List"]
+                                    .slice(0, 3)
+                                    .map((prize, index) => (
+                                      <div
+                                        key={index}
+                                        className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                                      >
+                                        {prize}
+                                      </div>
+                                    ))}
+                              </div>
+                              <div className="font-poppins text-xs md:text-sm text-gray-500">
+                                {event["Company"]}
+                              </div>
+                              <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                                {event["Event Name"]}
+                              </div>
+                            </div>
+                            <Link
+                              href={`/apply/${encodeURIComponent(
+                                event["Event Name"]
+                              )}`}
+                              className="w-fit h-fit rounded-lg"
+                            >
+                              <button
+                                className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                                  isApplied(event["Event ID"])
+                                    ? "bg-green-600/90 cursor-not-allowed"
+                                    : "bg-logo-purple/85 hover:bg-logo-purple"
+                                }`}
+                                onClick={() =>
+                                  !isApplied(event["Event ID"]) &&
+                                  handleApplyClick(event)
+                                }
+                                disabled={isApplied(event["Event ID"])}
+                              >
+                                {isApplied(event["Event ID"])
+                                  ? "Applied"
+                                  : "Apply"}
+                              </button>
+                            </Link>
+                          </div>
+                          <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                            {event["Short Description"] ||
+                              "No description available"}
+                          </div>
+                          <div className="lg:flex hidden flex-row justify-between">
+                            <div className="font-poppins text-sm text-gray-500">
+                              Submit by{" "}
+                              {event["Deadline"] &&
+                                new Date(
+                                  event["Deadline"]["_seconds"] * 1000
+                                ).toLocaleTimeString("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  timeZone: "America/Los_Angeles",
+                                  timeZoneName: "short",
+                                })}{" "}
+                              on{" "}
+                              {event["Deadline"] &&
+                                new Date(
+                                  event["Deadline"]["_seconds"] * 1000
+                                ).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                            </div>
+                            <div className="font-poppins text-sm pr-2 text-gray-500">
+                              {event["Required Skills"]?.join(", ")}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="font-poppins text-sm pr-2 text-gray-500">
-                        {event["Required Skills"]?.join(", ")}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-        <div className="lg:flex hidden flex-col m-4 pr-6 mb-6 lg:w-[25%] h-full">
-          <p className="font-poppins mt-1 text-gray-600 font-normal text-lg">
-            Filters
-          </p>
-          <div className="mt-4 rounded-lg bg-white h-full">
-            <div className="ml-4 mt-6 font-poppins font-semibold">
-              Challenge Difficulty
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="easy-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="easy-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                Easy (1-2 star)
-              </label>
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="medium-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="medium-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                Medium (3 star)
-              </label>
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="hard-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="hard-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                Hard (4-5 star)
-              </label>
-            </div>
-            <div className="ml-4 mt-6 font-poppins font-semibold">
-              Skill Requirement
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="less-than-2-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="less-than-2-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                &lt; 2 skills
-              </label>
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="between-2-and-4-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="between-2-and-4-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                2 to 4 skills
-              </label>
-            </div>
-            <div className="ml-8 mt-2 font-poppins">
-              <input
-                id="more-than-4-checkbox"
-                type="checkbox"
-                className="size-4 text-logo-purple/85 rounded focus:ring-logo-purple/85"
-              />
-              <label
-                htmlFor="more-than-4-checkbox"
-                className="ms-2 lg:text-sm text-xs text-gray-900"
-              >
-                &gt; 4 skills
-              </label>
-            </div>
-            <div className="flex w-full justify-end mb-4">
-              <button className="rounded-lg bg-logo-purple/85 text-white font-poppins w-24 h-10 font-medium text-sm ml-4 mr-8 mt-8">
-                Filter
-              </button>
-            </div>
+                    );
+                  }
+                }
+              }
+              return null;
+            })}
           </div>
         </div>
       </div>
@@ -472,86 +387,64 @@ export default function HomePage() {
                   className="bg-white h-fit rounded-lg p-5"
                 >
                   <div className="flex flex-col">
-                    <div className="flex flex-row justify-between">
-                      <div className="flex flex-col">
-                        <div className="lg:flex flex-row hidden space-x-2 mb-2">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 font-poppins">
+                      <div className="flex flex-col w-full sm:w-auto">
+                        <div className="flex flex-wrap gap-2 mb-2">
                           {event["Prize List"] &&
                             event["Prize List"]
                               .slice(0, 3)
                               .map((prize, index) => (
                                 <div
                                   key={index}
-                                  className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                                  className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
                                 >
                                   {prize}
                                 </div>
                               ))}
                         </div>
-                        <div className="font-poppins text-xs md:text-sm text-gray-500">
+                        <div className="font-poppins text-xs text-gray-500">
                           {event["Company"]}
                         </div>
-                        <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
+                        <div className="font-poppins text-lg font-semibold text-logo-purple">
                           {event["Event Name"]}
                         </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Link href="" className="w-fit h-fit rounded-lg">
-                          <button
-                            className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                              event.InitPaid === "Approved" ||
-                              event.InitPaid === "Completed"
-                                ? "bg-green-600/90 cursor-not-allowed"
-                                : event.InitPaid === "Pending"
-                                ? "bg-orange-500/90"
-                                : "bg-logo-purple/85 hover:bg-logo-purple"
-                            }`}
-                            onClick={() => {
-                              if (
-                                event.InitPaid === "Pay" ||
-                                event.InitPaid === "Pending"
-                              ) {
-                                handlePay(
-                                  event["Event ID"],
-                                  event["Prize Amount"],
-                                  10
-                                );
-                              }
-                            }}
-                            disabled={
-                              event.InitPaid === "Approved" ||
-                              event.InitPaid === "Completed"
-                            }
-                          >
-                            {event.InitPaid === "Approved" ||
+                      <div className="hidden sm:flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button
+                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
+                            event.InitPaid === "Approved" ||
                             event.InitPaid === "Completed"
-                              ? "Approved"
+                              ? "bg-green-600/90 cursor-not-allowed"
                               : event.InitPaid === "Pending"
-                              ? "Pending"
-                              : "Pay"}
-                          </button>
-                        </Link>
-                        <a
-                          href={event["Report URL"] || "#"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            if (!event["Report URL"]) {
-                              e.preventDefault();
-                              alert(
-                                "Report is not available yet. Please check 24 hours after the completion of the event."
+                              ? "bg-orange-500/90"
+                              : "bg-logo-purple/85 hover:bg-logo-purple"
+                          }`}
+                          onClick={() => {
+                            if (
+                              event.InitPaid === "Pay" ||
+                              event.InitPaid === "Pending"
+                            ) {
+                              handlePay(
+                                event["Event ID"],
+                                event["Prize Amount"],
+                                10
                               );
                             }
                           }}
-                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white flex items-center justify-center ${
-                            event["Report URL"]
-                              ? "bg-logo-purple/85 hover:bg-logo-purple"
-                              : "cursor-not-allowed opacity-50 bg-gray-400"
-                          }`}
+                          disabled={
+                            event.InitPaid === "Approved" ||
+                            event.InitPaid === "Completed"
+                          }
                         >
-                          See Report
-                        </a>
+                          {event.InitPaid === "Approved" ||
+                          event.InitPaid === "Completed"
+                            ? "Approved"
+                            : event.InitPaid === "Pending"
+                            ? "Pending"
+                            : "Pay"}
+                        </button>
                         <button
-                          className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
+                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
                             event.FinalPaid === "Completed" ||
                             event.FinalPaid === "Approved"
                               ? "bg-green-600/90 cursor-not-allowed"
@@ -589,19 +482,39 @@ export default function HomePage() {
                             ? "Pending"
                             : "Disburse"}
                         </button>
+                        <a
+                          href={event["Report URL"] || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            if (!event["Report URL"]) {
+                              e.preventDefault();
+                              alert(
+                                "Report is not available yet. Please check 24 hours after the completion of the event."
+                              );
+                            }
+                          }}
+                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
+                            event["Report URL"]
+                              ? "bg-logo-purple/85 hover:bg-logo-purple"
+                              : "cursor-not-allowed opacity-50 bg-gray-400"
+                          }`}
+                        >
+                          See Report
+                        </a>
                         <button
                           onClick={() => handleDelete(event["Event ID"])}
-                          className="w-10 h-10 flex items-center justify-center"
+                          className="rounded-lg p-2 transition-colors duration-300"
                         >
-                          <TrashIcon className="w-6 h-6 text-gray-500 hover:text-red-500 transition-colors duration-300" />
+                          <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
                         </button>
                       </div>
                     </div>
-                    <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
+                    <div className="font-poppins text-sm mt-2 mb-4 text-logo-purple">
                       {event["Short Description"] || "No description available"}
                     </div>
-                    <div className="lg:flex hidden flex-row justify-between">
-                      <div className="font-poppins text-sm text-gray-500">
+                    <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-500">
+                      <div className="mb-2 sm:mb-0 font-poppins">
                         Deadline set for{" "}
                         {event["Deadline"] &&
                           event["Deadline"]
@@ -622,9 +535,109 @@ export default function HomePage() {
                               day: "numeric",
                             })}
                       </div>
-                      <div className="font-poppins text-sm pr-2 text-gray-500">
+                      <div className="font-poppins">
                         {event["Required Skills"]?.join(", ")}
                       </div>
+                    </div>
+                    <div className="flex sm:hidden flex-wrap gap-2 w-full mt-4">
+                      <button
+                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
+                          event.InitPaid === "Approved" ||
+                          event.InitPaid === "Completed"
+                            ? "bg-green-600/90 cursor-not-allowed"
+                            : event.InitPaid === "Pending"
+                            ? "bg-orange-500/90"
+                            : "bg-logo-purple/85 hover:bg-logo-purple"
+                        }`}
+                        onClick={() => {
+                          if (
+                            event.InitPaid === "Pay" ||
+                            event.InitPaid === "Pending"
+                          ) {
+                            handlePay(
+                              event["Event ID"],
+                              event["Prize Amount"],
+                              10
+                            );
+                          }
+                        }}
+                        disabled={
+                          event.InitPaid === "Approved" ||
+                          event.InitPaid === "Completed"
+                        }
+                      >
+                        {event.InitPaid === "Approved" ||
+                        event.InitPaid === "Completed"
+                          ? "Approved"
+                          : event.InitPaid === "Pending"
+                          ? "Pending"
+                          : "Pay"}
+                      </button>
+                      <button
+                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
+                          event.FinalPaid === "Completed" ||
+                          event.FinalPaid === "Approved"
+                            ? "bg-green-600/90 cursor-not-allowed"
+                            : event.FinalPaid === "Pending"
+                            ? "bg-orange-500/90 hover:bg-orange-600"
+                            : (event.InitPaid === "Pay" ||
+                                event.InitPaid === "Approved") &&
+                              event["Report URL"]
+                            ? "bg-logo-purple/85 hover:bg-logo-purple"
+                            : "cursor-not-allowed opacity-50 bg-gray-400"
+                        }`}
+                        onClick={() => {
+                          if (
+                            (event.InitPaid === "Pay" ||
+                              event.InitPaid === "Approved") &&
+                            event["Report URL"] !== ""
+                          ) {
+                            handlePay(
+                              event["Event ID"],
+                              event["Prize Amount"],
+                              90
+                            );
+                          }
+                        }}
+                        disabled={
+                          event.FinalPaid === "Completed" ||
+                          event.FinalPaid === "Approved" ||
+                          !event["Report URL"]
+                        }
+                      >
+                        {event.FinalPaid === "Completed" ||
+                        event.FinalPaid === "Approved"
+                          ? "Completed"
+                          : event.FinalPaid === "Pending"
+                          ? "Pending"
+                          : "Disburse"}
+                      </button>
+                      <a
+                        href={event["Report URL"] || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          if (!event["Report URL"]) {
+                            e.preventDefault();
+                            alert(
+                              "Report is not available yet. Please check 24 hours after the completion of the event."
+                            );
+                          }
+                        }}
+                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow ${
+                          event["Report URL"]
+                            ? "bg-logo-purple/85 hover:bg-logo-purple"
+                            : "cursor-not-allowed opacity-50 bg-gray-400"
+                        }`}
+                      >
+                        See Report
+                      </a>
+                      <button
+                        onClick={() => handleDelete(event["Event ID"])}
+                        className="rounded-lg p-2 transition-colors duration-300 flex-grow"
+                      >
+                        <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500 mx-auto" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -637,7 +650,7 @@ export default function HomePage() {
               onClick={() => setIsModalOpen(false)}
             >
               <div
-                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg max-h-[75vh] overflow-y-auto"
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
@@ -747,6 +760,5 @@ export default function HomePage() {
       return <div></div>;
     }
   }
-
   return <div></div>;
 }
