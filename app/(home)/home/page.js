@@ -67,6 +67,7 @@ export default function HomePage() {
     fetchData();
   }, [userType]);
 
+  // random comment here
   useEffect(() => {
     sessionStorage.setItem("submissionIds", JSON.stringify(submissionIds));
   }, [submissionIds]);
