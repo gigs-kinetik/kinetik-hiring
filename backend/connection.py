@@ -10,6 +10,8 @@ from dotenv import find_dotenv, load_dotenv
 from auth0.authentication import GetToken, Database
 from auth0.management import Auth0
 
+import firebase_controller
+
 import pytz
 import datetime
 
@@ -44,9 +46,7 @@ app.secret_key = env.get("APP_SECRET_KEY")
 
 oauth = OAuth(app)
 
-cred = credentials.Certificate('private_data/gigapp-8cc4b-firebase-adminsdk-ws9td-1fa46b4829.json') 
-firebase_admin_app = firebase_admin.initialize_app(cred)
-db_firestore = firestore.client()
+
 
 @app.route("/")
 def utilize_connection():
@@ -55,16 +55,7 @@ def utilize_connection():
   firebase project. Append all collections and their IDs and return the total data. 
   """
 
-  try:
-    collections = []
-
-    for doc in db_firestore.collection("User Information").list_documents():
-      print(doc.id)
-    
-    return jsonify({'collections': collections})
-
-  except Exception as e:
-    return(str(e))
+  return jsonify({'Init message': 'Initialized'})
 
 @app.route("/signup_user", methods=["POST", "GET"])
 def sign_up():
@@ -80,10 +71,10 @@ def sign_up():
   try:
     success = db_oauth.signup(email=email, password=password, connection=CONNECTION)
     if success and success.email_verified == True:
-      add_user_to_firebase(email=email, first=first, last=last, type=type, collection_name=COLLECTION_NAME, company_name=company_name) # create a new user in the firestore document
+      firebase_controller.add_user_to_firebase(email=email, first=first, last=last, type=type, collection_name=COLLECTION_NAME, company_name=company_name) # create a new user in the firestore document
       return jsonify({'message': 'Signed up successfully!'}, 200)
   except Exception as e:
-    return jsonify({'message': 'Error'}, 404)
+    return jsonify({'message': str(e)}, 404)
 
 @app.route("/login_user", methods=["POST", "GET"]) # we have to get the body to the GET request
 def login():
@@ -97,57 +88,35 @@ def login():
     success = token.login(email, password, realm=CONNECTION)
   
     if success and success.email_verified == True:
-      update_user_in_firebase(email=email, collection_name=COLLECTION_NAME)
+      firebase_controller.update_user_in_firebase(email=email, collection_name=COLLECTION_NAME)
       return jsonify({'message': 'Updated user in Firebase!', 'access_token': success}, 200)
       # update the last login and the developer type using the email id
 
   except Exception as e:
-    return jsonify({"message": "Error!"}, 404)
+    return jsonify({"message": str(e)}, 404)
 
-def add_user_to_firebase(email, first, last, type, collection_name, company_name = None):
+@app.route('/validate_access_code', methods=["POST", "GET"])
+def validate_code():
+  raw_data = request.json # getting the provided data from the client
+  access_code = raw_data.get('access_code')
+
   try:
-    doc_ref = db_firestore.collection(collection_name)
-    datetime_time = get_login_time()
-    new_user_data = {
-      "First Name": first,
-      "Last Name": last,
-      "Last Login": f"{datetime_time[0]}, {datetime_time[1]}",
-      "Type": type,
-      "Num Events": 0,
-      "Events": [],
-    }
-
-    if type == "Company" and company_name:
-      new_user_data["Company Name"] = company_name
-    
-    doc_ref.add(new_user_data, email)
+    events_list = firebase_controller.validate_access_code(access_code, ("Company Information", "Access Codes")) # POST -> updating data
+    return jsonify({'message': 'Successful', 'events': events_list}, 200)
   except Exception as e:
-    return str(e)
+    return jsonify({'message': str(e)}, 400)
 
-def update_user_in_firebase(email, collection_name):
-  try:
-    doc_ref = db_firestore.collection(collection_name).document(email)
-    user_type = "Developer"
-    doc_data = doc_ref.get()
-
-    if doc_data.exists: # update the type that they login with
-      user_data = doc_data.to_dict()
-      user_type = user_data.get("Type", "Developer")
-    else:
-      doc_ref.set({'Type': 'Developer'})
-    
-    # update the last logged in value
-    datetime_data = get_login_time()
-    
-    doc_ref.update({
-      'Last Login': f"{datetime_data[0]}, {datetime_data[1]}",
-      'Type': user_type
-    })
-  except Exception as e:
-    return str(e)
   
-def update_submissions():
-  pass
+@app.route("/add_to_interest_list", methods=["POST", "GET"])
+def add_interested():
+  raw_data = request.json
+  email = raw_data.get('email')
+  user_note = raw_data.get('user_note')
+  try:
+    firebase_controller.add_user_to_interest_list(email, user_note, ("Company Information", "Interested Customers"))
+    return jsonify({'message': 'Successfully added user to interest list!'}, 200)
+  except Exception as e:
+    return jsonify({'Error': str(e)}, 400)
 
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
@@ -159,14 +128,7 @@ def reset_password():
 
     return jsonify({'message': 'Changed password!'}, 200)
   except Exception as e:
-    return jsonify({'message': 'Error'}, 400)
-
-def get_login_time():
-  local_tz = pytz.timezone('America/Chicago') 
-  curr_date = datetime.now(local_tz).strftime("%Y/%m/%d")
-  curr_time = datetime.now(local_tz).strftime("%H:%M:%s")
-
-  return (curr_date, curr_time)
+    return jsonify({'message': str(e)}, 400)
 
 if __name__ == "__main__":
   app.run(debug=True) # run the backend app
