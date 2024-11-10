@@ -40,7 +40,7 @@ def master(table, operation):
             'machine-access': companies.machine_access, # get (never call explicitly as event handler response)
             'events': companies.events, # get, post
             'submissions': companies.submissions, # get, delete
-            'signout': None, # get
+            'signout': companies.signout, # get
         },
         'users': {
             'register': user.register, # post
