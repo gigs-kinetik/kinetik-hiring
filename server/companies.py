@@ -66,7 +66,7 @@ def machine_access(method: str, body: Any):
             access_code,
         ]
     """
-    if method != 'GET': 
+    if method != 'PUT': 
         return 'invalid method', 403
     
     res = supabase.table('company_machines').select(
@@ -102,17 +102,18 @@ def login(method: str, body: Any):
             password!,
         ]
     """
-    if method != 'GET':
+    if method != 'PUT':
         return 'invalid method', 403
     
+    print(body)
     if (body.get('machine_id') is None and body.get('access_code') is None) and (body.get('email') is None or body.get('password') is None):
         return 'invalid body', 400
     
     if body.get('access_code') is not None:
-        return machine_access('GET', { 'access_code': body.get('access_code') })
+        return machine_access('PUT', { 'access_code': body.get('access_code') })
     
     if body.get('machine_id') is not None and (body.get('email') is None or body.get('password') is None):
-        return machine_access('GET', { 'machine_id': body.get('machine_id') })
+        return machine_access('PUT', { 'machine_id': body.get('machine_id') })
     
     res = supabase.table('companies').select('company_id, hashed_password, company_email, company_name, salt').eq('company_email', body.get('email')).execute()
     if hasattr(res, 'code'):
@@ -142,7 +143,7 @@ def login(method: str, body: Any):
         'name': name,
     }, 200
     
-    res = supabase.table('companies').update({ 'last_login': now() }).eq('user_id', result['id']).execute()
+    res = supabase.table('companies').update({ 'last_login': now().isoformat() }).eq('company_id', result[0]['id']).execute()
     return result
     
 def signout(method: str, body: Any):
@@ -152,7 +153,7 @@ def signout(method: str, body: Any):
             access_code?, // either or OR
         ]
     """
-    if method != 'GET':
+    if method != 'PUT':
         return 'invalid method', 400
     
     res = supabase.table('company_machines').delete()
@@ -183,11 +184,11 @@ def events(method: str, body: Any):
         ]
     """
     
-    result = machine_access('GET', { 'access_code': body.get('access_code') })
+    result = machine_access('PUT', { 'access_code': body.get('access_code') })
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    def get():
+    def put():
         res = supabase.table('events').select(', '.join('*'.split())).eq('company_id', body.get('id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
@@ -220,8 +221,8 @@ def events(method: str, body: Any):
             return 'error', 501
         return res.data[0], 200
     
-    if method == 'GET':
-        return get()
+    if method == 'PUT':
+        return put()
     if method == 'POST':
         return post()
     return 'invalid method', 403
@@ -231,17 +232,18 @@ def submissions(method: str, body: Any):
         [
             access_code,
             id,
+            event_id,
             
             (post?)
             submission_id?, // for deletion
         ]
     """
     
-    result = machine_access('GET', { 'access_code': body.get('access_code') })
+    result = machine_access('PUT', { 'access_code': body.get('access_code') })
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    def get():
+    def put():
         res = (
             supabase
             .from_("submissions")
@@ -249,6 +251,7 @@ def submissions(method: str, body: Any):
                 '*,'
                 'events!inner(event_id, event_name, company_id)'
             )
+            .eq('events.event_id', body.get('event_id'))
             .eq("events.company_id", body.get('id'))
             .execute()
         )
@@ -264,8 +267,8 @@ def submissions(method: str, body: Any):
             return 'error', 501
         return res.data[0], 200
     
-    if method == 'GET':
-        return get()
+    if method == 'PUT':
+        return put()
     if method == 'DELETE':
         return delete()
     return 'invalid method', 403

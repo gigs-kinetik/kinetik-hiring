@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.js"],
+  content: ["./app/**/*.js", './app/**/*.ts', './app/**/*.tsx', './components/**/*.tsx', './components/*.tsx'],
   theme: {
     extend: {
       colors: {
@@ -15,6 +15,9 @@ module.exports = {
       },
     },
     fontFamily: { poppins: ["Poppins", "sans-serif"] },
+    boxShadow: {
+      '3xl': '0 0px 50px -5px rgb(0 0 0 / 0.25)',
+    },
   },
   plugins: [require("@tailwindcss/forms")],
 };
