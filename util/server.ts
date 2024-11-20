@@ -636,4 +636,5 @@ export class User {
 export function get() {
     const { type } = useParams();
     const get = type === 'companies' ? Company.get : User.get;
+    return get();
 }
