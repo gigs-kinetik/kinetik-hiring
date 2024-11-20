@@ -42,6 +42,8 @@ export default function HomePage() {
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
+  const [chatMessages, setChatMessages] = useState([{ role: "assistant", content: "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?" }]);
+  const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
     const type = sessionStorage.getItem("userType");
@@ -226,6 +228,46 @@ export default function HomePage() {
       }
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (chatInput.trim() === "") return;
+
+    console.log("sending message to chatbot:", chatInput); // DEBUG
+
+    const newMessage = { role: "user", content: chatInput.replace(/\n/g, "<br>") };
+    const updatedMessages = [...chatMessages, newMessage];
+    setChatMessages(updatedMessages);
+    setChatInput("");
+
+    try {
+      const response = await fetch("http://localhost:8080/chat/conversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ conversation_history: updatedMessages, user_input: chatInput }),
+      });
+
+      const data = await response.json();
+      setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
+
+      // Populate form fields with filled_json valuesc
+      const filledJson = JSON.parse(data.filled_json);
+      console.log(data.filled_json)
+      console.log(filledJson['event_name'])
+      if (filledJson["event_name"]) console.log('true');
+      if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
+      if (filledJson["deadline"]) setDeadline(filledJson["deadline"]);
+      if (filledJson["short_desc"]) setShortDescription(filledJson["short_desc"]);
+      if (filledJson["long_desc"]) setLongDescription(filledJson["long_desc"]);
+      if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
+      if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"].join("; "));
+      if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"].join("; "));
+
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
@@ -651,107 +693,135 @@ export default function HomePage() {
               onClick={() => setIsModalOpen(false)}
             >
               <div
-                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[75vh] overflow-y-auto flex"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
-                  Add New Event
-                </h2>
-                <form onSubmit={handleSubmit}>
-                  <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
-                    <label className="block mb-2">
-                      Event Name <span className="text-red-500">*</span>
+                <div className="w-1/2 pr-4">
+                  <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                    Add New Event
+                  </h2>
+                  <form onSubmit={handleSubmit}>
+                    <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
+                      <label className="block mb-2">
+                        Event Name <span className="text-red-500">*</span>
+                        <input
+                          type="text"
+                          value={eventName}
+                          onChange={(e) => setEventName(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Deadline Date <span className="text-red-500">*</span>
+                        <input
+                          type="date"
+                          value={deadline}
+                          onChange={(e) => setDeadline(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Deadline Time (PST) <span className="text-red-500">*</span>
+                        <input
+                          type="time"
+                          value={deadlineTime}
+                          onChange={(e) => setDeadlineTime(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Short Description <span className="text-red-500">*</span>
+                        <textarea
+                          value={shortDescription}
+                          placeholder="Enter a quick synopsis of what you need."
+                          onChange={(e) => setShortDescription(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Long Description <span className="text-red-500">*</span>
+                        <textarea
+                          value={longDescription}
+                          placeholder="Enter the complete requirements for your project."
+                          onChange={(e) => setLongDescription(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Total Cash Amount (in USD) <span className="text-red-500">*</span>
+                        <input
+                          value={cashAmount}
+                          placeholder="Enter just the number with no commas (ex: 5000)."
+                          onChange={(e) => setCashAmount(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-4">
+                        Required Skills (semicolon-separated) <span className="text-red-500">*</span>
+                        <input
+                          type="text"
+                          value={requiredSkills}
+                          onChange={(e) => setRequiredSkills(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                          required
+                        />
+                      </label>
+                      <label className="block mb-2">
+                        Other Prizes/Incentives (semicolon-separated)
+                        <input
+                          type="text"
+                          value={prizeList}
+                          onChange={(e) => setPrizeList(e.target.value)}
+                          className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        />
+                      </label>
+                      <div className="flex justify-center">
+                        <button
+                          type="submit"
+                          className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? "Submitting..." : "Submit"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div className="w-1/2 pl-4 border-l border-gray-300">
+                  <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                    Chat Section
+                  </h2>
+                  <div className="flex flex-col h-full">
+                    <div className="flex-grow overflow-y-auto p-2 border border-gray-300 rounded-md">
+                      {chatMessages.map((msg, index) => (
+                        <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                          <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4">
                       <input
                         type="text"
-                        value={eventName}
-                        onChange={(e) => setEventName(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Deadline Date <span className="text-red-500">*</span>
-                      <input
-                        type="date"
-                        value={deadline}
-                        onChange={(e) => setDeadline(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Deadline Time (PST){" "}
-                      <span className="text-red-500">*</span>
-                      <input
-                        type="time"
-                        value={deadlineTime}
-                        onChange={(e) => setDeadlineTime(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Short Description <span className="text-red-500">*</span>
-                      <textarea
-                        value={shortDescription}
-                        placeholder="Enter a quick synopsis of what you need."
-                        onChange={(e) => setShortDescription(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Long Description <span className="text-red-500">*</span>
-                      <textarea
-                        value={longDescription}
-                        placeholder="Enter the complete requirements for your project."
-                        onChange={(e) => setLongDescription(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Total Cash Amount (in USD){" "}
-                      <span className="text-red-500">*</span>
-                      <input
-                        value={cashAmount}
-                        placeholder="Enter just the number with no commas (ex: 5000)."
-                        onChange={(e) => setCashAmount(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-4">
-                      Required Skills (semicolon-separated){" "}
-                      <span className="text-red-500">*</span>
-                      <input
-                        type="text"
-                        value={requiredSkills}
-                        onChange={(e) => setRequiredSkills(e.target.value)}
-                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                        required
-                      />
-                    </label>
-                    <label className="block mb-2">
-                      Other Prizes/Incentives (semicolon-separated){" "}
-                      <input
-                        type="text"
-                        value={prizeList}
-                        onChange={(e) => setPrizeList(e.target.value)}
+                        placeholder="Type your message..."
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                       />
-                    </label>
-                    <div className="flex justify-center">
                       <button
-                        type="submit"
-                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
-                        disabled={isSubmitting}
+                        onClick={handleSendMessage}
+                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-full h-10 font-medium mt-2"
                       >
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        Send
                       </button>
                     </div>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           )}

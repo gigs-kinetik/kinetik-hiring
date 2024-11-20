@@ -1,8 +1,10 @@
 from flask import Flask, Response, jsonify, request
-from typing import Any, Callable
+from flask_cors import CORS
 import companies, user
+import chat
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/', methods='GET POST'.split())
 def root():
@@ -50,6 +52,9 @@ def master(table, operation):
             'submissions': user.submissions, # get, post
             'signout': user.signout, # get
         },
+        'chat': {
+            'conversation': chat.handle_conversation, # post
+        }
     }
     if table not in filter or operation not in filter[table]:
         return 'nice try :]', 403
