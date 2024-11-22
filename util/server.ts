@@ -1,10 +1,10 @@
-import { getAccessCode, getDeviceId } from "./device";
+import { getAccessCode, getDeviceId, setAccessCode } from "./device";
 import { useRouter, redirect, RedirectType, useParams } from 'next/navigation'
 
 const PORT = 8080;
 const SERVER_URL = `http://localhost:${PORT}`;
 
-interface Json {
+type Json = {
     [key: string]: boolean | string | number | Json;
 }
 
@@ -15,26 +15,20 @@ type Operation =
     | "machine-access"
     | "events"
     | "submissions"
-    | "signout";
+    | "signout"
+    | 'companies'
+    | 'users';
 
 async function call(
     method: string,
     table: Table,
     operation: Operation,
     data: Json
-): Promise<Response> {
+): Promise<[Response, any]> {
     data["machine_id"] = getDeviceId();
     const code = getAccessCode();
     if (code) data["access_code"] = code;
 
-    if (method == "GET") {
-        const headers = new Headers();
-        for (const key in data) headers.append(key, data[key].toString());
-        return await fetch(`${SERVER_URL}/${table}/${operation}`, {
-            method: method,
-            headers: headers,
-        });
-    }
     let response = await fetch(`${SERVER_URL}/${table}/${operation}`, {
         method: method,
         body: JSON.stringify(data),
@@ -42,14 +36,17 @@ async function call(
 
     // if (response.status !== 200)
     //     throw new Error(`Call failed with status: ${response.status}`);
-    return response;
+    const json = await response.json();
+    if (json.access_code)
+        setAccessCode(json.access_code);
+    return [response, json];
 }
 
 function intermediate(table: Table) {
     return {
-        put: async (operation: Operation, data: Json): Promise<Response> => await call('PUT', table, operation, data),
-        post: async (operation: Operation, data: Json): Promise<Response> => await call('POST', table, operation, data),
-        delete: async (operation: Operation, data: Json): Promise<Response> => await call('DELETE', table, operation, data),
+        put: async (operation: Operation, data: Json): Promise<[Response, any]> => await call('PUT', table, operation, data),
+        post: async (operation: Operation, data: Json): Promise<[Response, any]> => await call('POST', table, operation, data),
+        delete: async (operation: Operation, data: Json): Promise<[Response, any]> => await call('DELETE', table, operation, data),
     };
 }
 
@@ -60,6 +57,8 @@ class BasicCompany {
     email: string;
     id: number;
     name: string;
+    first_name: string;
+    last_name: string;
 }
 
 export class CompanyInstance {
@@ -67,18 +66,24 @@ export class CompanyInstance {
     private _email: string;
     private _id: number;
     private _name: string;
+    private _first_name: string
+    private _last_name: string
 
     constructor(company: BasicCompany) {
         this._access_code = company.access_code;
         this._email = company.email;
         this._id = company.id;
         this._name = company.name;
+        this._first_name = company.first_name;
+        this._last_name = company.last_name;
     }
 
     get accessCode() { return this._access_code; }
     get email() { return this._email; }
     get id() { return this._id; }
     get name() { return this._name; }
+    get firstName() { return this._first_name; }
+    get lastName() { return this._last_name; }
 
     /**
      * Returns list of events the company has created, null if failed request
@@ -86,10 +91,10 @@ export class CompanyInstance {
      * @returns 
      */
     public async getEvents(): Promise<BasicEvent[] | null> {
-        const res = await cinter.put('events', { id: this.id });
+        const [res, json] = await cinter.put('events', { id: this.id });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent[];
+        return json as BasicEvent[];
     }
 
     /**
@@ -106,7 +111,7 @@ export class CompanyInstance {
         long_description: string,
         prize: number,
     }): Promise<BasicEvent | null> {
-        const res = await cinter.post('events', {
+        const [res, json] = await cinter.post('events', {
             id: this.id, 
             event_name, 
             ...(start_time && { start_time: start_time.toUTCString() }),
@@ -115,7 +120,7 @@ export class CompanyInstance {
         });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent;
+        return json as BasicEvent;
     }
 
     /**
@@ -137,13 +142,13 @@ export class CompanyInstance {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await cinter.post('events', {
+        const [res, json] = await cinter.post('events', {
             id: this.id,
             ...data
         });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent;
+        return json as BasicEvent;
     }
 
     /**
@@ -152,10 +157,10 @@ export class CompanyInstance {
      * @returns 
      */
     public async getSubmissions(eventId: number): Promise<BasicSubmission[] | null> {
-        const res = await cinter.put('submissions', { id: this.id, event_id: eventId })
+        const [res, json] = await cinter.put('submissions', { id: this.id, event_id: eventId })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission[]
+        return json as BasicSubmission[]
     }
 
     /**
@@ -165,10 +170,40 @@ export class CompanyInstance {
      * @returns 
      */
     public async deleteSubmission(submissionId: number): Promise<BasicSubmission | null> {
-        const res = await cinter.delete('submissions', { id: this.id, submission_id: submissionId });
+        const [res, json] = await cinter.delete('submissions', { id: this.id, submission_id: submissionId });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
+    }
+
+    public async update(data: {
+        email?: string;
+        company_name?: string;
+        first_name?: string;
+        last_name?: string;
+        password?: string;
+        verified?: boolean;
+    }): Promise<CompanyInstance | null> {
+        const obj = {};
+        for (const key in data)
+            if (data[key])
+                obj[key] = data[key]
+        const [res, json] = await cinter.post('companies', {
+            id: this.id,
+            ...obj
+        });
+
+        if (res.status !== 200)
+            return null;
+
+        const company = json as BasicCompany;
+        this._access_code = company.access_code;
+        this._email = company.email;
+        this._id = company.id;
+        this._name = company.name;
+        this._first_name = company.first_name;
+        this._last_name = company.last_name;
+        return this;
     }
 }
 
@@ -223,13 +258,13 @@ export class UserInstance {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('events', {
+        const [res, json] = await uinter.post('events', {
             id: this.id, 
             ...data,
         })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent[];
+        return json as BasicEvent[];
     }
 
     /**
@@ -238,10 +273,10 @@ export class UserInstance {
      * @returns 
      */
     public async getSubmissions(): Promise<BasicSubmission[] | null> {
-        const res = await uinter.put('submissions', { id: this.id });
+        const [res, json] = await uinter.put('submissions', { id: this.id });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission[]
+        return json as BasicSubmission[]
     }
 
     /**
@@ -263,13 +298,13 @@ export class UserInstance {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('events', {
+        const [res, json] = await uinter.post('events', {
             id: this.id, 
             ...data,
         })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
     }
 
     /**
@@ -291,10 +326,38 @@ export class UserInstance {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('submissions', { id: this.id, ...data })
+        const [res, json] = await uinter.post('submissions', { id: this.id, ...data })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
+    }
+
+    public async update(data: {
+        email?: string;
+        first_name?: string;
+        last_name?: string;
+        password?: string;
+        verified?: boolean;
+    }): Promise<UserInstance | null> {
+        const obj = {};
+        for (const key in data)
+            if (data[key])
+                obj[key] = data[key]
+        const [res, json] = await uinter.post('users', {
+            id: this.id,
+            ...obj
+        });
+
+        if (res.status !== 200)
+            return null;
+
+        const user = json as BasicUser;
+        this._access_code = user.access_code;
+        this._email = user.email;
+        this._id = user.id;
+        this._first_name = user.first_name;
+        this._last_name = user.last_name;
+        return this;
     }
 }
 
@@ -333,11 +396,11 @@ export class Company {
      * @param password 
      * @returns 
      */
-    public static async register(name: string, email: string, password: string): Promise<CompanyInstance | null> {
-        const res = await cinter.post('register', { name, email, password })
+    public static async register(name: string, first_name: string, last_name: string, email: string, password: string): Promise<CompanyInstance | null> {
+        const [res, json] = await cinter.post('register', { name, first_name, last_name, email, password })
         if (res.status !== 200)
             return null;
-        return new CompanyInstance(await res.json())
+        return new CompanyInstance(json)
     }
 
     /**
@@ -347,10 +410,10 @@ export class Company {
      * @returns 
      */
     public static async login(email: string, password: string): Promise<CompanyInstance | null> {
-        const res = await cinter.put('login', { email, password });
+        const [res, json] = await cinter.put('login', { email, password });
         if (res.status !== 200)
             return null;
-        return new CompanyInstance(await res.json())
+        return new CompanyInstance(json)
     }
 
     /**
@@ -359,10 +422,10 @@ export class Company {
      * @returns
      */
     private static async accessCompany(): Promise<CompanyInstance | null> {
-        const res = await cinter.put('login', {});
+        const [res, json] = await cinter.put('login', {});
         if (res.status !== 200)
             return null;
-        return new CompanyInstance(await res.json());
+        return new CompanyInstance(json);
     }
 
     /**
@@ -371,10 +434,10 @@ export class Company {
      * @returns 
      */
     public static async getEvents(companyId: number): Promise<BasicEvent[] | null> {
-        const res = await cinter.put('events', { id: companyId });
+        const [res, json] = await cinter.put('events', { id: companyId });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent[];
+        return json as BasicEvent[];
     }
 
     /**
@@ -391,7 +454,7 @@ export class Company {
         long_description: string,
         prize: number,
     }): Promise<BasicEvent | null> {
-        const res = await cinter.post('events', {
+        const [res, json] = await cinter.post('events', {
             id: companyId, 
             event_name, 
             ...(start_time && { start_time: start_time.toUTCString() }),
@@ -400,7 +463,7 @@ export class Company {
         });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent;
+        return json as BasicEvent;
     }
 
     /**
@@ -422,13 +485,13 @@ export class Company {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await cinter.post('events', {
+        const [res, json] = await cinter.post('events', {
             id: companyId,
             ...data
         });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent;
+        return json as BasicEvent;
     }
 
     /**
@@ -437,10 +500,10 @@ export class Company {
      * @returns 
      */
     public static async getSubmissions(companyId: number, eventId: number): Promise<BasicSubmission[] | null> {
-        const res = await cinter.put('submissions', { id: companyId, event_id: eventId })
+        const [res, json] = await cinter.put('submissions', { id: companyId, event_id: eventId })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission[]
+        return json as BasicSubmission[]
     }
 
     /**
@@ -450,10 +513,10 @@ export class Company {
      * @returns 
      */
     public static async deleteSubmission(companyId: number, submissionId: number): Promise<BasicSubmission | null> {
-        const res = await cinter.delete('submissions', { id: companyId, submission_id: submissionId });
+        const [res, json] = await cinter.delete('submissions', { id: companyId, submission_id: submissionId });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
     }
 
     /**
@@ -461,7 +524,7 @@ export class Company {
      * @returns 
      */
     public static async signoutFromDevice() {
-        return (await cinter.put('signout', {})).status !== 200
+        return (await cinter.put('signout', {}))[0].status !== 200
     }
 
     /**
@@ -469,9 +532,9 @@ export class Company {
      * @returns 
      */
     public static async get(): Promise<CompanyInstance | null> {
-        const router = useRouter();
-        if (!(await this.accessCompany()))
-            router.push('/companies/login')
+        // const router = useRouter();
+        // if (!(await this.accessCompany()))
+        //     router.push('/companies/login')
         return await this.accessCompany();
     }
 }
@@ -486,10 +549,10 @@ export class User {
      * @returns 
      */
     public static async register(first_name: string, last_name: string, email: string, password: string): Promise<UserInstance | null> {
-        const res = await uinter.post('register', { first_name, last_name, email, password });
+        const [res, json] = await uinter.post('register', { first_name, last_name, email, password });
         if (res.status !== 200)
             return null;
-        return new UserInstance(await res.json());
+        return new UserInstance(json);
     }
 
     /**
@@ -499,10 +562,10 @@ export class User {
      * @returns 
      */
     public static async login(email: string, password: string): Promise<UserInstance | null> {
-        const res = await uinter.put('login', { email, password });
+        const [res, json] = await uinter.put('login', { email, password });
         if (res.status !== 200)
             return null;
-        return new UserInstance(await res.json());
+        return new UserInstance(json);
     }
 
     /**
@@ -511,10 +574,10 @@ export class User {
      * @returns
      */
     private static async accessUser(): Promise<UserInstance | null> {
-        const res = await uinter.put('login', {});
+        const [res, json] = await uinter.put('login', {});
         if (res.status !== 200)
             return null;
-        return new UserInstance(await res.json());
+        return new UserInstance(json);
     }
 
     /**
@@ -539,13 +602,13 @@ export class User {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('events', {
+        const [res, json] = await uinter.post('events', {
             id: userId, 
             ...data,
         })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicEvent[];
+        return json as BasicEvent[];
     }
 
     /**
@@ -554,10 +617,10 @@ export class User {
      * @returns 
      */
     public static async getSubmissions(userId: number): Promise<BasicSubmission[] | null> {
-        const res = await uinter.put('submissions', { id: userId });
+        const [res, json] = await uinter.put('submissions', { id: userId });
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission[]
+        return json as BasicSubmission[]
     }
 
     /**
@@ -578,14 +641,14 @@ export class User {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('events', {
+        const [res, json] = await uinter.post('events', {
             id: userId, 
             ...data,
             event_id: eventId,
         })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
     }
 
     /**
@@ -606,10 +669,10 @@ export class User {
         for (const option in options)
             if (options[option])
                 data[option] = options[option];
-        const res = await uinter.post('submissions', { id: userId, ...data, submission_id: submissionId })
+        const [res, json] = await uinter.post('submissions', { id: userId, ...data, submission_id: submissionId })
         if (res.status !== 200)
             return null;
-        return (await res.json()) as BasicSubmission;
+        return json as BasicSubmission;
     }
 
     /**
@@ -617,7 +680,7 @@ export class User {
      * @returns 
      */
     public static async signOutOfDevice(): Promise<boolean> {
-        const res = await uinter.put('signout', {})
+        const [res, json] = await uinter.put('signout', {})
         return res.status === 200
     }
 
@@ -626,9 +689,9 @@ export class User {
      * @returns 
      */
     public static async get(): Promise<UserInstance | null> {
-        const router = useRouter();
-        if (!(await this.accessUser()))
-            router.push('/companies/login')
+        // const router = useRouter();
+        // if (!(await this.accessUser()))
+        //     router.push('/companies/login')
         return await this.accessUser();
     }
 }

@@ -49,6 +49,7 @@ def master(table, operation):
             'events': companies.events, # put, post
             'submissions': companies.submissions, # put, delete
             'signout': companies.signout, # put
+            'companies': companies.companies # post
         },
         'users': {
             'register': user.register, # post
@@ -57,6 +58,7 @@ def master(table, operation):
             'events': user.events, # put
             'submissions': user.submissions, # put, post
             'signout': user.signout, # put
+            'users': user.users, # post
         },
     }
     if table not in filter or operation not in filter[table]:

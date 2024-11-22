@@ -3,104 +3,95 @@
 import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../../lib/firebaseConfig";
+import { useParams, useRouter } from "next/navigation";
+import { Company, User } from "../../../util/server";
 
-export default function LoginPage() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSignedUp, setIsSignedUp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [userType, setUserType] = useState("Developer");
-  const [companyName, setCompanyName] = useState("");
-  const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
+export default function SignupPage() {
+  // const [firstName, setFirstName] = useState("");
+  // const [lastName, setLastName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [error, setError] = useState("");
+  // const [isSignedUp, setIsSignedUp] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [passwordVisible, setPasswordVisible] = useState(false);
+  // const [termsAccepted, setTermsAccepted] = useState(false);
+  // const [userType, setUserType] = useState("Developer");
+  // const [companyName, setCompanyName] = useState("");
+  // const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
+  const [data, setData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    error: '',
+    isSignedUp: false,
+    isLoading: false,
+    passwordVisible: false,
+    termsAccepted: false,
+    userType: 'Developer',
+    companyName: '',
+    companyTermsAccepted: false,
+  })
+  const [firstName, setFirstName] = useState('')
+  // const {
+  //   firstName, lastName, email, password, error, isSignedUp, isLoading, passwordVisible, termsAccepted, userType, companyName, companyTermsAccepted
+  // } = data
   const router = useRouter();
 
   useEffect(() => {
-    const savedFirstName = sessionStorage.getItem("firstName");
-    const savedLastName = sessionStorage.getItem("lastName");
-    const savedEmail = sessionStorage.getItem("email");
-    const savedPassword = sessionStorage.getItem("password");
-    const savedTermsAccepted =
-      sessionStorage.getItem("termsAccepted") === "true";
-    if (savedFirstName) setFirstName(savedFirstName);
-    if (savedLastName) setLastName(savedLastName);
-    if (savedEmail) setEmail(savedEmail);
-    if (savedPassword) setPassword(savedPassword);
-    setTermsAccepted(savedTermsAccepted);
+    // const savedFirstName = sessionStorage.getItem("firstName");
+    // const savedLastName = sessionStorage.getItem("lastName");
+    // const savedEmail = sessionStorage.getItem("email");
+    // const savedPassword = sessionStorage.getItem("password");
+    // const savedTermsAccepted =
+    //   sessionStorage.getItem("termsAccepted") === "true";
+    // if (savedFirstName) setFirstName(savedFirstName);
+    // if (savedLastName) setLastName(savedLastName);
+    // if (savedEmail) setEmail(savedEmail);
+    // if (savedPassword) setPassword(savedPassword);
+    // setTermsAccepted(savedTermsAccepted);
   }, []);
 
-  const handleInputChange = (setter, fieldName, value) => {
+  const handleInputChange = (setter: (value: string | boolean) => void, fieldName: string, value: string | boolean) => {
     setter(value);
-    sessionStorage.setItem(fieldName, value);
+    sessionStorage.setItem(fieldName, value.toString());
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (!termsAccepted) {
-      setError("You must accept the terms and conditions to sign up.");
+    if (!data.termsAccepted) {
+      setData({ error: "You must accept the terms and conditions to sign up.", ...data });
       return;
     }
-    if (userType === "Company" && !companyTermsAccepted) {
-      setError("You must accept the company-specific terms and conditions.");
+    if (data.userType === "Company" && !data.companyTermsAccepted) {
+      setData({ error: "You must accept the company-specific terms and conditions.", ...data });
       return;
     }
-    setIsLoading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await sendEmailVerification(auth.currentUser);
-      setIsSignedUp(true);
-      const options = { timeZone: "America/Chicago", timeZoneName: "short" };
-      const currDate = new Date()
-        .toLocaleDateString("en-US", options)
-        .split(", ")[0];
-      const currTime = new Date().toLocaleTimeString("en-US", options);
-      await setDoc(doc(db, "User Information", email), {
-        "First Name": firstName,
-        "Last Name": lastName,
-        "Last Login": currDate + ", " + currTime,
-        Type: userType,
-        ...(userType === "Company" && { "Company Name": companyName }),
-        "Num Events": 0,
-        Events: [],
-      });
-      auth.signOut();
-      setError("");
-      sessionStorage.clear();
-      router.push("/login");
-      alert("An email verification has been sent to " + email);
-    } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        setError(
-          "Email already in use, please login or sign up with another email."
-        );
-      } else if (error.code === "auth/weak-password") {
-        setError("Password should be at least 6 characters.");
+    setData({ isLoading: true, ...data });
+    if (data.password.length < 6) {
+      setData({ error: 'Password must be at least 6 characters in length', ...data })
+    } else if (data.userType === 'Developer') {
+      const user = await User.register(data.firstName, data.lastName, data.email, data.password);
+      if (!user) {
+        setData({ error: 'Email already in use', ...data })
       } else {
-        setError(error.message);
+        router.push("/login/user")
+        setData({ isLoading: false, ...data });
       }
-      setIsSignedUp(false);
-    } finally {
-      setIsLoading(false);
+    } else {
+      const company = await Company.register(data.companyName, data.firstName, data.lastName, data.email, data.password);
+      if (!company) {
+        setData({ error: 'Email already in use', ...data })
+      } else {
+        router.push('/login/company');
+        setData({ isLoading: false, ...data });
+      }
     }
   };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+    setData({ passwordVisible: !data.passwordVisible, ...data });
   };
 
   return (
@@ -111,10 +102,10 @@ export default function LoginPage() {
         </Link>
       </button>
       <div className="font-poppins flex h-screen flex-col justify-center px-6 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
-        {isSignedUp ? (
+        {data.isSignedUp ? (
           <div className="text-center text-off-white">
             <p>Account created successfully!</p>
-            <p>Email: {email}</p>
+            <p>Email: {data.email}</p>
           </div>
         ) : (
           <>
@@ -137,8 +128,8 @@ export default function LoginPage() {
                         type="radio"
                         name="userType"
                         value="Developer"
-                        checked={userType === "Developer"}
-                        onChange={() => setUserType("Developer")}
+                        checked={data.userType === "Developer"}
+                        onChange={() => setData({ userType: "Developer", ...data })}
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Developer</span>
@@ -148,15 +139,15 @@ export default function LoginPage() {
                         type="radio"
                         name="userType"
                         value="Company"
-                        checked={userType === "Company"}
-                        onChange={() => setUserType("Company")}
+                        checked={data.userType === "Company"}
+                        onChange={() => setData({ userType: "Company", ...data })}
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Company</span>
                     </label>
                   </div>
                 </div>
-                {userType === "Company" && (
+                {data.userType === "Company" && (
                   <div>
                     <label
                       htmlFor="companyName"
@@ -169,10 +160,10 @@ export default function LoginPage() {
                         id="companyName"
                         name="companyName"
                         type="text"
-                        value={companyName}
+                        value={data.companyName}
                         onChange={(e) =>
                           handleInputChange(
-                            setCompanyName,
+                            (companyName: string) => setData({ companyName: companyName, ...data }),
                             "companyName",
                             e.target.value
                           )
@@ -197,12 +188,13 @@ export default function LoginPage() {
                         name="firstName"
                         type="text"
                         value={firstName}
-                        onChange={(e) =>
-                          handleInputChange(
-                            setFirstName,
-                            "firstName",
-                            e.target.value
-                          )
+                        onChange={(e) => // setData({ firstName: e.target.value, ...data })
+                          setFirstName(e.target.value)
+                          // handleInputChange(
+                          //   (firstName: string) => setData({ firstName: firstName, ...data }),
+                          //   "firstName",
+                          //   e.target.value
+                          // )
                         }
                         required
                         className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
@@ -221,10 +213,10 @@ export default function LoginPage() {
                         id="lastName"
                         name="lastName"
                         type="text"
-                        value={lastName}
+                        value={data.lastName}
                         onChange={(e) =>
                           handleInputChange(
-                            setLastName,
+                            (lastName: string) => setData({ lastName: lastName, ...data }),
                             "lastName",
                             e.target.value
                           )
@@ -248,9 +240,9 @@ export default function LoginPage() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      value={email}
+                      value={data.email}
                       onChange={(e) =>
-                        handleInputChange(setEmail, "email", e.target.value)
+                        handleInputChange((email: string) => setData({ email: email, ...data }), "email", e.target.value)
                       }
                       required
                       className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
@@ -270,12 +262,12 @@ export default function LoginPage() {
                     <input
                       id="password"
                       name="password"
-                      type={passwordVisible ? "text" : "password"}
+                      type={data.passwordVisible ? "text" : "password"}
                       autoComplete="current-password"
-                      value={password}
+                      value={data.password}
                       onChange={(e) =>
                         handleInputChange(
-                          setPassword,
+                          (password: string) => setData({ password: password, ...data }),
                           "password",
                           e.target.value
                         )
@@ -287,7 +279,7 @@ export default function LoginPage() {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                       onClick={togglePasswordVisibility}
                     >
-                      {passwordVisible ? (
+                      {data.passwordVisible ? (
                         <EyeSlashIcon className="h-5 w-5 text-gray-600" />
                       ) : (
                         <EyeIcon className="h-5 w-5 text-gray-600" />
@@ -295,15 +287,15 @@ export default function LoginPage() {
                     </span>
                   </div>
                 </div>
-                {userType === "Company" && (
+                {data.userType === "Company" && (
                   <div className="flex items-center justify-center">
                     <input
                       id="companyTerms"
                       name="companyTerms"
                       type="checkbox"
-                      checked={companyTermsAccepted}
+                      checked={data.companyTermsAccepted}
                       onChange={() =>
-                        setCompanyTermsAccepted(!companyTermsAccepted)
+                        setData({ companyTermsAccepted: !data.companyTermsAccepted, ...data })
                       }
                       className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                     />
@@ -321,10 +313,10 @@ export default function LoginPage() {
                     id="terms"
                     name="terms"
                     type="checkbox"
-                    checked={termsAccepted}
+                    checked={data.termsAccepted}
                     onChange={() => {
-                      setTermsAccepted(!termsAccepted);
-                      sessionStorage.setItem("termsAccepted", !termsAccepted);
+                      setData({ termsAccepted: !data.termsAccepted, ...data });
+                      sessionStorage.setItem("termsAccepted", (!data.termsAccepted).toString());
                     }}
                     className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                   />
@@ -345,14 +337,14 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-logo-purple/85 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-logo-purple/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/70"
-                    disabled={isLoading}
+                    disabled={data.isLoading}
                   >
-                    {isLoading ? "Signing Up..." : "Sign Up"}
+                    {data.isLoading ? "Signing Up..." : "Sign Up"}
                   </button>
                 </div>
-                {error && (
+                {data.error && (
                   <p className="text-red-700 font-medium text-sm text-center">
-                    {error}
+                    {data.error}
                   </p>
                 )}
               </form>

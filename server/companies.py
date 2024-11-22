@@ -24,6 +24,8 @@ def register(method: str, body: Any):
             email,
             password,
             name,
+            first_name,
+            last_name,
             machine_id
         ]
     """
@@ -38,6 +40,8 @@ def register(method: str, body: Any):
         'verified': False,
         'hashed_password': sha256(apply_salt(body.get('password').strip(), salt).encode()).hexdigest(),
         'salt': salt,
+        'first_name': body.get('first_name').strip(),
+        'last_name': body.get('last_name').strip(),
     }).execute()
     
     if hasattr(res, 'code'):
@@ -272,3 +276,39 @@ def submissions(method: str, body: Any):
     if method == 'DELETE':
         return delete()
     return 'invalid method', 403
+
+def companies(method: str, body: Any):
+    """
+        [
+            access_code,
+            id,
+            
+            first_name?,
+            last_name?,
+            company_name?,
+            email?,
+            password?,
+            verified?,
+        ]
+    """
+    
+    if method != 'POST':
+        return 'invalid method', 403
+    
+    salt = (lambda: ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=32)) + ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=random.randint(1, 32))))()
+    
+    result = machine_access('PUT', { 'access_code': body.get('access_code') })
+    if result[1] != 200 or result[0].get('id') != body.get('id'):
+        return 'invalid token', 400
+    
+    res = supabase.table('companies').update(
+        **({ 'first_name': body.get('first_name') } if body.get('first_name') is not None else {})
+        **({ 'last_name': body.get('last_name') } if body.get('last_name') is not None else {})
+        **({ 'company_name': body.get('company_name') } if body.get('company_name') is not None else {})
+        **({ 'hashed_password': sha256(apply_salt(body.get('password').strip(), salt).encode()).hexdigest(), 'salt': salt } if body.get('password') is not None else {})
+        **({ 'company_email': body.get('email') } if body.get('email') is not None else {})
+        **({ 'verified': body.get('verified') } if body.get('verified') is not None else {})
+    ).execute()
+    if hasattr(res, 'code'):
+        return 'error', 501
+    return res.data, 200
