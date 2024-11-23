@@ -216,6 +216,11 @@ type BasicUser = {
     first_name: string,
     last_name: string,
     id: number,
+    age: number
+    gender: Gender
+    country_of_citizenship: string
+    location: string
+    skills: string[]
 }
 
 export class UserInstance {
@@ -224,6 +229,11 @@ export class UserInstance {
     private _first_name: string;
     private _last_name: string;
     private _id: number;
+    private _age: number
+    private _gender: Gender
+    private _country_of_citizenship: string
+    private _location: string
+    private _skills: string[]
 
     constructor(user: BasicUser) {
         this._access_code = user.access_code;
@@ -231,13 +241,23 @@ export class UserInstance {
         this._first_name = user.first_name;
         this._last_name = user.last_name;
         this._id = user.id;
+        this._age = user.age;
+        this._gender = user.gender;
+        this._country_of_citizenship = user.country_of_citizenship;
+        this._location = user.location;
+        this._skills = user.skills;
     }
 
     get accessCode() { return this._access_code; }
     get email() { return this._email; }
     get id() { return this._id; }
     get firstName() { return this._first_name; }
-    get lastName() { return this.lastName; }
+    get lastName() { return this._last_name; }
+    get age() { return this._age; }
+    get gender() { return this._gender; }
+    get countryOfCitizenship() { return this._country_of_citizenship; }
+    get location() { return this._location; }
+    get skills() { return this._skills; }
 
     /**
      * Query events based on a set of search parameters, null on request fail
@@ -341,6 +361,11 @@ export class UserInstance {
         last_name?: string;
         password?: string;
         verified?: boolean;
+        age?: number,
+        gender?: Gender,
+        country_of_citizenship?: string,
+        location?: string,
+        skills?: string[]
     }): Promise<UserInstance | null> {
         const obj = {};
         for (const key in data)
