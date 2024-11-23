@@ -109,17 +109,19 @@ def login(method: str, body: Any):
     if method != 'PUT':
         return 'invalid method', 403
     
-    print(body)
     if (body.get('machine_id') is None and body.get('access_code') is None) and (body.get('email') is None or body.get('password') is None):
         return 'invalid body', 400
     
     if body.get('access_code') is not None:
-        return machine_access('PUT', { 'access_code': body.get('access_code') })
+        result = machine_access('PUT', { 'access_code': body.get('access_code') })
+        if result[1] == 200:
+            return result
     
     if body.get('machine_id') is not None and (body.get('email') is None or body.get('password') is None):
         return machine_access('PUT', { 'machine_id': body.get('machine_id') })
     
     res = supabase.table('companies').select('company_id, hashed_password, company_email, company_name, salt').eq('company_email', body.get('email')).execute()
+    print(body, '\n', res)
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:

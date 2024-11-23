@@ -36,11 +36,12 @@ async function call(
         body: JSON.stringify(data),
     });
 
-    // if (response.status !== 200)
-    //     throw new Error(`Call failed with status: ${response.status}`);
-    const json = await response.json();
-    if (json.access_code)
-        setAccessCode(json.access_code);
+    let json: any = {}
+    try {
+        json = await response.json();
+        if (json.access_code)
+            setAccessCode(json.access_code);
+    } catch (e) {}
     return [response, json];
 }
 

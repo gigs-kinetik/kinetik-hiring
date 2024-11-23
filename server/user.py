@@ -116,7 +116,9 @@ def login(method: str, body: Any):
         return 'invalid body', 400
     
     if body.get('access_code') is not None:
-        return machine_access('PUT', { 'access_code': body.get('access_code') })
+        result = machine_access('PUT', { 'access_code': body.get('access_code') })
+        if result == 200:
+            return result
     
     if body.get('machine_id') is not None and (body.get('email') is None or body.get('password') is None):
         return machine_access('PUT', { 'machine_id': body.get('machine_id') })

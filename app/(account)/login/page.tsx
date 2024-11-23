@@ -30,6 +30,7 @@ export default function LoginPage() {
             setData({ error: "Invalid username or password.", ...data });
             ++requestCount;
         } else {
+            console.log('hello from else');
             router.push("/home");
         }
         // TODO: Implement user verification
