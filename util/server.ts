@@ -8,6 +8,8 @@ type Json = {
     [key: string]: boolean | string | number | Json;
 }
 
+type Gender = 'male' | 'female' | 'other' | 'undefined'
+
 type Table = "companies" | "users";
 type Operation =
     | "register"
@@ -664,6 +666,11 @@ export class User {
         project_video_link?: string,
         resume_link?: string,
         additional_links?: string,
+        age?: number,
+        gender?: Gender,
+        country_of_citizenship?: string,
+        location?: string,
+        skills?: string[]
     }): Promise<BasicSubmission | null> {
         let data = {}
         for (const option in options)

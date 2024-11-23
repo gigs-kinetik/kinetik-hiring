@@ -76,7 +76,7 @@ def machine_access(method: str, body: Any):
     res = supabase.table('user_machines').select(
         'user_id,'
         'access_code,'
-        'users (first_name, last_name, user_email)'
+        'users (first_name, last_name, user_email, skills, location, country_of_citizenship, gender, age)'
     )
     if body.get('access_code') is not None:
         res = res.eq('access_code', body.get('access_code')).gt('valid_until', now().isoformat())
@@ -89,12 +89,14 @@ def machine_access(method: str, body: Any):
     if len(res.data) == 0:
         return 'invalid access', 404
     
+    a = res.data[0]['users']
+    a['email'] = a['user_email']
+    del a['user_email']
+    
     return {
         'access_code': res.data[0]['access_code'],
         'id': res.data[0]['user_id'],
-        'first_name': res.data[0]['users']['first_name'],
-        'last_name': res.data[0]['users']['last_name'],
-        'email': res.data[0]['users']['user_email'],
+        **(a)
     }, 200
     
 def login(method: str, body: Any):
@@ -302,6 +304,11 @@ def users(method: str, body: Any):
             email?,
             password?,
             verified?,
+            skills?,
+            location?,
+            country_of_citizenship?,
+            gender?,
+            age?,
         ]
     """
     
@@ -314,13 +321,12 @@ def users(method: str, body: Any):
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    res = supabase.table('users').update(
-        **({ 'first_name': body.get('first_name') } if body.get('first_name') is not None else {})
-        **({ 'last_name': body.get('last_name') } if body.get('last_name') is not None else {})
-        **({ 'hashed_password': sha256(apply_salt(body.get('password').strip(), salt).encode()).hexdigest(), 'salt': salt } if body.get('password') is not None else {})
-        **({ 'user_email': body.get('email') } if body.get('email') is not None else {})
-        **({ 'verified': body.get('verified') } if body.get('verified') is not None else {})
-    ).execute()
+    d = {}
+    for key in body:
+        if key != 'id' and key != 'access_code':
+            d[key] = body[key]
+    
+    res = supabase.table('users').update(d).eq('user_id', body.get('id')).execute()
     if hasattr(res, 'code'):
         return 'error', 501
     return res.data, 200
