@@ -530,13 +530,10 @@ export class Company {
     }
 
     /**
-     * Gets the company instance. USE THIS OVER accessCompany and login. Includes login page redirection
+     * DO NOT CALL THIS FUNCTION!!!!!
      * @returns 
      */
     public static async get(): Promise<CompanyInstance | null> {
-        // const router = useRouter();
-        // if (!(await this.accessCompany()))
-        //     router.push('/companies/login')
         return await this.accessCompany();
     }
 }
@@ -692,7 +689,7 @@ export class User {
     }
 
     /**
-     * Gets the company instance. USE THIS OVER accessCompany and login. Includes login page redirection
+     * DO NOT CALL THIS FUNCTION!!!
      * @returns 
      */
     public static async get(): Promise<UserInstance | null> {
@@ -703,6 +700,9 @@ export class User {
     }
 }
 
+/**
+ * Gets the current instance (either user or company, use instanceof or something to check the type)
+ */
 export async function get(): Promise<CompanyInstance | UserInstance> {
     const result: CompanyInstance = await Company.get();
     if (result)
