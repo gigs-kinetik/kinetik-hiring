@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Company, User } from "../../../../util/server";
+import { useRouter } from "next/navigation";
+import { Company, User } from "../../../util/server";
 // import {
 //   signInWithEmailAndPassword,
 //   sendPasswordResetEmail,
@@ -13,7 +13,6 @@ import { Company, User } from "../../../../util/server";
 // import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 export default function LoginPage() {
-    const { type } = useParams();
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -27,10 +26,7 @@ export default function LoginPage() {
         e.preventDefault();
         let requestCount = 0;
         // TODO: Implement differentiation between user and company login to allow the same email to be used for user and company accounts
-        if (
-            (type === 'company' && !(await Company.login(email, password))) ||
-            (type === 'user' && !(await User.login(email, password)))
-        ) {
+        if (!(await Company.login(email, password)) && !(await User.login(email, password))) {
             setData({ error: "Invalid username or password.", ...data });
             ++requestCount;
         } else {

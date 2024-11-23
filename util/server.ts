@@ -703,8 +703,9 @@ export class User {
     }
 }
 
-export function get() {
-    const { type } = useParams();
-    const get = type === 'companies' ? Company.get : User.get;
-    return get();
+export async function get(): Promise<CompanyInstance | UserInstance> {
+    const result: CompanyInstance = await Company.get();
+    if (result)
+        return result;
+    return await User.get();
 }
