@@ -2,11 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaInstagram, FaQuoteLeft } from "react-icons/fa";
-import { FaListCheck } from "react-icons/fa6";
-import { FaMoneyCheckDollar } from "react-icons/fa6";
-import { BiSolidReport } from "react-icons/bi";
-import { BsPersonWorkspace } from "react-icons/bs";
+import { motion } from "framer-motion";
+import { FaInstagram } from "react-icons/fa";
 
 const PurpleCirclesBackground = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -21,511 +18,529 @@ const PurpleCirclesBackground = () => {
   }, []);
 
   const circlePositions = [
-    { x: "20%", y: "40%", scrollSpeed: 0.1 },
-    { x: "80%", y: "70%", scrollSpeed: 0.1 },
-    { x: "50%", y: "100%", scrollSpeed: 0.1 },
+    { x: "0%", y: "10vh", scrollSpeed: -0.3, size: "500px" },
+    { x: "75%", y: "30vh", scrollSpeed: -0.3, size: "500px" },
+    { x: "-25%", y: "80vh", scrollSpeed: -0.3, size: "500px" },
+    { x: "-5%", y: "180vh", scrollSpeed: -0.3, size: "500px" },
+    { x: "85%", y: "90vh", scrollSpeed: -0.3, size: "450px" },
+    { x: "40%", y: "150vh", scrollSpeed: -0.3, size: "400px" },
+    { x: "10%", y: "240vh", scrollSpeed: -0.3, size: "350px" },
+    { x: "65%", y: "250vh", scrollSpeed: -0.3, size: "550px" },
+    { x: "-15%", y: "300vh", scrollSpeed: -0.3, size: "320px" },
+    { x: "55%", y: "350vh", scrollSpeed: -0.3, size: "470px" },
+    { x: "30%", y: "400vh", scrollSpeed: -0.3, size: "380px" },
+    { x: "5%", y: "450vh", scrollSpeed: -0.3, size: "270px" },
+    { x: "70%", y: "500vh", scrollSpeed: -0.3, size: "420px" },
+    { x: "50%", y: "220vh", scrollSpeed: -0.3, size: "340px" },
+    { x: "90%", y: "280vh", scrollSpeed: -0.3, size: "310px" },
+    { x: "15%", y: "330vh", scrollSpeed: -0.3, size: "400px" },
+    { x: "80%", y: "410vh", scrollSpeed: -0.3, size: "440px" },
+    { x: "35%", y: "470vh", scrollSpeed: -0.3, size: "200px" },
   ];
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
+    <div className="absolute w-full min-h-screen inset-0 overflow-hidden pointer-events-none z-[-1]">
       {circlePositions.map((pos, index) => (
-        <div
+        <motion.div
           key={index}
-          className="absolute rounded-full"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: index * 0.2 }}
+          className="absolute blur-lg"
           style={{
             left: pos.x,
-            top: `calc(${pos.y} + ${scrollY * pos.scrollSpeed}px)`,
-            width: "400px",
-            height: "400px",
-            background:
-              "radial-gradient(circle, rgba(73, 36, 125, 0.4) 10%, rgba(255, 255, 255, 0) 70%)",
+            top: `calc(${pos.y} - ${scrollY * Math.abs(pos.scrollSpeed)}px)`,
+            width: pos.size,
+            height: pos.size,
+            background: `radial-gradient(
+              circle,
+              rgba(73, 36, 125, ${index === 2 ? 0.5 : 0.4}) 10%,
+              rgba(73, 36, 125, 0.1) 45%,
+              rgba(255, 255, 255, 0) 70%
+            )`,
             transform: "translate(-50%, -50%)",
             willChange: "transform, top",
+            overflow: "hidden",
           }}
         />
       ))}
+      <div
+        className="absolute bottom-0 left-0 w-full h-64 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)",
+        }}
+      />
     </div>
   );
 };
 
+const fadeInUpVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6 },
+  },
+};
+
+const staggerChildrenVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeInOut" },
+  },
+};
+
 export default function LandingPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="font-poppins h-full flex flex-col px-6 lg:px-20">
-      {/* Background */}
+    <div className="relative font-poppins h-full flex flex-col px-6 lg:px-20">
       <PurpleCirclesBackground />
 
       {/* Navbar */}
-      <div className="flex justify-between items-center px-6 lg:px-20 pb-4 pt-6 backdrop-blur-md fixed top-0 left-0 w-full z-50 shadow-md">
-        {/* Logo Section */}
-        <div className="text-logo-purple flex-shrink-0">
+      <motion.div
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-between items-center px-6 lg:px-20 pb-4 pt-6 backdrop-blur-md bg-off-white/30 fixed top-0 left-0 w-full z-50 shadow-md"
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-logo-purple flex-shrink-0"
+        >
           <img
             className="w-28 md:w-32 lg:w-36"
             src="/name.png"
             alt="Company Logo"
           />
-        </div>
+        </motion.div>
 
-        {/* Navigation Links */}
-        <div className="flex space-x-6 md:space-x-10 font-semibold text-logo-purple text-sm md:text-base">
-          <Link
-            href="/login"
-            className="group relative transition-all duration-500"
-          >
-            Log In
-            <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-1 rounded-xl bg-logo-purple absolute left-0 bottom-0"></span>
-          </Link>
-          <Link
-            href="/signup"
-            className="group relative transition-all duration-500"
-          >
-            Sign Up
-            <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-1 rounded-xl bg-logo-purple absolute left-0 bottom-0"></span>
-          </Link>
-        </div>
-      </div>
+        <motion.div
+          variants={staggerChildrenVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex space-x-6 md:space-x-10 font-semibold text-logo-purple text-sm md:text-base"
+        >
+          {["Log In", "Sign Up"].map((text, index) => (
+            <motion.div key={text} variants={fadeInUpVariants}>
+              <Link
+                href={text === "Log In" ? "/login" : "/signup"}
+                className="group relative transition-all duration-500"
+              >
+                {text}
+                <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-1 rounded-xl bg-logo-purple absolute left-0 bottom-0"></span>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
 
       {/* Landing Content */}
-      <div className="flex flex-col pt-10 h-full">
+      <motion.div
+        className="flex flex-col pt-2 h-full z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
         <div className="flex flex-col items-center justify-start pt-6">
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="md:text-6xl text-3xl font-bold text-logo-purple">
-              <button className="px-3 py-1 mt-10 mb-10 text-logo-purple text-sm font-medium rounded-xl border-black border-2 bg-gray-950/10 hover:bg-gray-950/30 hover:scale-105 transition-all duration-300">
-                Schedule a Call!
-              </button>
-              <div className="flex flex-row">
-                <div className="md:text-6xl text-3xl font-semibold text-logo-purple pt-10">
-                  <span>Automate Your Complete</span>
+          <motion.div
+            className="flex flex-col items-center text-center space-y-6"
+            variants={staggerChildrenVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div
+              variants={fadeInUpVariants}
+              className="md:text-6xl text-3xl font-bold text-logo-purple"
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="px-3 py-1 mt-28 text-logo-purple text-xs font-medium rounded-full border-black border-2 bg-gray-950/5 text-center max-w-40 mx-auto"
+              >
+                Supercharged with AI
+              </motion.div>
+              <motion.div variants={fadeInUpVariants} className="flex flex-row">
+                <div className="md:text-6xl text-3xl font-semibold text-logo-purple pt-8">
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1 }}
+                  >
+                    Automate Your Complete
+                  </motion.span>
                   <br />
-                  <span className="text-purple-900">Gig Workflow.</span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1.2 }}
+                    className="text-purple-900"
+                  >
+                    Gig Workflow.
+                  </motion.span>
                 </div>
-              </div>
-            </div>
-            <div className="flex md:text-xl text-md font-normal text-logo-purple/70">
-              Kinetik manages the end-to-end tech gig process.
-            </div>
-          </div>
-          <div className="flex flex-col items-center mt-20 space-y-20">
+              </motion.div>
+            </motion.div>
+            <motion.div
+              variants={fadeInUpVariants}
+              className="flex md:text-xl text-md font-normal text-logo-purple/70"
+            >
+              Kinetik manages the end-to-end technical gig process.
+            </motion.div>
+          </motion.div>
+
+          {/* Buttons */}
+          <motion.div
+            className="flex justify-center space-x-6 mt-24"
+            variants={staggerChildrenVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {[
+              {
+                text: "Chat With Us",
+                href: "https://calendly.com/kinetikgigs/chat-with-kinetik",
+                className:
+                  "px-4 py-2 text-white font-medium rounded-md bg-purple-900 hover:scale-105 transition-transform",
+              },
+              {
+                text: "Join the Waitlist",
+                className:
+                  "px-4 py-2 text-logo-purple font-medium border-2 border-logo-purple rounded-md hover:scale-105 transition-transform",
+              },
+            ].map((button, index) => (
+              <motion.a
+                key={button.text}
+                href={button.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={button.className}
+                variants={fadeInUpVariants}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {button.text}
+              </motion.a>
+            ))}
+          </motion.div>
+
+          {/* Backed By Section */}
+          <motion.div
+            className="flex flex-col items-center space-y-2 mt-28"
+            variants={fadeInUpVariants}
+          >
+            <motion.div
+              className="md:text-lg text-md font-medium text-logo-purple"
+              variants={fadeInUpVariants}
+            >
+              Backed By
+            </motion.div>
+            <motion.div
+              className="flex space-x-8"
+              variants={staggerChildrenVariants}
+            >
+              {["met-logo.png", "aieb-logo.png", "msft-logo.png"].map(
+                (logo, index) => (
+                  <motion.img
+                    key={logo}
+                    src={`/${logo}`}
+                    alt={`Company Logo ${index + 1}`}
+                    className="h-12 md:h-16 object-contain"
+                    variants={fadeInUpVariants}
+                    whileHover={{ scale: 1.1 }}
+                  />
+                )
+              )}
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple text-3xl mt-52 font-semibold text-center"
+          >
+            Ship At Lightning Speeds
+          </motion.div>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple/80 mb-10 text-xl font-light text-center"
+          >
+            Operate more efficiently, and focus on your business operations
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col items-center space-y-20"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerChildrenVariants}
+          >
             {/* Stats Section */}
-            <div className="flex flex-col items-center space-y-8">
+            <motion.div
+              className="flex flex-col items-center space-y-8"
+              variants={fadeInUpVariants}
+            >
               <div className="flex justify-center space-x-16">
-                {/* Stat 1 */}
-                <div className="flex flex-col items-center text-logo-purple">
-                  <div className="text-2xl md:text-3xl font-semibold">10x</div>
-                  <div className="text-sm md:text-md text-logo-purple/70">
-                    Faster Development
-                  </div>
-                </div>
-                {/* Stat 2 */}
-                <div className="flex flex-col items-center text-logo-purple">
-                  <div className="text-2xl md:text-3xl font-semibold">100%</div>
-                  <div className="text-sm md:text-md text-logo-purple/70">
-                    Satisfaction Guarantee
-                  </div>
-                </div>
-                {/* Stat 3 */}
-                <div className="flex flex-col items-center text-logo-purple">
-                  <div className="text-2xl md:text-3xl font-semibold">500+</div>
-                  <div className="text-sm md:text-md text-logo-purple/70">
-                    Hours Saved
-                  </div>
-                </div>
+                {[
+                  { value: "500+", label: "Hours of Tech Dev Saved" },
+                  { value: "50x", label: "Faster Development" },
+                  { value: "100%", label: "Satisfaction Guarantee" },
+                ].map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex flex-col items-center text-logo-purple"
+                    variants={fadeInUpVariants}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <div className="text-3xl md:text-4xl font-semibold">
+                      {stat.value}
+                    </div>
+                    <div className="text-md md:text-lg text-logo-purple/70">
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
-
-            {/* Trusted By Section */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="md:text-lg text-md font-medium text-logo-purple">
-                Trusted By
-              </div>
-              <div className="flex space-x-8">
-                {/* Replace with actual logo images */}
-                <img
-                  src="/met-logo.png"
-                  alt="Company Logo 1"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/hp-logo.png"
-                  alt="Company Logo 2"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/nasa-logo.png"
-                  alt="Company Logo 3"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/un-logo.png"
-                  alt="Company Logo 4"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/empowermx-logo.png"
-                  alt="Company Logo 5"
-                  className="h-12 md:h-16 object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Created By Section */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="md:text-lg text-md font-medium text-logo-purple">
-                Created by Engineers From
-              </div>
-              <div className="flex space-x-8">
-                {/* Replace with actual logo images */}
-                <img
-                  src="/met-logo.png"
-                  alt="Company Logo 1"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/hp-logo.png"
-                  alt="Company Logo 2"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/nasa-logo.png"
-                  alt="Company Logo 3"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/un-logo.png"
-                  alt="Company Logo 4"
-                  className="h-12 md:h-16 object-contain"
-                />
-                <img
-                  src="/empowermx-logo.png"
-                  alt="Company Logo 5"
-                  className="h-12 md:h-16 object-contain"
-                />
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
-        {/* Guarantee Section */}
-        <div className="flex flex-col w-full pb-20 pt-14 px-8">
-          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-            Kinetik's Guarantee.
-          </div>
-          <div className="flex text-gray-500 font-normal sm:text-lg text-md text-center justify-center mb-8 mx-8">
-            Quality, high-value, affordable MVPs for your engineering, business,
-            and design ideas.
-          </div>
-          <div className="flex justify-center">
-            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mb-14"></div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-center space-y-6 lg:space-y-0 lg:space-x-10 px-4 w-full max-w-6xl mx-auto">
-            <div className="flex flex-col bg-white p-6 md:p-8 text-logo-purple rounded-xl shadow-md flex-1">
-              <div className="text-lg sm:text-xl font-semibold mb-6 sm:mb-8 text-center">
-                Efficient execution
-              </div>
-              <div className="flex justify-center mb-6 sm:mb-8 items-baseline">
-                <span className="font-normal text-3xl sm:text-4xl md:text-5xl">
-                  {"< "} 4
-                </span>
-                <span className="text-sm md:text-md ml-2">days</span>
-              </div>
-              <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
-                We will bring you multiple iterations in less than 4 days.
-              </div>
+        {/* Main Intro */}
+        <div className="mt-52 w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple text-3xl font-semibold text-center"
+          >
+            Optimize Your Technical Dev
+          </motion.div>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple/80 mb-10 text-xl font-light text-center"
+          >
+            Forget the hassle of technical development, leave it to us
+          </motion.div>
+
+          {/* Cards Container */}
+          <div className="flex justify-center items-center gap-x-10 w-full max-w-5xl mx-auto px-4">
+            {/* Card 1 */}
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative w-2xl"
+              >
+                {/* Step Badge */}
+                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
+                  Step 1
+                </div>
+
+                {/* Image Section */}
+                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
+                  <img
+                    src="/crowdsource.png"
+                    alt="Kinetik's AI Challenge"
+                    className="object-cover h-full"
+                  />
+                </div>
+
+                {/* Text Section */}
+                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
+                  <div className="text-logo-purple text-xl font-semibold mb-2">
+                    Crowdsourced Hiring
+                  </div>
+                  <p className="text-logo-purple/80 text-sm">
+                    Collect numerous MVP iterations and find top talent by
+                    hosting company-related challenges on our platform.
+                  </p>
+                </div>
+              </motion.div>
             </div>
-            <div className="flex flex-col bg-white p-6 md:p-8 text-logo-purple rounded-xl shadow-md flex-1">
-              <div className="text-lg sm:text-xl font-semibold mb-6 sm:mb-8 text-center">
-                Quality development
-              </div>
-              <div className="flex justify-center mb-6 sm:mb-8 items-baseline">
-                <span className="font-normal text-3xl sm:text-4xl md:text-5xl">
-                  100%
-                </span>
-                <span className="text-sm md:text-md ml-2">satisfaction</span>
-              </div>
-              <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
-                We have the highest standards. We prioritize our client's
-                happiness. Dont like the submissions. No need to pay!
-              </div>
-            </div>
-            <div className="flex flex-col bg-white p-6 md:p-8 text-logo-purple rounded-xl shadow-md flex-1">
-              <div className="text-lg sm:text-xl font-semibold mb-6 sm:mb-8 text-center">
-                Best-in-class
-              </div>
-              <div className="flex justify-center mb-6 sm:mb-8 items-baseline">
-                <span className="font-normal text-3xl sm:text-4xl md:text-5xl">
-                  1000+
-                </span>
-                <span className="text-sm md:text-md ml-2">developers</span>
-              </div>
-              <div className="font-normal text-sm sm:text-md text-gray-400 text-center">
-                We have the most skilled developers from Ivy League + T20
-                universities in our network.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col w-full pb-16 pt-14">
-          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-            Just 4 Steps.
-          </div>
-          <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-            Minimal to no work from your side.
-          </div>
-          <div className="flex justify-center">
-            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-center items-center w-full space-y-16 lg:space-y-0 lg:space-x-8 px-4">
-            <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                1
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center">
-                <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                  List Your Needs
+            {/* Card 2 */}
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative"
+              >
+                {/* Step Badge */}
+                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
+                  Step 2
                 </div>
-                <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                  Specify what technologies you want and what kind of product
-                  you are looking to build.
+
+                {/* Image Section */}
+                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
+                  <img
+                    src=""
+                    alt="Kinetik's AI Challenge"
+                    className="object-cover h-full"
+                  />
                 </div>
-                <div className="mt-6 sm:mt-8">
-                  <FaListCheck className="fill-logo-purple/85 text-4xl sm:text-6xl" />
+
+                {/* Text Section */}
+                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
+                  <div className="text-logo-purple text-xl font-semibold mb-2">
+                    Gig Development
+                  </div>
+                  <p className="text-logo-purple/80 text-sm">
+                    Employ our suite of AI-powered tools to manage your gig and
+                    see your product come to fruition.
+                  </p>
                 </div>
-              </div>
-            </div>
-            <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                2
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center">
-                <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                  Select Your Incentives
-                </div>
-                <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                  Specify how much money you want to allocate to complete the
-                  gig.
-                </div>
-                <div className="mt-6 sm:mt-8">
-                  <FaMoneyCheckDollar className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                </div>
-              </div>
-            </div>
-            <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                3
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center">
-                <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                  Host Your Challenge
-                </div>
-                <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                  That's it! Now, just wait for our comprehensive report on the
-                  submissions!
-                </div>
-                <div className="mt-6 sm:mt-8">
-                  <BiSolidReport className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                </div>
-              </div>
-            </div>
-            <div className="relative flex flex-col justify-between w-full max-w-xs bg-off-white rounded-xl shadow-md p-4 sm:p-6 min-h-64 sm:min-h-72">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-8 sm:h-8 bg-logo-purple/90 text-white rounded-full flex items-center justify-center text-sm sm:text-base">
-                4
-              </div>
-              <div className="flex-grow flex flex-col items-center justify-center">
-                <div className="text-xl sm:text-2xl font-medium text-logo-purple text-center">
-                  Choose your MVP
-                </div>
-                <div className="text-sm sm:text-md mt-3 sm:mt-4 text-gray-500 text-center px-2 sm:px-4">
-                  Of all submissions select the best one for your needs. Proceed
-                  with the developers by offering a gig.
-                </div>
-                <div className="mt-6 sm:mt-8">
-                  <BsPersonWorkspace className="fill-logo-purple/85 text-4xl sm:text-6xl" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-row justify-center w-full mt-20 pl-4 pr-4">
-            <div className="flex text-logo-purple bg-logo-purple/60 rounded-2xl p-1 max-w-4xl">
-              <img className="rounded-xl" src="/altora-challenge.png" />
+              </motion.div>
             </div>
           </div>
         </div>
-        <div className="flex flex-col w-full pb-16 pt-14">
-          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-            Vast Product Scope.
-          </div>
-          <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-            Everything. Here are some examples of what we have worked with.
-          </div>
-          <div className="flex justify-center">
-            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-          </div>
-          <div className="flex flex-col xl:flex-row justify-center items-center space-y-16 xl:space-y-0 xl:space-x-16 px-4">
-            <div className="flex flex-col items-center">
-              <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                Technical Projects
-              </div>
-              <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
-                <div className="flex justify-center mb-5">
-                  <img className="w-20" src="/aws-logo.webp" />
+
+        {/* Main Intro */}
+        <div className="mt-52 w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple text-3xl mb-10 font-semibold text-left"
+          >
+            How Kinetik Works
+          </motion.div>
+
+          {/* Cards Container */}
+          <div className="flex justify-center items-center gap-x-10 w-full max-w-5xl mx-auto px-4">
+            {/* Card 1 */}
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative w-2xl"
+              >
+                {/* Step Badge */}
+                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
+                  Step 1
                 </div>
-                <div className="flex justify-around">
-                  <img className="w-14" src="/react-logo.png" />
-                  <img className="w-14" src="/gpt-logo.png" />
+
+                {/* Image Section */}
+                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
+                  <img
+                    src="/crowdsource.png"
+                    alt="Kinetik's AI Challenge"
+                    className="object-cover h-full"
+                  />
                 </div>
-              </div>
-              <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                Mobile Apps, Web Apps, AI Agents, LLM Dev
-              </div>
+
+                {/* Text Section */}
+                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
+                  <div className="text-logo-purple text-xl font-semibold mb-2">
+                    Crowdsourced Hiring
+                  </div>
+                  <p className="text-logo-purple/80 text-sm">
+                    Collect numerous MVP iterations and find top talent by
+                    hosting company-related challenges on our platform.
+                  </p>
+                </div>
+              </motion.div>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                Business Projects
-              </div>
-              <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
-                <div className="flex justify-around mb-5">
-                  <img className="w-16" src="/excel-logo.png" />
-                  <img className="w-16" src="/powerbi-logo.png" />
+            {/* Card 2 */}
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative"
+              >
+                {/* Step Badge */}
+                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
+                  Step 2
                 </div>
-                <div className="flex justify-center">
-                  <img className="w-20" src="/powerpoint-logo.png" />
+
+                {/* Image Section */}
+                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
+                  <img
+                    src=""
+                    alt="Kinetik's AI Challenge"
+                    className="object-cover h-full"
+                  />
                 </div>
-              </div>
-              <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                Strategy Decks, Business Plans, Case Studies
-              </div>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="text-center font-normal text-logo-purple mb-3 text-lg">
-                Design Projects
-              </div>
-              <div className="flex flex-col w-full max-w-xs p-6 rounded-xl bg-white h-auto shadow-md">
-                <div className="flex justify-center mb-5">
-                  <img className="w-20" src="/figma-logo.webp" />
+
+                {/* Text Section */}
+                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
+                  <div className="text-logo-purple text-xl font-semibold mb-2">
+                    Gig Development
+                  </div>
+                  <p className="text-logo-purple/80 text-sm">
+                    Employ our suite of AI-powered tools to manage your gig and
+                    see your product come to fruition.
+                  </p>
                 </div>
-                <div className="flex justify-around">
-                  <img className="w-14" src="/canva-logo.png" />
-                  <img className="w-14" src="/photoshop-logo.png" />
-                </div>
-              </div>
-              <div className="text-center font-light text-logo-purple mt-3 w-60 text-base">
-                Creative Designs, Logos, CX, Social Media Marketing
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col w-full pb-16 pt-14 bg-white">
-          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-            Unique Advantages.
-          </div>
-          <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-            Maximize your outcomes with Kinetik’s novel outlook.
-          </div>
-          <div className="flex justify-center">
-            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-16"></div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8 text-black">
-            <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
-              <div className="text-2xl font-medium mb-2 text-center">
-                Multiple Quality MVPs
-              </div>
-              <div className="text-center text-gray-700">
-                Get a variety of innovative solutions from top talent. Evaluate
-                multiple high-quality submissions to find the perfect fit for
-                your needs.
-              </div>
-            </div>
-            <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
-              <div className="text-2xl font-medium mb-2 text-center">
-                Hire Through Contests
-              </div>
-              <div className="text-center text-gray-700">
-                Meritocracy at its finest. Identify and hire the best developers
-                by assessing their real-world solutions and performance in
-                challenges.
-              </div>
-            </div>
-            <div className="flex flex-col justify-between p-6 w-full max-w-xs bg-off-white rounded-xl h-auto shadow-md">
-              <div className="text-2xl font-medium mb-2 text-center">
-                Variable Pricing
-              </div>
-              <div className="text-center text-gray-700">
-                Customize your prize pool based on the complexity and importance
-                of your challenge. Flexibility that aligns with your budget and
-                goals.
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
-        <div className="flex flex-col w-full pb-16 pt-14">
-          <div className="flex text-logo-purple font-medium sm:text-3xl text-2xl justify-center mb-2">
-            Impactful Track Record.
-          </div>
-          <div className="flex text-gray-500 font-normal sm:text-lg text-md justify-center mb-2 text-center">
-            See what others have to say about us.
-          </div>
-          <div className="flex justify-center">
-            <div className="h-1 w-6 md:w-9 rounded-xl bg-logo-purple mt-6 mb-20"></div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
-            <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
-              <div className="flex items-center mb-4">
-                <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
-              </div>
-              <div className="text-center text-gray-700 italic">
-                Kinetik helped us go from idea to MVP within days. Loved the
-                experience and highly recommend Kinetik for anyone trying to
-                build or hire quickly.
-              </div>
-              <div className="text-center mt-4">
-                <div className="font-semibold text-logo-purple">
-                  Benny Johnson
-                </div>
-                <div className="text-sm text-gray-500">
-                  Sonicbids & Advance Music Tech
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col justify-between p-6 lg:p-8 w-full max-w-lg lg:max-w-[36rem] bg-white rounded-xl shadow-md h-auto">
-              <div className="flex items-center mb-4">
-                <FaQuoteLeft className="text-logo-purple/30 text-4xl" />
-              </div>
-              <div className="text-center text-gray-700 italic">
-                Kinetik has been a game-changer for us. Fast, high-quality work
-                just the way we wanted. We've seen great success since using
-                this platform.
-              </div>
-              <div className="text-center mt-4">
-                <div className="font-semibold text-logo-purple">Anonymous</div>
-                <div className="text-sm text-gray-500">ChatSMB</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </motion.div>
 
       {/* Footer */}
-      <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
+      <motion.div
+        className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-logo-purple h-24 mt-20 border-t-2 border-logo-purple/30"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="flex flex-col items-start justify-center">
           <div className="pb-1">@2024 Kinetik Tech, LLC.</div>
           <div>All Rights Reserved.</div>
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="pb-2">Follow us at</div>
-          <div className="flex">
+          <motion.div className="flex" whileHover={{ scale: 1.1 }}>
             <a
               href="https://www.instagram.com/kinetikgigs/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaInstagram className="size-4 sm:size-6 text-off-white mx-2 hover:text-gray-300" />
+              <FaInstagram className="size-4 sm:size-6 text-logo-purple mx-2" />
             </a>
-          </div>
+          </motion.div>
         </div>
         <div className="flex flex-col items-end justify-center">
           <div className="pb-1">Contact us at</div>
           <div>info@kinetikgigs.com</div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
