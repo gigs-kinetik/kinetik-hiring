@@ -6,7 +6,6 @@ import { UserCircleIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EventsProvider } from "../../lib/eventsContext";
-import { auth } from "../../lib/firebaseConfig";
 import {
   Menu,
   MenuButton,
@@ -15,6 +14,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { FaInstagram } from "react-icons/fa";
+import { get, signout } from "../../util/server";
 
 export default function HomeLayout({ children }) {
   const [email, setEmail] = useState("");
@@ -22,13 +22,23 @@ export default function HomeLayout({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem("userEmail");
-    if (storedEmail) {
-      setLoggedIn(true);
-      setEmail(storedEmail);
-    } else {
-      router.push("/login");
+    // const storedEmail = sessionStorage.getItem("userEmail");
+    // if (storedEmail) {
+    //   setLoggedIn(true);
+    //   setEmail(storedEmail);
+    // } else {
+    //   router.push("/login");
+    // }
+
+    async function getInstance() {
+      const accountInstance = await get();
+      if (accountInstance) {
+        setLoggedIn(true);
+      } else {
+        router.push("/login");
+      }
     }
+    getInstance();
   }, [router]);
 
   if (!loggedIn) {
@@ -37,7 +47,7 @@ export default function HomeLayout({ children }) {
 
   const handleSignOut = () => {
     sessionStorage.clear();
-    auth.signOut();
+    signout();
     router.push("/");
   };
 

@@ -3,27 +3,14 @@
 import Link from "next/link";
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
-import { db } from "../../../lib/firebaseConfig";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
-import {
-  getDocs,
-  getDoc,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  doc,
-  query,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
+import { BasicSubmission, CompanyInstance, get, UserInstance } from "../../../util/server";
 
 export default function HomePage() {
   const events = useEvents();
-  const [submissionIds, setSubmissionIds] = useState([]);
+  const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [userType, setUserType] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deadline, setDeadline] = useState("");
@@ -32,78 +19,63 @@ export default function HomePage() {
   const [companyName, setCompanyName] = useState([]);
   const [longDescription, setLongDescription] = useState("");
   const [shortDescription, setShortDescription] = useState("");
-  const [cashAmount, setCashAmount] = useState("");
-  const [prizeList, setPrizeList] = useState("");
-  const [requiredSkills, setRequiredSkills] = useState("");
+  const [cashAmount, setCashAmount] = useState<number>(NaN);
+  const [prizes, setPrizes] = useState<number[]>([]);
+  const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const userEmail = sessionStorage.getItem("userEmail");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [user, setUser] = useState<UserInstance | CompanyInstance | null>(null);
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
 
-  useEffect(() => {
-    const type = sessionStorage.getItem("userType");
-    setUserType(type);
-  }, []);
+  // get().then(async user => {
+  //   setUser(user)
+  //   const company = user instanceof CompanyInstance;
+  //   if (!user)
+  //     return;
+
+  //   if (company) {
+  //     setChallenges(await user.getEvents());
+  //   } else {
+  //     setFilteredEvents(await user.queryEvents({
+  //       // insert query
+  //     }));
+  //     setSubmissions((await user.getSubmissions()) ?? []);
+  //   }
+
+  //   setLoading(false);
+  // });
 
   useEffect(() => {
+    console.log('EXECUTING USE EFFECT HOOK');
     const fetchData = async () => {
-      if (userType === "Company") {
-        const updatedChallenges = await fetchChallenges();
-        setChallenges(updatedChallenges);
-        setLoading(false);
-      } else if (userType === "Developer") {
-        const filteredEventsFromStorage = JSON.parse(
-          sessionStorage.getItem("filteredEvents") || "[]"
-        );
-        setFilteredEvents(filteredEventsFromStorage);
-        const ids = await fetchSubmissionIds();
-        setSubmissionIds(ids);
-        setLoading(false);
+      setUser(await get());
+      const company = user instanceof CompanyInstance;
+      if (!user)
+        return;
+
+      if (company) {
+        setChallenges(await user.getEvents());
+      } else {
+        setFilteredEvents(await user.queryEvents({
+          // insert query
+        }));
+        setSubmissions((await user.getSubmissions()) ?? []);
       }
+
+      setLoading(false);
     };
+
     fetchData();
-  }, [userType]);
+  }, [user]);
 
-  // random comment here
-  useEffect(() => {
-    sessionStorage.setItem("submissionIds", JSON.stringify(submissionIds));
-  }, [submissionIds]);
+  if (!user)
+    return null;
 
-  const fetchSubmissionIds = async () => {
-    const submissionsRef = collection(
-      db,
-      "User Information",
-      userEmail,
-      "Submissions"
-    );
-    const q = query(submissionsRef);
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.id);
-  };
-
-  const fetchChallenges = async () => {
-    const userDocRef = doc(db, "User Information", userEmail);
-    const userDocSnap = await getDoc(userDocRef);
-    const userData = userDocSnap.data();
-    setCompanyName(userData["Company Name"]);
-    const eventIds = userData["Events"];
-    if (!eventIds || eventIds.length === 0) {
-      return [];
-    }
-    const fetchedChallenges = [];
-    for (let eventId of eventIds) {
-      const eventDocRef = doc(db, "Events", eventId);
-      const eventDocSnap = await getDoc(eventDocRef);
-      fetchedChallenges.push(eventDocSnap.data());
-    }
-    return fetchedChallenges;
-  };
-
-  const handleApplyClick = (event) => {
-    sessionStorage.setItem("currentEvent", JSON.stringify(event));
+  const handleApplyClick = (eventId: number) => {
+    sessionStorage.setItem("currentEventId", JSON.stringify(eventId));
   };
 
   const handleSubmit = async (e) => {
@@ -115,98 +87,113 @@ export default function HomePage() {
     setIsSubmitting(true);
     const [hours, minutes] = deadlineTime.split(":");
     const combinedDateTime = new Date(deadline);
-    combinedDateTime.setHours(hours, minutes, 0, 0);
+    combinedDateTime.setHours(parseFloat(hours), parseFloat(minutes), 0, 0);
     const pstDateTime = new Date(
       combinedDateTime.toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
       })
     );
-    const prizes = prizeList.split(";").map((prize) => prize.trim());
-    if (prizes == "") {
-      prizes[0] = "$" + cashAmount + " Cash Prize";
+    if (prizes.length == 0) {
+      prizes.push(cashAmount);
     } else {
-      prizes.unshift("$" + cashAmount + " Cash Prize");
+      prizes.unshift(cashAmount);
     }
-    const skills = requiredSkills.split(";").map((skill) => skill.trim());
-    const userDocRef = doc(db, "User Information", userEmail);
-    const userDocSnap = await getDoc(userDocRef);
-    const numEvents = userDocSnap.data()["Num Events"] + 1;
-    await updateDoc(userDocRef, {
-      "Num Events": numEvents,
-    });
-    const eventId = `${userEmail}${numEvents}`;
-    const eventsCollectionRef = collection(db, "Events");
-    const newEventDocRef = doc(eventsCollectionRef, eventId);
-    await setDoc(newEventDocRef, {
-      InitPaid: "Pay",
-      FinalPaid: "Pay",
-      "Event ID": eventId,
-      Company: companyName,
-      Contact: userEmail,
-      Deadline: pstDateTime,
-      "Event Name": eventName,
-      "Long Description": longDescription,
-      "Short Description": shortDescription,
-      "Prize List": prizes,
-      "Required Skills": skills,
-      "Prize Amount": cashAmount,
-      "Report URL": "",
-    });
-    await updateDoc(userDocRef, {
-      Events: arrayUnion(eventId),
-    });
+    const skills = requiredSkills.map((skill) => skill.trim());
+    // const userDocRef = doc(db, "User Information", userEmail);
+    // const userDocSnap = await getDoc(userDocRef);
+    // const numEvents = userDocSnap.data()["Num Events"] + 1;
+    // await updateDoc(userDocRef, {
+    //   "Num Events": numEvents,
+    // });
+
+    // const eventId = `${userEmail}${numEvents}`;
+    // const eventsCollectionRef = collection(db, "Events");
+    // const newEventDocRef = doc(eventsCollectionRef, eventId);
+    if (user instanceof CompanyInstance) {
+      user.addEvent({
+        event_name: eventName,
+        short_description: shortDescription,
+        long_description: longDescription,
+        prize_list: prizes,
+        required_skills: skills,
+        prize: cashAmount,
+        end_time: pstDateTime,
+        payment_status: 0,
+      });
+      setChallenges(await user.getEvents());
+    }
+    // await setDoc(newEventDocRef, {
+    //   InitPaid: "Pay",
+    //   FinalPaid: "Pay",
+    //   "Event ID": eventId,
+    //   Company: companyName,
+    //   Contact: userEmail,
+    //   Deadline: pstDateTime,
+    //   "Event Name": eventName,
+    //   "Long Description": longDescription,
+    //   "Short Description": shortDescription,
+    //   "Prize List": prizes,
+    //   "Required Skills": skills,
+    //   "Prize Amount": cashAmount,
+    //   "Report URL": "",
+    // });
+    // await updateDoc(userDocRef, {
+    //   Events: arrayUnion(eventId),
+    // });
     setDeadline("");
     setDeadlineTime("");
     setEventName("");
     setLongDescription("");
     setShortDescription("");
-    setCashAmount("");
-    setPrizeList("");
-    setRequiredSkills("");
+    setCashAmount(NaN);
+    setPrizes([]);
+    setRequiredSkills([]);
     setIsModalOpen(false);
-    const updatedChallenges = await fetchChallenges();
-    setChallenges(updatedChallenges);
     setIsSubmitting(false);
   };
 
-  const handleDelete = async (eventId) => {
+  const handleDelete = async (eventId: number) => {
+    if (!(user instanceof CompanyInstance))
+      return;
+
     setIsDeleting(true);
-    const userEmail = sessionStorage.getItem("userEmail");
-    const eventDocRefInUserInfo = doc(
-      db,
-      "User Information",
-      userEmail,
-      "Events",
-      eventId
-    );
-    await deleteDoc(eventDocRefInUserInfo);
-    const eventDocRefInEventsCollection = doc(db, "Events", eventId);
-    await deleteDoc(eventDocRefInEventsCollection);
-    const userDocRef = doc(db, "User Information", userEmail);
-    await updateDoc(userDocRef, {
-      Events: arrayRemove(eventId),
-    });
-    const updatedChallenges = await fetchChallenges();
-    setChallenges(updatedChallenges);
+    // const userEmail = sessionStorage.getItem("userEmail");
+    // const eventDocRefInUserInfo = doc(
+    //   db,
+    //   "User Information",
+    //   userEmail,
+    //   "Events",
+    //   eventId
+    // );
+    // await deleteDoc(eventDocRefInUserInfo);
+    // const eventDocRefInEventsCollection = doc(db, "Events", eventId);
+    // await deleteDoc(eventDocRefInEventsCollection);
+    // const userDocRef = doc(db, "User Information", userEmail);
+    // await updateDoc(userDocRef, {
+    //   Events: arrayRemove(eventId),
+    // });
+
+    await user.deleteEvent(eventId)
+    setChallenges(await user.getEvents());
     setIsDeleting(false);
   };
 
-  const isApplied = (eventId) => {
-    return submissionIds.includes(eventId);
+  const isApplied = (eventId: number) => {
+    return submissions.filter(sub => sub.event_id === eventId).length > 0;
   };
 
-  const handlePay = async (eventId, prizeAmount, percentage) => {
-    if (percentage == 10) {
-      const userDocRef = doc(db, "Events", eventId);
-      await updateDoc(userDocRef, {
-        InitPaid: "Pending",
-      });
-    } else if (percentage == 90) {
-      const userDocRef = doc(db, "Events", eventId);
-      await updateDoc(userDocRef, {
-        FinalPaid: "Pending",
-      });
-    }
+  const handlePay = async (eventId: number, prizeAmount: number, percentage: number) => {
+    // if (percentage == 10) {
+    //   const userDocRef = doc(db, "Events", eventId);
+    //   await updateDoc(userDocRef, {
+    //     InitPaid: "Pending",
+    //   });
+    // } else if (percentage == 90) {
+    //   const userDocRef = doc(db, "Events", eventId);
+    //   await updateDoc(userDocRef, {
+    //     FinalPaid: "Pending",
+    //   });
+    // }
     try {
       const stripe = await stripePromise;
       const response = await fetch("/home/create-payment-intent", {
@@ -226,10 +213,23 @@ export default function HomePage() {
       }
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
+    } finally {
+      if (!(user instanceof CompanyInstance))
+        return;
+      if (percentage === 10)
+        await user.updateEvent({
+          event_id: eventId,
+          payment_status: 1,
+        })
+      else if (percentage === 90)
+        await user.updateEvent({
+          event_id: eventId,
+          payment_status: 2,
+        })
     }
   };
 
-  if (userType === "Developer" && !loading) {
+  if ((user instanceof UserInstance) && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
         <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
@@ -347,8 +347,8 @@ export default function HomePage() {
     );
   }
 
-  if (userType === "Company" && !loading) {
-    if (!challenges.empty) {
+  if ((user instanceof CompanyInstance) && !loading) {
+    if (challenges.length > 0) {
       return (
         <div className="flex flex-row max-w-full max-h-full">
           {isDeleting && (
@@ -716,7 +716,7 @@ export default function HomePage() {
                       <input
                         value={cashAmount}
                         placeholder="Enter just the number with no commas (ex: 5000)."
-                        onChange={(e) => setCashAmount(e.target.value)}
+                        onChange={(e) => setCashAmount(parseFloat(e.target.value))}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -727,7 +727,7 @@ export default function HomePage() {
                       <input
                         type="text"
                         value={requiredSkills}
-                        onChange={(e) => setRequiredSkills(e.target.value)}
+                        onChange={(e) => setRequiredSkills(e.target.value.split(';'))}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -736,8 +736,8 @@ export default function HomePage() {
                       Other Prizes/Incentives (semicolon-separated){" "}
                       <input
                         type="text"
-                        value={prizeList}
-                        onChange={(e) => setPrizeList(e.target.value)}
+                        value={prizes.map(prize => `$${prize} Case Prize`)}
+                        onChange={(e) => setPrizes(e.target.value.split(';').map(s => parseFloat(s.substring(1))))}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                       />
                     </label>

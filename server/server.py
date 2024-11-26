@@ -46,10 +46,10 @@ def master(table, operation):
             'register': companies.register, # post
             'login': companies.login, # put
             'machine-access': companies.machine_access, # put (never call explicitly as event handler response)
-            'events': companies.events, # put, post
+            'events': companies.events, # put, post, delete
             'submissions': companies.submissions, # put, delete
             'signout': companies.signout, # put
-            'companies': companies.companies # post
+            'companies': companies.companies, # post
         },
         'users': {
             'register': user.register, # post

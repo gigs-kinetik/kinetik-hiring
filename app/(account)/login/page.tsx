@@ -26,13 +26,17 @@ export default function LoginPage() {
         e.preventDefault();
         let requestCount = 0;
         // TODO: Implement differentiation between user and company login to allow the same email to be used for user and company accounts
-        if (!(await Company.login(email, password)) && !(await User.login(email, password))) {
+        if (await Company.login(email, password)) {
+            // sessionStorage.setItem('userType', 'Developer');
+            alert('Routing to home!');
+            router.push("/home");
+        } else if (await User.login(email, password)) {
+            // sessionStorage.setItem('userType', 'Company');
+            router.push("/home");
+        } else {
             setData({ error: "Invalid username or password.", ...data });
             ++requestCount;
-        } else {
-            console.log('hello from else');
-            router.push("/home");
-        }
+        } 
         // TODO: Implement user verification
 
         // if (user.emailVerified) {

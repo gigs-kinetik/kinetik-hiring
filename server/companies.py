@@ -180,13 +180,17 @@ def events(method: str, body: Any):
             id,
             
             (post?)
-            event_id?, // for updates
+            event_id?, // for updates or deletions
             event_name,
             start_time?,
             end_time?,
             short_description,
             long_description,
             prize,
+            prize_list,
+            required_skills?,
+            report_url?,
+            payment_status?,
         ]
     """
     
@@ -195,34 +199,47 @@ def events(method: str, body: Any):
         return 'invalid token', 400
     
     def put():
-        res = supabase.table('events').select(', '.join('*'.split())).eq('company_id', body.get('id')).execute()
+        res = None
+        if 'event_id' not in body:
+            res = supabase.table('events').select('*').eq('company_id', body.get('id')).execute()
+        else:
+            res = supabase.table('events').select('*').eq('company_id', body.get('id')).eq('event_id', body.get('event_id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
         return res.data, 200
         
     def post():
         res = supabase.table('events')
+        d = {}
+        for key in body:
+            if key != 'id' and key != 'access_code':
+                d[key] = body[key]
+        
         if body.get('event_id') is not None:
             res = res.upsert({
                 'event_id': body.get('event_id'),
-                **({'event_name': body.get('event_name')} if body.get('event_name') is not None else {}),
-                **({'start_time': body.get('start_time')} if body.get('start_time') is not None else {}),
-                **({'end_time': body.get('end_time')} if body.get('end_time') is not None else {}),
-                **({'short_description': body.get('short_description')} if body.get('short_description') is not None else {}),
-                **({'long_description': body.get('long_description')} if body.get('long_description') is not None else {}),
-                **({'prize': body.get('prize')} if body.get('prize') is not None else {}),
+                **d,
             }).execute()
         else:
+            req_keys = 'event_name, company_id, short_description, long_description, prize'.split(', ')
+            for key in req_keys:
+                if key in d:
+                    del d[key]
             res = res.insert({
                 'event_name': body.get('event_name'),
                 'company_id': body.get('id'),
-                **({'start_time': body.get('start_time')} if body.get('start_time') is not None else {}),
-                **({'end_time': body.get('end_time')} if body.get('end_time') is not None else {}),
                 'short_description': body.get('short_description'),
                 'long_description': body.get('long_description'),
                 'prize': body.get('prize'),
+                **d,
             }).execute()
             
+        if hasattr(res, 'code'):
+            return 'error', 501
+        return res.data[0], 200
+    
+    def delete():
+        res = supabase.table('events').delete().eq('event_id', body.get('event_id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
         return res.data[0], 200
@@ -231,6 +248,8 @@ def events(method: str, body: Any):
         return put()
     if method == 'POST':
         return post()
+    if method == 'DELETE':
+        return delete()
     return 'invalid method', 403
 
 def submissions(method: str, body: Any):
@@ -303,14 +322,13 @@ def companies(method: str, body: Any):
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    res = supabase.table('companies').update(
-        **({ 'first_name': body.get('first_name') } if body.get('first_name') is not None else {})
-        **({ 'last_name': body.get('last_name') } if body.get('last_name') is not None else {})
-        **({ 'company_name': body.get('company_name') } if body.get('company_name') is not None else {})
-        **({ 'hashed_password': sha256(apply_salt(body.get('password').strip(), salt).encode()).hexdigest(), 'salt': salt } if body.get('password') is not None else {})
-        **({ 'company_email': body.get('email') } if body.get('email') is not None else {})
-        **({ 'verified': body.get('verified') } if body.get('verified') is not None else {})
-    ).execute()
+    d = {}
+    for key in body:
+        if key != 'id' and key != 'access_code':
+            d[key] = body[key]
+    
+    res = supabase.table('companies').update(d).execute()
     if hasattr(res, 'code'):
         return 'error', 501
     return res.data, 200
+

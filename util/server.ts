@@ -4,11 +4,11 @@ import { useRouter, redirect, RedirectType, useParams } from 'next/navigation'
 const PORT = 8080;
 const SERVER_URL = `http://localhost:${PORT}`;
 
-type Json = {
-    [key: string]: boolean | string | number | Json;
+export type Json = {
+    [key: string]: boolean | string | number | Json | (boolean | string | number | Json)[];
 }
 
-type Gender = 'male' | 'female' | 'other' | 'undefined'
+export type Gender = 'male' | 'female' | 'other' | 'undefined'
 
 type Table = "companies" | "users";
 type Operation =
@@ -100,25 +100,54 @@ export class CompanyInstance {
         return json as BasicEvent[];
     }
 
+    public async getEvent(event_id: number): Promise<BasicEvent | null> {
+        const [res, json] = await cinter.put('events', { id: this.id, event_id });
+        if (res.status !== 200)
+            return null;
+        return json as BasicEvent;
+    }
+
+    public async deleteEvent(event: number | BasicEvent) {
+        if (typeof event === 'number') {
+            const [res, json] = await cinter.delete('events', { id: this.id, event_id: event })
+            if (res.status !== 200)
+                return null;
+            return json as BasicEvent;
+        }
+
+        const [res, json] = await cinter.delete('events', { id: this.id, event_id: event.event_id })
+        if (res.status !== 200)
+            return null;
+        return json as BasicEvent;
+    }
+
     /**
      * Adds an event to a company, returns the event added, null on request fail
      * @param companyId 
      * @param param1 
      * @returns 
      */
-    public async addEvent({ event_name, start_time, end_time, short_description, long_description, prize }: {
+    public async addEvent({ event_name, start_time, end_time, short_description, long_description, prize, prize_list, report_url, required_skills, payment_status }: {
         event_name: string,
         start_time?: Date,
         end_time?: Date,
         short_description: string,
         long_description: string,
         prize: number,
+        prize_list?: number[],
+        report_url?: string,
+        required_skills?: string[],
+        payment_status?: number,
     }): Promise<BasicEvent | null> {
         const [res, json] = await cinter.post('events', {
             id: this.id, 
             event_name, 
             ...(start_time && { start_time: start_time.toUTCString() }),
             ...(end_time && { end_time: end_time.toUTCString() }), 
+            ...(required_skills && { required_skills: required_skills }), 
+            ...(prize_list && { prize_list: prize_list }), 
+            ...(report_url && { report_url: report_url }), 
+            ...(payment_status && { payment_status: payment_status }), 
             short_description, long_description, prize
         });
         if (res.status !== 200)
@@ -140,6 +169,10 @@ export class CompanyInstance {
         short_description?: string,
         long_description?: string,
         prize?: number,
+        prize_list?: number[],
+        report_url?: string,
+        required_skills?: string[],
+        payment_status: number,
     }): Promise<BasicEvent | null> {
         let data: Json = {};
         for (const option in options)
@@ -221,6 +254,7 @@ type BasicUser = {
     country_of_citizenship: string
     location: string
     skills: string[]
+    num_events: number
 }
 
 export class UserInstance {
@@ -234,6 +268,7 @@ export class UserInstance {
     private _country_of_citizenship: string
     private _location: string
     private _skills: string[]
+    private _num_events: number
 
     constructor(user: BasicUser) {
         this._access_code = user.access_code;
@@ -246,6 +281,7 @@ export class UserInstance {
         this._country_of_citizenship = user.country_of_citizenship;
         this._location = user.location;
         this._skills = user.skills;
+        this._num_events = user.num_events;
     }
 
     get accessCode() { return this._access_code; }
@@ -258,6 +294,7 @@ export class UserInstance {
     get countryOfCitizenship() { return this._country_of_citizenship; }
     get location() { return this._location; }
     get skills() { return this._skills; }
+    get numEvents() { return this._num_events; }
 
     /**
      * Query events based on a set of search parameters, null on request fail
@@ -365,7 +402,8 @@ export class UserInstance {
         gender?: Gender,
         country_of_citizenship?: string,
         location?: string,
-        skills?: string[]
+        skills?: string[],
+        num_events?: number,
     }): Promise<UserInstance | null> {
         const obj = {};
         for (const key in data)
@@ -389,7 +427,7 @@ export class UserInstance {
     }
 }
 
-type BasicEvent = {
+export type BasicEvent = {
     company_id: 11,
     created_at: Date,
     start_time: Date,
@@ -401,9 +439,12 @@ type BasicEvent = {
     payment_status: 0 | 1 | 2,
     prize: number,
     submissions: number,
+    prize_list: number[],
+    required_skills: string[],
+    report_url: string,
 }
 
-type BasicSubmission = {
+export type BasicSubmission = {
     additional_links: { [key: string]: string } | null,
     event_id: number,
     project_description: string,
@@ -734,4 +775,8 @@ export async function get(): Promise<CompanyInstance | UserInstance> {
     if (result)
         return result;
     return await User.get();
+}
+
+export async function signout(): Promise<boolean> {
+    return Company.signoutFromDevice() || User.signOutOfDevice();
 }
