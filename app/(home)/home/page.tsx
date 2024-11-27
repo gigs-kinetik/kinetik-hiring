@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 import { useEvents } from "../../../lib/eventsContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
-import { BasicSubmission, CompanyInstance, get, UserInstance } from "../../../util/server";
+import { BasicEvent, BasicSubmission, Company, CompanyInstance, get, UserInstance } from "../../../util/server";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const events = useEvents();
+  // const events = useEvents();
+  const router = useRouter()
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [challenges, setChallenges] = useState([]);
+  const [challenges, setChallenges] = useState<BasicEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [deadline, setDeadline] = useState("");
   const [deadlineTime, setDeadlineTime] = useState("");
   const [eventName, setEventName] = useState("");
-  const [companyName, setCompanyName] = useState([]);
   const [longDescription, setLongDescription] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [cashAmount, setCashAmount] = useState<number>(NaN);
@@ -26,30 +27,12 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [user, setUser] = useState<UserInstance | CompanyInstance | null>(null);
+  const [events, setEvents] = useState<BasicEvent[]>([])
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
 
-  // get().then(async user => {
-  //   setUser(user)
-  //   const company = user instanceof CompanyInstance;
-  //   if (!user)
-  //     return;
-
-  //   if (company) {
-  //     setChallenges(await user.getEvents());
-  //   } else {
-  //     setFilteredEvents(await user.queryEvents({
-  //       // insert query
-  //     }));
-  //     setSubmissions((await user.getSubmissions()) ?? []);
-  //   }
-
-  //   setLoading(false);
-  // });
-
   useEffect(() => {
-    console.log('EXECUTING USE EFFECT HOOK');
     const fetchData = async () => {
       setUser(await get());
       const company = user instanceof CompanyInstance;
@@ -58,25 +41,25 @@ export default function HomePage() {
 
       if (company) {
         setChallenges(await user.getEvents());
+        setEvents(await user.getEvents());
       } else {
         setFilteredEvents(await user.queryEvents({
           // insert query
         }));
         setSubmissions((await user.getSubmissions()) ?? []);
+        setEvents(await user.getSubmissionEvents());
       }
 
       setLoading(false);
     };
 
     fetchData();
-  }, [user]);
+  }, []);
 
-  if (!user)
-    return null;
-
-  const handleApplyClick = (eventId: number) => {
-    sessionStorage.setItem("currentEventId", JSON.stringify(eventId));
-  };
+  const handleApplyClick = useCallback((eventId: number) => {
+    // sessionStorage.setItem("currentEventId", JSON.stringify(eventId));
+    router.push(`/apply/${eventId}`)
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,9 +161,9 @@ export default function HomePage() {
     setIsDeleting(false);
   };
 
-  const isApplied = (eventId: number) => {
+  const isApplied = useCallback((eventId: number) => {
     return submissions.filter(sub => sub.event_id === eventId).length > 0;
-  };
+  }, [submissions])
 
   const handlePay = async (eventId: number, prizeAmount: number, percentage: number) => {
     // if (percentage == 10) {
@@ -229,6 +212,9 @@ export default function HomePage() {
     }
   };
 
+  if (!user)
+    return null;
+
   if ((user instanceof UserInstance) && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
@@ -241,96 +227,88 @@ export default function HomePage() {
           <div className="w-full mt-4 space-y-4">
             {events.map((event) => {
               console.log(filteredEvents, event);
-              if (filteredEvents.includes(event["Event ID"])) {
+              if (filteredEvents.includes(event.event_id)) {
                 if (
-                  event.InitPaid === "Approved" &&
-                  event["Deadline"] &&
-                  event["Deadline"]["_seconds"]
+                  event.payment_status > 0 &&
+                  event.end_time
                 ) {
-                  const eventDate = new Date(
-                    event["Deadline"]["_seconds"] * 1000
-                  );
+                  const eventDate = new Date(event.end_time.getMilliseconds());
                   if (eventDate > new Date()) {
                     return (
                       <div
-                        key={event["Event Name"]}
+                        key={event.event_name}
                         className="bg-white h-fit rounded-lg p-5"
                       >
                         <div className="flex flex-col">
                           <div className="flex flex-row justify-between">
                             <div className="flex flex-col">
                               <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                                {event["Prize List"] &&
-                                  event["Prize List"]
-                                    .slice(0, 3)
-                                    .map((prize, index) => (
-                                      <div
-                                        key={index}
-                                        className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
-                                      >
-                                        {prize}
-                                      </div>
-                                    ))}
+                                {event.prize_list
+                                  .slice(0, 3)
+                                  .map((prize, index) => (
+                                    <div
+                                      key={index}
+                                      className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
+                                    >
+                                      ${prize} Cash Prize
+                                    </div>
+                                  ))}
                               </div>
                               <div className="font-poppins text-xs md:text-sm text-gray-500">
                                 {event["Company"]}
                               </div>
                               <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                                {event["Event Name"]}
+                                {event.event_name}
                               </div>
                             </div>
                             <Link
                               href={`/apply/${encodeURIComponent(
-                                event["Event Name"]
+                                event.event_id
                               )}`}
                               className="w-fit h-fit rounded-lg"
                             >
                               <button
                                 className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                                  isApplied(event["Event ID"])
+                                  isApplied(event.event_id)
                                     ? "bg-green-600/90 cursor-not-allowed"
                                     : "bg-logo-purple/85 hover:bg-logo-purple"
                                 }`}
                                 onClick={() =>
-                                  !isApplied(event["Event ID"]) &&
-                                  handleApplyClick(event)
+                                  !isApplied(event.event_id) &&
+                                  handleApplyClick(event.event_id)
                                 }
-                                disabled={isApplied(event["Event ID"])}
+                                disabled={isApplied(event.event_id)}
                               >
-                                {isApplied(event["Event ID"])
+                                {isApplied(event.event_id)
                                   ? "Applied"
                                   : "Apply"}
                               </button>
                             </Link>
                           </div>
                           <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                            {event["Short Description"] ||
+                            {event.short_description ||
                               "No description available"}
                           </div>
                           <div className="lg:flex hidden flex-row justify-between">
                             <div className="font-poppins text-sm text-gray-500">
                               Submit by{" "}
-                              {event["Deadline"] &&
-                                new Date(
-                                  event["Deadline"]["_seconds"] * 1000
-                                ).toLocaleTimeString("en-US", {
+                              {event.end_time &&
+                                new Date(event.end_time.getMilliseconds()).toLocaleTimeString("en-US", {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   timeZone: "America/Los_Angeles",
                                   timeZoneName: "short",
                                 })}{" "}
                               on{" "}
-                              {event["Deadline"] &&
-                                new Date(
-                                  event["Deadline"]["_seconds"] * 1000
-                                ).toLocaleDateString("en-US", {
+                              {event.end_time &&
+                                new Date(event.end_time.getMilliseconds()).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
                                 })}
                             </div>
                             <div className="font-poppins text-sm pr-2 text-gray-500">
-                              {event["Required Skills"]?.join(", ")}
+                              {event.required_skills.join(", ")}
                             </div>
                           </div>
                         </div>
@@ -384,111 +362,97 @@ export default function HomePage() {
             <div className="w-full mt-4 space-y-4">
               {challenges.map((event) => (
                 <div
-                  key={event["Event Name"]}
+                  key={event.event_name}
                   className="bg-white h-fit rounded-lg p-5"
                 >
                   <div className="flex flex-col">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 font-poppins">
                       <div className="flex flex-col w-full sm:w-auto">
                         <div className="flex flex-wrap gap-2 mb-2">
-                          {event["Prize List"] &&
-                            event["Prize List"]
-                              .slice(0, 3)
-                              .map((prize, index) => (
-                                <div
-                                  key={index}
-                                  className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
-                                >
-                                  {prize}
-                                </div>
-                              ))}
+                          {event.prize_list
+                            .slice(0, 3)
+                            .map((prize, index) => (
+                              <div
+                                key={index}
+                                className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
+                              >
+                                ${prize} Cash Prize
+                              </div>
+                            ))}
                         </div>
                         <div className="font-poppins text-xs text-gray-500">
                           {event["Company"]}
                         </div>
                         <div className="font-poppins text-lg font-semibold text-logo-purple">
-                          {event["Event Name"]}
+                          {event.event_name}
                         </div>
                       </div>
                       <div className="hidden sm:flex flex-wrap gap-2 w-full sm:w-auto">
                         <button
                           className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
-                            event.InitPaid === "Approved" ||
-                            event.InitPaid === "Completed"
+                            event.payment_status > 0
                               ? "bg-green-600/90 cursor-not-allowed"
-                              : event.InitPaid === "Pending"
+                              : event.payment_status < 0
                               ? "bg-orange-500/90"
                               : "bg-logo-purple/85 hover:bg-logo-purple"
                           }`}
                           onClick={() => {
-                            if (
-                              event.InitPaid === "Pay" ||
-                              event.InitPaid === "Pending"
-                            ) {
+                            if (event.payment_status === 0) {
                               handlePay(
-                                event["Event ID"],
+                                event.event_id,
                                 event["Prize Amount"],
                                 10
                               );
                             }
                           }}
                           disabled={
-                            event.InitPaid === "Approved" ||
-                            event.InitPaid === "Completed"
+                            event.payment_status > 0
                           }
                         >
-                          {event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
+                          {event.payment_status % 2 === 0
                             ? "Approved"
-                            : event.InitPaid === "Pending"
+                            : event.payment_status !== 0
                             ? "Pending"
                             : "Pay"}
                         </button>
                         <button
                           className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
-                            event.FinalPaid === "Completed" ||
-                            event.FinalPaid === "Approved"
+                            event.payment_status === 4
                               ? "bg-green-600/90 cursor-not-allowed"
-                              : event.FinalPaid === "Pending"
+                              : event.payment_status === 3
                               ? "bg-orange-500/90 hover:bg-orange-600"
-                              : (event.InitPaid === "Pay" ||
-                                  event.InitPaid === "Approved") &&
-                                event["Report URL"]
+                              : event.payment_status !== 1 && event.report_url
                               ? "bg-logo-purple/85 hover:bg-logo-purple"
                               : "cursor-not-allowed opacity-50 bg-gray-400"
                           }`}
                           onClick={() => {
                             if (
-                              (event.InitPaid === "Pay" ||
-                                event.InitPaid === "Approved") &&
-                              event["Report URL"] !== ""
+                              event.payment_status < 3 && event.payment_status % 2 === 0 && event.report_url
                             ) {
                               handlePay(
-                                event["Event ID"],
+                                event.event_id,
                                 event["Prize Amount"],
                                 90
                               );
                             }
                           }}
                           disabled={
-                            event.FinalPaid === "Completed" ||
-                            event.FinalPaid === "Approved" ||
-                            !event["Report URL"]
+                            event.payment_status === 4 ||
+                            !event.report_url
                           }
                         >
-                          {event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved"
+                          {event.payment_status === 4
                             ? "Completed"
-                            : event.FinalPaid === "Pending"
+                            : event.payment_status === 3
                             ? "Pending"
                             : "Disburse"}
                         </button>
                         <a
-                          href={event["Report URL"] || "#"}
+                          href={event.report_url || "#"}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => {
-                            if (!event["Report URL"]) {
+                            if (!event.report_url) {
                               e.preventDefault();
                               alert(
                                 "Report is not available yet. Please check 24 hours after the completion of the event."
@@ -496,7 +460,7 @@ export default function HomePage() {
                             }
                           }}
                           className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
-                            event["Report URL"]
+                            event.report_url
                               ? "bg-logo-purple/85 hover:bg-logo-purple"
                               : "cursor-not-allowed opacity-50 bg-gray-400"
                           }`}
@@ -504,7 +468,7 @@ export default function HomePage() {
                           See Report
                         </a>
                         <button
-                          onClick={() => handleDelete(event["Event ID"])}
+                          onClick={() => handleDelete(event.event_id)}
                           className="rounded-lg p-2 transition-colors duration-300"
                         >
                           <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
@@ -517,9 +481,8 @@ export default function HomePage() {
                     <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-500">
                       <div className="mb-2 sm:mb-0 font-poppins">
                         Deadline set for{" "}
-                        {event["Deadline"] &&
-                          event["Deadline"]
-                            .toDate()
+                        {event.end_time &&
+                          event.end_time
                             .toLocaleTimeString("en-US", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -527,9 +490,8 @@ export default function HomePage() {
                               timeZoneName: "short",
                             })}{" "}
                         on{" "}
-                        {event["Deadline"] &&
-                          event["Deadline"]
-                            .toDate()
+                        {event.end_time &&
+                          event.end_time
                             .toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "long",
@@ -543,82 +505,70 @@ export default function HomePage() {
                     <div className="flex sm:hidden flex-wrap gap-2 w-full mt-4">
                       <button
                         className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
+                          event.payment_status === 2
                             ? "bg-green-600/90 cursor-not-allowed"
-                            : event.InitPaid === "Pending"
+                            : event.payment_status === 1
                             ? "bg-orange-500/90"
                             : "bg-logo-purple/85 hover:bg-logo-purple"
                         }`}
                         onClick={() => {
                           if (
-                            event.InitPaid === "Pay" ||
-                            event.InitPaid === "Pending"
+                            event.payment_status <= 1
                           ) {
                             handlePay(
-                              event["Event ID"],
+                              event.event_id,
                               event["Prize Amount"],
                               10
                             );
                           }
                         }}
                         disabled={
-                          event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
+                          event.payment_status === 2
                         }
                       >
-                        {event.InitPaid === "Approved" ||
-                        event.InitPaid === "Completed"
+                        {event.payment_status === 2
                           ? "Approved"
-                          : event.InitPaid === "Pending"
+                          : event.payment_status === 1
                           ? "Pending"
                           : "Pay"}
                       </button>
                       <button
                         className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved"
+                          event.payment_status === 4
                             ? "bg-green-600/90 cursor-not-allowed"
-                            : event.FinalPaid === "Pending"
+                            : event.payment_status === 3
                             ? "bg-orange-500/90 hover:bg-orange-600"
-                            : (event.InitPaid === "Pay" ||
-                                event.InitPaid === "Approved") &&
-                              event["Report URL"]
+                            : (event.payment_status % 2 === 0 && event.payment_status < 3) && event.report_url
                             ? "bg-logo-purple/85 hover:bg-logo-purple"
                             : "cursor-not-allowed opacity-50 bg-gray-400"
                         }`}
                         onClick={() => {
                           if (
-                            (event.InitPaid === "Pay" ||
-                              event.InitPaid === "Approved") &&
-                            event["Report URL"] !== ""
+                            (event.payment_status % 2 === 0 && event.payment_status < 3) && event.report_url
                           ) {
                             handlePay(
-                              event["Event ID"],
+                              event.event_id,
                               event["Prize Amount"],
                               90
                             );
                           }
                         }}
                         disabled={
-                          event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved" ||
-                          !event["Report URL"]
+                          event.payment_status === 4 || !event.report_url
                         }
                       >
-                        {event.FinalPaid === "Completed" ||
-                        event.FinalPaid === "Approved"
+                        {event.payment_status === 4
                           ? "Completed"
-                          : event.FinalPaid === "Pending"
+                          : event.payment_status === 3
                           ? "Pending"
                           : "Disburse"}
                       </button>
                       <a
-                        href={event["Report URL"] || "#"}
+                        href={event.report_url || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => {
-                          if (!event["Report URL"]) {
+                          if (!event.report_url) {
                             e.preventDefault();
                             alert(
                               "Report is not available yet. Please check 24 hours after the completion of the event."
@@ -626,7 +576,7 @@ export default function HomePage() {
                           }
                         }}
                         className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow ${
-                          event["Report URL"]
+                          event.report_url
                             ? "bg-logo-purple/85 hover:bg-logo-purple"
                             : "cursor-not-allowed opacity-50 bg-gray-400"
                         }`}
@@ -634,7 +584,7 @@ export default function HomePage() {
                         See Report
                       </a>
                       <button
-                        onClick={() => handleDelete(event["Event ID"])}
+                        onClick={() => handleDelete(event.event_id)}
                         className="rounded-lg p-2 transition-colors duration-300 flex-grow"
                       >
                         <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500 mx-auto" />

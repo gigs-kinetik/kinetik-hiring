@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { ArrowUturnLeftIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { db } from "../../../../lib/firebaseConfig";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { useRouter, useParams } from "next/navigation";
+import { BasicEvent, BasicSubmission, Company, CompanyInstance, get, getEvent, UserInstance } from "../../../../util/server";
 
 export default function ApplyPage() {
   const router = useRouter();
+  const { event: eventId } = useParams()
   const [projectLink, setProjectLink] = useState("");
   const [resumeLink, setResumeLink] = useState("");
   const [videoLink, setVideoLink] = useState("");
@@ -16,28 +16,33 @@ export default function ApplyPage() {
   const [additionalLink2, setAdditionalLink2] = useState("");
   const [additionalLink3, setAdditionalLink3] = useState("");
   const [validationError, setValidationError] = useState("");
-  const [event, setEventInfo] = useState(null);
+  const [event, setEvent] = useState<BasicEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<CompanyInstance | UserInstance | null>(null)
 
   useEffect(() => {
-    const storedEvent = sessionStorage.getItem("currentEvent");
-    if (storedEvent) {
-      const eventInfo = JSON.parse(storedEvent);
-      setEventInfo(eventInfo);
-      const submissionIds = sessionStorage.getItem("submissionIds");
-      if (submissionIds.includes(eventInfo["Event ID"])) {
-        router.push("/home");
+    async function func() {
+      if (!user)
+        setUser(await get());
+      if (eventId && user && user instanceof UserInstance) {
+        const event = await getEvent(parseInt(eventId as string));
+        setEvent(event);
+        const submissions = await user.getSubmissions();
+        if (submissions.filter(sub => sub.event_id === event.event_id).length > 0) {
+          router.push("/home");
+        } else {
+          setLoading(false);
+        }
       } else {
         setLoading(false);
       }
-    } else {
-      setLoading(false);
     }
-  }, [router]);
+
+    func()
+  }, [router, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userEmail = sessionStorage.getItem("userEmail");
     if (!projectLink || !resumeLink || !videoLink) {
       setValidationError(
         "Project link, resume link, and video link are required."
@@ -48,35 +53,53 @@ export default function ApplyPage() {
     }
 
     try {
-      const userInfoRef = doc(db, "User Information", userEmail);
-      const submissionsRef = collection(userInfoRef, "Submissions");
-      const options = { timeZone: "America/Chicago", timeZoneName: "short" };
-      const currDate = new Date()
-        .toLocaleDateString("en-US", options)
-        .split(", ")[0];
-      const currTime = new Date().toLocaleTimeString("en-US", options);
-      await setDoc(doc(submissionsRef, event["Event ID"]), {
-        "Event Name": event["Event Name"],
-        "Submitted At": currDate + ", " + currTime,
-        "Project Link": projectLink,
-        "Resume Link": resumeLink,
-        "Video Link": videoLink,
-        "Other Links": [
-          additionalLink1,
-          additionalLink2,
-          additionalLink3,
-        ].filter((link) => link !== ""),
-      });
-      const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
-      const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
-      await setDoc(doc(submissionsRef2, userEmail), {});
+      // const userInfoRef = doc(db, "User Information", userEmail);
+      // const submissionsRef = collection(userInfoRef, "Submissions");
+      // const options: Intl.DateTimeFormatOptions = { timeZone: "America/Chicago", timeZoneName: "short" };
+      // const currDate = new Date()
+      //   .toLocaleDateString("en-US", options)
+      //   .split(", ")[0];
+      // const currTime = new Date().toLocaleTimeString("en-US", options);
+      // await setDoc(doc(submissionsRef, event["Event ID"]), {
+      //   "Event Name": event["Event Name"],
+      //   "Submitted At": currDate + ", " + currTime,
+      //   "Project Link": projectLink,
+      //   "Resume Link": resumeLink,
+      //   "Video Link": videoLink,
+      //   "Other Links": [
+      //     additionalLink1,
+      //     additionalLink2,
+      //     additionalLink3,
+      //   ].filter((link) => link !== ""),
+      // });
+      // const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
+      // const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
+      // await setDoc(doc(submissionsRef2, userEmail), {});
+
+      if (user instanceof UserInstance) {
+        await user.createSubmission({
+          event_id: event.event_id,
+          project_name: `${user.firstName} ${user.lastName}'s -> ${event.event_name}`,
+          project_description: `${user.firstName} ${user.lastName}'s -> ${event.event_name} -> Description`,
+          project_link: projectLink,
+          project_video_link: videoLink,
+          resume_link: resumeLink,
+          additional_links: [additionalLink1, additionalLink2, additionalLink3].filter(link => link.length > 0)
+        });
+      } else {
+        alert('You are not a user!');
+        throw new Error('Not a user');
+      }
+
       router.push("/home");
       alert("Submission successful!");
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error: ", error);
       alert("Submission failed.");
     }
   };
+
+  // alert((!event) as boolean)
 
   if (loading || !event) {
     return <div></div>;

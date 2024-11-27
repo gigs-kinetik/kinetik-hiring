@@ -1,3 +1,4 @@
+import { lockfilePatchPromise } from "next/dist/build/swc";
 import { getAccessCode, getDeviceId, setAccessCode } from "./device";
 import { useRouter, redirect, RedirectType, useParams } from 'next/navigation'
 
@@ -10,7 +11,7 @@ export type Json = {
 
 export type Gender = 'male' | 'female' | 'other' | 'undefined'
 
-type Table = "companies" | "users";
+type Table = "companies" | "users" | 'events';
 type Operation =
     | "register"
     | "login"
@@ -19,7 +20,9 @@ type Operation =
     | "submissions"
     | "signout"
     | 'companies'
-    | 'users';
+    | 'users'
+    | 'get'
+    | 'get-submissions';
 
 async function call(
     method: string,
@@ -53,7 +56,7 @@ function intermediate(table: Table) {
     };
 }
 
-const [cinter, uinter] = [intermediate('companies'), intermediate('users')]
+const [cinter, uinter, einter] = [intermediate('companies'), intermediate('users'), intermediate('events')]
 
 class BasicCompany {
     access_code: string;
@@ -339,6 +342,13 @@ export class UserInstance {
         return json as BasicSubmission[]
     }
 
+    public async getSubmissionEvents(): Promise<BasicEvent[] | null> {
+        const [res, json] = await einter.put('get-submissions', { id: this.id });
+        if (res.status !== 200)
+            return null;
+        return json as BasicEvent[];
+    }
+
     /**
      * Create a submission for an event, null on request fail
      * @param userId 
@@ -352,7 +362,7 @@ export class UserInstance {
         project_link: string,
         project_video_link?: string,
         resume_link?: string,
-        additional_links?: string,
+        additional_links?: string[],
     }): Promise<BasicSubmission | null> {
         let data: Json = {};
         for (const option in options)
@@ -436,7 +446,7 @@ export type BasicEvent = {
     event_name: string,
     short_description: string,
     long_description: string,
-    payment_status: 0 | 1 | 2,
+    payment_status: 0 | 1 | 2 | 3 | 4, // 0 = none, 1 = pending, 2 = init, 3 = pending, 4 = final
     prize: number,
     submissions: number,
     prize_list: number[],
@@ -466,10 +476,18 @@ export class Company {
      * @returns 
      */
     public static async register(name: string, first_name: string, last_name: string, email: string, password: string): Promise<CompanyInstance | null> {
+        localStorage.clear();
         const [res, json] = await cinter.post('register', { name, first_name, last_name, email, password })
         if (res.status !== 200)
             return null;
         return new CompanyInstance(json)
+    }
+
+    public static async getById(companyId: number): Promise<CompanyInstance | null> {
+        const [res, json] = await cinter.put('companies', { id: companyId });
+        if (res.status !== 200)
+            return null;
+        return new CompanyInstance(json);
     }
 
     /**
@@ -479,6 +497,7 @@ export class Company {
      * @returns 
      */
     public static async login(email: string, password: string): Promise<CompanyInstance | null> {
+        localStorage.clear();
         const [res, json] = await cinter.put('login', { email, password });
         if (res.status !== 200)
             return null;
@@ -615,6 +634,7 @@ export class User {
      * @returns 
      */
     public static async register(first_name: string, last_name: string, email: string, password: string): Promise<UserInstance | null> {
+        localStorage.clear();
         const [res, json] = await uinter.post('register', { first_name, last_name, email, password });
         if (res.status !== 200)
             return null;
@@ -628,6 +648,7 @@ export class User {
      * @returns 
      */
     public static async login(email: string, password: string): Promise<UserInstance | null> {
+        localStorage.clear();
         const [res, json] = await uinter.put('login', { email, password });
         if (res.status !== 200)
             return null;
@@ -770,7 +791,7 @@ export class User {
 /**
  * Gets the current instance (either user or company, use instanceof or something to check the type)
  */
-export async function get(): Promise<CompanyInstance | UserInstance> {
+export async function get(): Promise<CompanyInstance | UserInstance | null> {
     const result: CompanyInstance = await Company.get();
     if (result)
         return result;
@@ -779,4 +800,11 @@ export async function get(): Promise<CompanyInstance | UserInstance> {
 
 export async function signout(): Promise<boolean> {
     return Company.signoutFromDevice() || User.signOutOfDevice();
+}
+
+export async function getEvent(eventId: number): Promise<BasicEvent> {
+    const [res, json] = (await einter.put('get', { event_id: eventId }))
+    if (res.status !== 200)
+        return null;
+    return json as BasicEvent
 }

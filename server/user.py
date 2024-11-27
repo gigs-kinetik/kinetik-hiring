@@ -131,7 +131,9 @@ def login(method: str, body: Any):
         
     email, first_name, last_name = None, None, None
     for user in res.data:
-        if user['hashed_password'] != sha256(apply_salt(body.get('password'), res.data[0]['salt']).encode()).hexdigest():
+        print(body.get('password').strip())
+        print(user['hashed_password'], sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest())
+        if user['hashed_password'] != sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest():
             return 'invalid creds', 404
         email, first_name, last_name = user['user_email'], user['first_name'], user['last_name']
     
@@ -256,7 +258,7 @@ def submissions(method: str, body: Any):
         return 'invalid token', 400
     
     def put():
-        res = supabase.table('submissions').select(', '.join('*'.split())).eq('user_id', body.get('id'))
+        res = supabase.table('submissions').select(', '.join('*'.split())).eq('user_id', body.get('id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
         return res.data, 200
@@ -327,7 +329,12 @@ def users(method: str, body: Any):
     for key in body:
         if key != 'id' and key != 'access_code':
             d[key] = body[key]
-    
+    if 'password' in d:
+        password = d['password']
+        del d['password']
+        
+        d['hashed_password'] = sha256(apply_salt(password.strip(), salt).encode()).hexdigest()
+        d['salt'] = salt
     res = supabase.table('users').update(d).eq('user_id', body.get('id')).execute()
     if hasattr(res, 'code'):
         return 'error', 501

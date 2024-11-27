@@ -302,7 +302,7 @@ def companies(method: str, body: Any):
     """
         [
             access_code,
-            id,
+            id, // only needed param for the put version
             
             first_name?,
             last_name?,
@@ -313,22 +313,36 @@ def companies(method: str, body: Any):
         ]
     """
     
-    if method != 'POST':
-        return 'invalid method', 403
+    def post():
+        salt = (lambda: ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=32)) + ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=random.randint(1, 32))))()
+        result = machine_access('PUT', { 'access_code': body.get('access_code') })
+        if result[1] != 200 or result[0].get('id') != body.get('id'):
+            return 'invalid token', 400
+        
+        d = {}
+        for key in body:
+            if key != 'id' and key != 'access_code':
+                d[key] = body[key]
+        if 'password' in d:
+            password = d['password']
+            del d['password']
+            
+            d['hashed_password'] = sha256(apply_salt(password.strip(), salt).encode()).hexdigest()
+            d['salt'] = salt
+        res = supabase.table('companies').update(d).execute()
+        if hasattr(res, 'code'):
+            return 'error', 501
+        return res.data, 200
     
-    salt = (lambda: ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=32)) + ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=random.randint(1, 32))))()
+    def put():
+        res = supabase.table('companies').select('*').eq('company_id', int(body.get('id').strip())).execute()
+        if hasattr(res, 'code'):
+            return 'error', 501
+        return res.data, 200
     
-    result = machine_access('PUT', { 'access_code': body.get('access_code') })
-    if result[1] != 200 or result[0].get('id') != body.get('id'):
-        return 'invalid token', 400
-    
-    d = {}
-    for key in body:
-        if key != 'id' and key != 'access_code':
-            d[key] = body[key]
-    
-    res = supabase.table('companies').update(d).execute()
-    if hasattr(res, 'code'):
-        return 'error', 501
-    return res.data, 200
+    if method == 'POST':
+        return post()
+    if method == 'PUT':
+        return put()
+    return 'invalid method', 403
 

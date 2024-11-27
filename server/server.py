@@ -3,7 +3,7 @@ from flask import Flask, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
 from typing import Any, Callable
-import companies, user
+import companies, user, events
 
 app = Flask(__name__)
 cors = CORS(app) # allow CORS for all domains on all routes.
@@ -49,7 +49,7 @@ def master(table, operation):
             'events': companies.events, # put, post, delete
             'submissions': companies.submissions, # put, delete
             'signout': companies.signout, # put
-            'companies': companies.companies, # post
+            'companies': companies.companies, # post, put
         },
         'users': {
             'register': user.register, # post
@@ -60,6 +60,10 @@ def master(table, operation):
             'signout': user.signout, # put
             'users': user.users, # post
         },
+        'events': {
+            'get': events.get, # put
+            'get-submissions': events.get_submissions, # put
+        }
     }
     if table not in filter or operation not in filter[table]:
         return 'nice try :]', 403
