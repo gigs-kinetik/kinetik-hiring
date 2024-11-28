@@ -259,9 +259,12 @@ export default function HomePage() {
       console.log(filledJson['event_name'])
       if (filledJson["event_name"]) console.log('true');
       if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
-      if (filledJson["deadline"]) setDeadline(filledJson["deadline"]);
-      if (filledJson["short_desc"]) setShortDescription(filledJson["short_desc"]);
-      if (filledJson["long_desc"]) setLongDescription(filledJson["long_desc"]);
+      if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
+      if (filledJson["deadline_time"]) {
+        setDeadlineTime(filledJson["deadline_time"]);
+      }
+      if (filledJson["short_description"]) setShortDescription(filledJson["short_desc"]);
+      if (filledJson["long_description"]) setLongDescription(filledJson["long_desc"]);
       if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
       if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"].join("; "));
       if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"].join("; "));
