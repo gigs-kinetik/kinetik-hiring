@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaQuoteLeft } from "react-icons/fa";
+import { useInView } from "react-intersection-observer";
+import { RotatingShadow } from "../../components/RotatingShadow";
 
 const PurpleCirclesBackground = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -18,24 +20,40 @@ const PurpleCirclesBackground = () => {
   }, []);
 
   const circlePositions = [
-    { x: "0%", y: "10vh", scrollSpeed: -0.3, size: "500px" },
-    { x: "75%", y: "30vh", scrollSpeed: -0.3, size: "500px" },
-    { x: "-25%", y: "80vh", scrollSpeed: -0.3, size: "500px" },
-    { x: "-5%", y: "180vh", scrollSpeed: -0.3, size: "500px" },
-    { x: "85%", y: "90vh", scrollSpeed: -0.3, size: "450px" },
-    { x: "40%", y: "150vh", scrollSpeed: -0.3, size: "400px" },
-    { x: "10%", y: "240vh", scrollSpeed: -0.3, size: "350px" },
-    { x: "65%", y: "250vh", scrollSpeed: -0.3, size: "550px" },
-    { x: "-15%", y: "300vh", scrollSpeed: -0.3, size: "320px" },
-    { x: "55%", y: "350vh", scrollSpeed: -0.3, size: "470px" },
-    { x: "30%", y: "400vh", scrollSpeed: -0.3, size: "380px" },
-    { x: "5%", y: "450vh", scrollSpeed: -0.3, size: "270px" },
-    { x: "70%", y: "500vh", scrollSpeed: -0.3, size: "420px" },
-    { x: "50%", y: "220vh", scrollSpeed: -0.3, size: "340px" },
-    { x: "90%", y: "280vh", scrollSpeed: -0.3, size: "310px" },
-    { x: "15%", y: "330vh", scrollSpeed: -0.3, size: "400px" },
-    { x: "80%", y: "410vh", scrollSpeed: -0.3, size: "440px" },
-    { x: "35%", y: "470vh", scrollSpeed: -0.3, size: "200px" },
+    { x: "0%", y: "10vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "75%", y: "30vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "-25%", y: "80vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "-5%", y: "180vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "85%", y: "90vh", scrollSpeed: -0.05, size: "450px" },
+    { x: "40%", y: "150vh", scrollSpeed: -0.05, size: "400px" },
+    { x: "10%", y: "240vh", scrollSpeed: -0.05, size: "350px" },
+    { x: "65%", y: "250vh", scrollSpeed: -0.05, size: "550px" },
+    { x: "-15%", y: "300vh", scrollSpeed: -0.05, size: "320px" },
+    { x: "50%", y: "220vh", scrollSpeed: -0.05, size: "340px" },
+    { x: "90%", y: "280vh", scrollSpeed: -0.05, size: "310px" },
+    { x: "15%", y: "350vh", scrollSpeed: -0.05, size: "380px" },
+    { x: "70%", y: "370vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "-20%", y: "400vh", scrollSpeed: -0.05, size: "400px" },
+    { x: "45%", y: "430vh", scrollSpeed: -0.05, size: "350px" },
+    { x: "80%", y: "470vh", scrollSpeed: -0.05, size: "300px" },
+    { x: "-10%", y: "520vh", scrollSpeed: -0.05, size: "360px" },
+    { x: "60%", y: "540vh", scrollSpeed: -0.05, size: "320px" },
+    { x: "0%", y: "580vh", scrollSpeed: -0.05, size: "400px" },
+    { x: "90%", y: "600vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "-25%", y: "650vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "80%", y: "700vh", scrollSpeed: -0.05, size: "460px" },
+    { x: "20%", y: "750vh", scrollSpeed: -0.05, size: "350px" },
+    { x: "55%", y: "780vh", scrollSpeed: -0.05, size: "380px" },
+    { x: "5%", y: "820vh", scrollSpeed: -0.05, size: "440px" },
+    { x: "-15%", y: "860vh", scrollSpeed: -0.05, size: "300px" },
+    { x: "70%", y: "880vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "-5%", y: "900vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "90%", y: "940vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "10%", y: "980vh", scrollSpeed: -0.05, size: "370px" },
+    { x: "70%", y: "1000vh", scrollSpeed: -0.05, size: "370px" },
+    { x: "30%", y: "1020vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "50%", y: "1060vh", scrollSpeed: -0.05, size: "370px" },
+    { x: "10%", y: "1100vh", scrollSpeed: -0.05, size: "570px" },
   ];
 
   return (
@@ -103,9 +121,102 @@ const cardVariants = {
   },
 };
 
+const timelineData = [
+  {
+    title: "Optimized Hiring",
+    description:
+      "Spend less time hiring and crowdsource your efforts to get matched with top talent.",
+    image: "/hiring.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+  {
+    title: "Streamlined Onboarding",
+    description:
+      "Effortlessly onboard your developers with tailored workflows and integrations.",
+    image: "/onboarding.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+  {
+    title: "Legal Compliance",
+    description:
+      "Safeguard your work with automated compliance and regulations.",
+    image: "/legal.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+  {
+    title: "Automated Payments",
+    description:
+      "Securely streamline your payments and let us handle the scheduled distribution.",
+    image: "/payments.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+  {
+    title: "Personalized Management",
+    description:
+      "Employ an AI-powered product manager to provide insights to yours ideas and code.",
+    image: "/pm.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+  {
+    title: "Quality Assurance",
+    description:
+      "Enhance quality assurance and ensure your product meets the highest standards.",
+    image: "/testing.png",
+    bulletPoints: [
+      "Discuss ideas with the team",
+      "Identify potential challenges",
+      "Draft initial project goals",
+    ],
+  },
+];
+
 export default function LandingPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  const [lineHeight, setLineHeight] = useState(0);
+
+  const calculateLineFill = () => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const timelineHeight = document.getElementById("timeline").offsetHeight;
+    const offsetTop = document.getElementById("timeline").offsetTop;
+
+    const progress = Math.max(
+      0,
+      Math.min(
+        1,
+        (scrollTop + windowHeight - offsetTop) / (timelineHeight + windowHeight)
+      )
+    );
+
+    setLineHeight(progress * 100);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", calculateLineFill);
+    return () => window.removeEventListener("scroll", calculateLineFill);
   }, []);
 
   return (
@@ -223,6 +334,7 @@ export default function LandingPage() {
               },
               {
                 text: "Join the Waitlist",
+                href: "https://forms.gle/CpDq4VtVB4CyV2BL8",
                 className:
                   "px-4 py-2 text-logo-purple font-medium border-2 border-logo-purple rounded-md hover:scale-105 transition-transform",
               },
@@ -254,7 +366,7 @@ export default function LandingPage() {
               Backed By
             </motion.div>
             <motion.div
-              className="flex space-x-8"
+              className="flex flex-wrap justify-center space-x-4 md:space-x-8 sm:space-y-4 sm:space-x-0"
               variants={staggerChildrenVariants}
             >
               {["met-logo.png", "aieb-logo.png", "msft-logo.png"].map(
@@ -263,7 +375,7 @@ export default function LandingPage() {
                     key={logo}
                     src={`/${logo}`}
                     alt={`Company Logo ${index + 1}`}
-                    className="h-12 md:h-16 object-contain"
+                    className="h-10 sm:h-12 md:h-16 object-contain"
                     variants={fadeInUpVariants}
                     whileHover={{ scale: 1.1 }}
                   />
@@ -272,6 +384,7 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
 
+          {/* Stats */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
@@ -288,22 +401,21 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-logo-purple/80 mb-10 text-xl font-light text-center"
           >
-            Operate more efficiently, and focus on your business operations
+            Operate more efficiently, and focus on your business operations.
           </motion.div>
 
           <motion.div
-            className="flex flex-col items-center space-y-20"
+            className="flex flex-col items-center space-y-10 sm:space-y-20"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerChildrenVariants}
           >
-            {/* Stats Section */}
             <motion.div
               className="flex flex-col items-center space-y-8"
               variants={fadeInUpVariants}
             >
-              <div className="flex justify-center space-x-16">
+              <div className="flex flex-wrap justify-center gap-8 sm:space-x-16">
                 {[
                   { value: "500+", label: "Hours of Tech Dev Saved" },
                   { value: "50x", label: "Faster Development" },
@@ -318,7 +430,7 @@ export default function LandingPage() {
                     <div className="text-3xl md:text-4xl font-semibold">
                       {stat.value}
                     </div>
-                    <div className="text-md md:text-lg text-logo-purple/70">
+                    <div className="text-md md:text-lg text-logo-purple/70 text-center">
                       {stat.label}
                     </div>
                   </motion.div>
@@ -346,19 +458,19 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-logo-purple/80 mb-10 text-xl font-light text-center"
           >
-            Forget the hassle of technical development, leave it to us
+            Forget the hassle of technical development, leave it to us.
           </motion.div>
 
           {/* Cards Container */}
-          <div className="flex justify-center items-center gap-x-10 w-full max-w-5xl mx-auto px-4">
+          <div className="flex flex-wrap justify-center items-center gap-8 w-full max-w-5xl mx-auto px-4">
             {/* Card 1 */}
-            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-full sm:w-[48%]">
               <motion.div
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
-                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative w-2xl"
+                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative"
               >
                 {/* Step Badge */}
                 <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
@@ -386,8 +498,9 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             </div>
+
             {/* Card 2 */}
-            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-full sm:w-[48%]">
               <motion.div
                 variants={cardVariants}
                 initial="hidden"
@@ -403,7 +516,7 @@ export default function LandingPage() {
                 {/* Image Section */}
                 <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
                   <img
-                    src=""
+                    src="/process.png"
                     alt="Kinetik's AI Challenge"
                     className="object-cover h-full"
                   />
@@ -424,90 +537,317 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Main Intro */}
+        {/* Steps */}
         <div className="mt-52 w-full">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-logo-purple text-3xl mb-10 font-semibold text-left"
+            className="text-logo-purple text-3xl md:text-4xl font-semibold text-left"
           >
             How Kinetik Works
           </motion.div>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple/80 text-lg md:text-xl font-light text-left"
+          >
+            Go from idea to product in no time.
+          </motion.div>
 
-          {/* Cards Container */}
-          <div className="flex justify-center items-center gap-x-10 w-full max-w-5xl mx-auto px-4">
+          <div
+            id="timeline"
+            className="relative w-full min-h-screen pt-10 text-white"
+          >
+            {/* Timeline Line */}
+            <div className="absolute transform -translate-x-1/2 h-full w-1 bg-purple-900/20">
+              <motion.div
+                style={{ height: `${lineHeight}%` }}
+                className="absolute left-0 top-0 w-full bg-purple-900"
+                transition={{ duration: 0.1 }}
+              />
+            </div>
+
+            {/* Timeline Items */}
+            <div className="flex flex-col ml-5 md:ml-10">
+              {timelineData.map((item, index) => {
+                const [ref, inView] = useInView({
+                  triggerOnce: true,
+                  threshold: 0.3,
+                });
+
+                return (
+                  <motion.div
+                    key={index}
+                    ref={ref}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={inView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.3, delay: index * 0.2 }}
+                    className="relative flex flex-col md:flex-row mt-8"
+                  >
+                    {/* Content Card */}
+                    <motion.div
+                      className="relative rounded-xl shadow-xl pr-6 md:pr-10 pt-4 md:pt-6 w-full md:w-2/3"
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={inView ? { opacity: 1, x: 0 } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <h3 className="text-2xl md:text-3xl font-semibold mb-2 text-logo-purple">
+                        {item.title}
+                      </h3>
+                      <p className="text-logo-purple/80 text-base md:text-xl font-light mb-4">
+                        {item.description}
+                      </p>
+
+                      {/* Bullet Points */}
+                      <ul className="list-disc pl-6 md:pl-10 pb-10 text-logo-purple/80 font-light text-sm md:text-xl">
+                        {item.bulletPoints.map((point, bulletIndex) => (
+                          <li key={bulletIndex}>{point}</li>
+                        ))}
+                      </ul>
+                    </motion.div>
+
+                    {/* Image */}
+                    <RotatingShadow
+                      shadowBlur={40}
+                      shadowColor={"rgb(86, 65, 135)"}
+                      shadowSpread={0}
+                      radius={10}
+                      borderRadius={10}
+                    >
+                      <div className="relative h-48 md:h-96 rounded-lg overflow-hidden shadow-lg group hover:scale-105">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </RotatingShadow>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="mt-52 w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple text-3xl font-semibold text-center"
+          >
+            Why We Are The Best
+          </motion.div>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-logo-purple/80 mb-10 text-xl font-light text-center"
+          >
+            See what our customers have to say.
+          </motion.div>
+          <div className="flex flex-col lg:flex-row justify-center items-center space-y-16 lg:space-y-0 lg:space-x-8 p-4 lg:p-8">
             {/* Card 1 */}
-            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+            <div className="hover:scale-105">
               <motion.div
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
-                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative w-2xl"
+                className="relative flex flex-col justify-between shadow-3xl p-6 lg:p-8 w-full max-w-[28rem] lg:max-w-[40rem] bg-white/10 rounded-xl h-auto"
               >
-                {/* Step Badge */}
-                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
-                  Step 1
+                {/* Quote Icon */}
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-xl" />
                 </div>
-
-                {/* Image Section */}
-                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
-                  <img
-                    src="/crowdsource.png"
-                    alt="Kinetik's AI Challenge"
-                    className="object-cover h-full"
-                  />
+                {/* Quote Content */}
+                <div className="text-center text-gray-700 text-sm">
+                  As a solo founder with limited time, I needed my MVP done over
+                  a single weekend. Kinetik helped me write a project scope and
+                  connected me with high-quality talent to execute and manage it
+                  efficiently!
                 </div>
-
-                {/* Text Section */}
-                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
-                  <div className="text-logo-purple text-xl font-semibold mb-2">
-                    Crowdsourced Hiring
+                {/* Author Info */}
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    Albert Zheng
                   </div>
-                  <p className="text-logo-purple/80 text-sm">
-                    Collect numerous MVP iterations and find top talent by
-                    hosting company-related challenges on our platform.
-                  </p>
+                  <div className="text-sm text-gray-500">Founder, CEO</div>
+                </div>
+                {/* Company Logo */}
+                <div className="flex justify-center mt-8">
+                  <img
+                    src="/skywaze-logo.png"
+                    alt="Company Logo"
+                    className="h-12 w-auto"
+                  />
                 </div>
               </motion.div>
             </div>
+
             {/* Card 2 */}
-            <div className="hover:shadow-5xl hover:rounded-xl hover:scale-105 transition-all duration-300 w-1/2">
+            <div className="hover:scale-105">
               <motion.div
                 variants={cardVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
-                className="bg-white/10 h-96 rounded-xl shadow-3xl transition-all duration-300 ease-in-out transform flex flex-col relative"
+                className="relative flex flex-col justify-between shadow-3xl p-6 lg:p-8 w-full max-w-[28rem] lg:max-w-[40rem] bg-white/10 rounded-xl h-auto"
               >
-                {/* Step Badge */}
-                <div className="absolute top-3 left-3 bg-logo-purple text-white text-sm font-semibold py-1 px-3 rounded-full shadow">
-                  Step 2
+                {/* Quote Icon */}
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-xl" />
                 </div>
-
-                {/* Image Section */}
-                <div className="flex items-center justify-center bg-white/20 rounded-t-xl h-2/3 overflow-hidden">
-                  <img
-                    src=""
-                    alt="Kinetik's AI Challenge"
-                    className="object-cover h-full"
-                  />
+                {/* Quote Content */}
+                <div className="text-center text-gray-700 text-sm">
+                  Kinetik's facilitation of communication was excellent. They
+                  really served as a strong intermediary. Loved the experience
+                  and highly recommend Kinetik for anyone trying to hire and
+                  build quickly.
                 </div>
-
-                {/* Text Section */}
-                <div className="p-6 bg-white/20 rounded-b-xl flex-grow">
-                  <div className="text-logo-purple text-xl font-semibold mb-2">
-                    Gig Development
+                {/* Author Info */}
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    Benny Johnson
                   </div>
-                  <p className="text-logo-purple/80 text-sm">
-                    Employ our suite of AI-powered tools to manage your gig and
-                    see your product come to fruition.
-                  </p>
+                  <div className="text-sm text-gray-500">CTO</div>
+                </div>
+                {/* Company Logo */}
+                <div className="flex justify-center mt-8">
+                  <img
+                    src="/sonicbids-logo.png"
+                    alt="Company Logo"
+                    className="h-12 w-auto"
+                  />
                 </div>
               </motion.div>
             </div>
+
+            {/* Card 3 */}
+            <div className="hover:scale-105">
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="relative flex flex-col justify-between shadow-3xl p-6 lg:p-8 w-full max-w-[28rem] lg:max-w-[40rem] bg-white/10 rounded-xl h-auto"
+              >
+                {/* Quote Icon */}
+                <div className="flex items-center mb-4">
+                  <FaQuoteLeft className="text-logo-purple/30 text-xl" />
+                </div>
+                {/* Quote Content */}
+                <div className="text-center text-gray-700 text-sm">
+                  Kinetik has been a game-changer for us. Fast, high-quality
+                  work just the way we wanted. We've seen great success since
+                  using this platform. I strongly endorse Kinetik for anyone
+                  aiming to launch an MVP.
+                </div>
+                {/* Author Info */}
+                <div className="text-center mt-4">
+                  <div className="font-semibold text-logo-purple">
+                    Anonymous
+                  </div>
+                  <div className="text-sm text-gray-500">Tech Lead</div>
+                </div>
+                {/* Company Logo */}
+                <div className="flex justify-center mt-8">
+                  <img
+                    src="/chatsmb-logo.png"
+                    alt="Company Logo"
+                    className="h-12 w-auto"
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-52 w-full">
+          <div className="w-full">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-logo-purple text-xl font-semibold text-center"
+            >
+              FAQs
+            </motion.div>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-logo-purple text-3xl font-semibold text-center"
+            >
+              Frequently Asked Questions
+            </motion.div>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-logo-purple/80 mb-10 text-xl font-light text-center"
+            >
+              Have some questions? Here are some common ones.
+            </motion.div>
+
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="max-w-3xl mx-auto space-y-1"
+            >
+              {[
+                {
+                  question: "Who is this service designed for?",
+                  answer:
+                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                },
+                {
+                  question: "Why use Kinetik when I can do it myself?",
+                  answer:
+                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                },
+                {
+                  question: "We already have PMs, why should I use this?",
+                  answer:
+                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                },
+                {
+                  question: "Why should I stay subscribed?",
+                  answer:
+                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                },
+                {
+                  question: "Is my data safe?",
+                  answer:
+                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                },
+              ].map((faq, index) => (
+                <details
+                  key={index}
+                  className="border border-gray-300 rounded-lg overflow-hidden"
+                >
+                  <summary className="shadow-4xl cursor-pointer bg-white/50 px-4 py-3 text-black font-semibold hover:bg-white transition-colors">
+                    {faq.question}
+                  </summary>
+                  <div className="px-4 py-3 text-gray-500 bg-white/70 border-t-2">
+                    {faq.answer}
+                  </div>
+                </details>
+              ))}
+            </motion.div>
           </div>
         </div>
       </motion.div>
