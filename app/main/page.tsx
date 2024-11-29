@@ -221,6 +221,7 @@ const ModalForm = () => {
   };
 
   const handleFormSubmit = (e) => {
+    // TODO: update to database
     e.preventDefault();
     closeModal();
   };
