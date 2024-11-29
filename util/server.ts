@@ -22,7 +22,9 @@ type Operation =
     | 'companies'
     | 'users'
     | 'get'
-    | 'get-submissions';
+    | 'get-submissions'
+    | 'verify'
+    | 'reset-password';
 
 async function call(
     method: string,
@@ -612,7 +614,7 @@ export class Company {
      * @returns 
      */
     public static async signoutFromDevice() {
-        return (await cinter.put('signout', {}))[0].status !== 200
+        return (await cinter.put('signout', {}))[0].status === 200
     }
 
     /**
@@ -621,6 +623,14 @@ export class Company {
      */
     public static async get(): Promise<CompanyInstance | null> {
         return await this.accessCompany();
+    }
+
+    public static async verify(companyId: number, emailAddr: string): Promise<boolean> {
+        return (await cinter.put('verify', { id: companyId, email: emailAddr }))[0].status === 200;
+    }
+
+    public static async resetPassword(companyId: number, emailAddr: string): Promise<boolean> {
+        return (await cinter.put('reset-password', { id: companyId, email: emailAddr }))[0].status === 200;
     }
 }
 
@@ -785,6 +795,14 @@ export class User {
         // if (!(await this.accessUser()))
         //     router.push('/companies/login')
         return await this.accessUser();
+    }
+
+    public static async verify(userId: number, emailAddr: string): Promise<boolean> {
+        return (await uinter.put('verify', { id: userId, email: emailAddr }))[0].status === 200;
+    }
+
+    public static async resetPassword(userId: number, emailAddr: string): Promise<boolean> {
+        return (await uinter.put('reset-password', { id: userId, email: emailAddr }))[0].status === 200;
     }
 }
 
