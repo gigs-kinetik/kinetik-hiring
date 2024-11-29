@@ -2,7 +2,8 @@ import logging
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS, cross_origin
 import json
-from typing import Any, Callable
+from typing import Callable, Any
+from util import server_port, server_debug_mode
 import companies, user, events
 
 app = Flask(__name__)
@@ -41,7 +42,7 @@ users
 @app.route('/<table>/<operation>', methods='GET POST PUT DELETE'.split())
 @cross_origin()
 def master(table, operation):
-    filter: dict[str, dict[str, Callable[[str, Any], Any]]] = {
+    filter: dict[str, dict[str, Callable[[str, dict], Any]]] = {
         'companies': {
             'register': companies.register, # post
             'login': companies.login, # put
@@ -50,6 +51,8 @@ def master(table, operation):
             'submissions': companies.submissions, # put, delete
             'signout': companies.signout, # put
             'companies': companies.companies, # post, put
+            'verify': companies.verify, # put
+            'reset': companies.reset, # put
         },
         'users': {
             'register': user.register, # post
@@ -59,6 +62,8 @@ def master(table, operation):
             'submissions': user.submissions, # put, post
             'signout': user.signout, # put
             'users': user.users, # post
+            'verify': user.verify, # put
+            'reset': user.reset, # put
         },
         'events': {
             'get': events.get, # put
@@ -71,4 +76,4 @@ def master(table, operation):
 
 if __name__ == '__main__':
     logging.getLogger('flask_cors').level = logging.DEBUG
-    app.run(port=8080, debug=True)
+    app.run(port=server_port, debug=server_debug_mode)

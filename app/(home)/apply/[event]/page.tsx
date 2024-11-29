@@ -53,29 +53,6 @@ export default function ApplyPage() {
     }
 
     try {
-      // const userInfoRef = doc(db, "User Information", userEmail);
-      // const submissionsRef = collection(userInfoRef, "Submissions");
-      // const options: Intl.DateTimeFormatOptions = { timeZone: "America/Chicago", timeZoneName: "short" };
-      // const currDate = new Date()
-      //   .toLocaleDateString("en-US", options)
-      //   .split(", ")[0];
-      // const currTime = new Date().toLocaleTimeString("en-US", options);
-      // await setDoc(doc(submissionsRef, event["Event ID"]), {
-      //   "Event Name": event["Event Name"],
-      //   "Submitted At": currDate + ", " + currTime,
-      //   "Project Link": projectLink,
-      //   "Resume Link": resumeLink,
-      //   "Video Link": videoLink,
-      //   "Other Links": [
-      //     additionalLink1,
-      //     additionalLink2,
-      //     additionalLink3,
-      //   ].filter((link) => link !== ""),
-      // });
-      // const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
-      // const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
-      // await setDoc(doc(submissionsRef2, userEmail), {});
-
       if (user instanceof UserInstance) {
         await user.createSubmission({
           event_id: event.event_id,
@@ -98,8 +75,6 @@ export default function ApplyPage() {
       alert("Submission failed.");
     }
   };
-
-  // alert((!event) as boolean)
 
   if (loading || !event) {
     return <div></div>;

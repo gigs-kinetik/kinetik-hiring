@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect, useCallback } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
@@ -9,7 +8,6 @@ import { BasicEvent, BasicSubmission, Company, CompanyInstance, get, UserInstanc
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  // const events = useEvents();
   const router = useRouter()
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -57,7 +55,6 @@ export default function HomePage() {
   }, []);
 
   const handleApplyClick = useCallback((eventId: number) => {
-    // sessionStorage.setItem("currentEventId", JSON.stringify(eventId));
     router.push(`/apply/${eventId}`)
   }, []);
 
@@ -82,16 +79,6 @@ export default function HomePage() {
       prizes.unshift(cashAmount);
     }
     const skills = requiredSkills.map((skill) => skill.trim());
-    // const userDocRef = doc(db, "User Information", userEmail);
-    // const userDocSnap = await getDoc(userDocRef);
-    // const numEvents = userDocSnap.data()["Num Events"] + 1;
-    // await updateDoc(userDocRef, {
-    //   "Num Events": numEvents,
-    // });
-
-    // const eventId = `${userEmail}${numEvents}`;
-    // const eventsCollectionRef = collection(db, "Events");
-    // const newEventDocRef = doc(eventsCollectionRef, eventId);
     if (user instanceof CompanyInstance) {
       user.addEvent({
         event_name: eventName,
@@ -105,24 +92,6 @@ export default function HomePage() {
       });
       setChallenges(await user.getEvents());
     }
-    // await setDoc(newEventDocRef, {
-    //   InitPaid: "Pay",
-    //   FinalPaid: "Pay",
-    //   "Event ID": eventId,
-    //   Company: companyName,
-    //   Contact: userEmail,
-    //   Deadline: pstDateTime,
-    //   "Event Name": eventName,
-    //   "Long Description": longDescription,
-    //   "Short Description": shortDescription,
-    //   "Prize List": prizes,
-    //   "Required Skills": skills,
-    //   "Prize Amount": cashAmount,
-    //   "Report URL": "",
-    // });
-    // await updateDoc(userDocRef, {
-    //   Events: arrayUnion(eventId),
-    // });
     setDeadline("");
     setDeadlineTime("");
     setEventName("");
@@ -140,22 +109,6 @@ export default function HomePage() {
       return;
 
     setIsDeleting(true);
-    // const userEmail = sessionStorage.getItem("userEmail");
-    // const eventDocRefInUserInfo = doc(
-    //   db,
-    //   "User Information",
-    //   userEmail,
-    //   "Events",
-    //   eventId
-    // );
-    // await deleteDoc(eventDocRefInUserInfo);
-    // const eventDocRefInEventsCollection = doc(db, "Events", eventId);
-    // await deleteDoc(eventDocRefInEventsCollection);
-    // const userDocRef = doc(db, "User Information", userEmail);
-    // await updateDoc(userDocRef, {
-    //   Events: arrayRemove(eventId),
-    // });
-
     await user.deleteEvent(eventId)
     setChallenges(await user.getEvents());
     setIsDeleting(false);

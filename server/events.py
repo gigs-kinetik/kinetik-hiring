@@ -5,7 +5,7 @@ import pytz
 from datetime import datetime, timedelta
 from util import supabase
 
-def get(method: str, body: Any):
+def get(method: str, body: dict):
     """ 
         event_id
     """
@@ -18,7 +18,7 @@ def get(method: str, body: Any):
         return 'error', 404
     return res.data[0], 200
 
-def get_submissions(method: str, body: Any):
+def get_submissions(method: str, body: dict):
     """ 
         id
     """

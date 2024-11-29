@@ -1,9 +1,11 @@
+from email.message import EmailMessage
+import smtplib
 from typing import Any
 import random
 from hashlib import sha256
 import pytz
 from datetime import datetime, timedelta
-from util import supabase
+from util import supabase, verify_account, reset_password
 
 """
 Operations:
@@ -18,7 +20,7 @@ def now(): return datetime.now(pytz.utc)
 
 def apply_salt(password: str, salt: str): return salt[:len(salt) // 2] + password + salt[len(salt) // 2:]
 
-def register(method: str, body: Any):
+def register(method: str, body: dict):
     """
         [
             email,
@@ -62,7 +64,7 @@ def register(method: str, body: Any):
         'last_name': body.get('last_name').strip(),
     }, 200
     
-def machine_access(method: str, body: Any):
+def machine_access(method: str, body: dict):
     """
         [
             machine_id,
@@ -99,7 +101,7 @@ def machine_access(method: str, body: Any):
         **(a)
     }, 200
     
-def login(method: str, body: Any):
+def login(method: str, body: dict):
     """
         [
             machine_id?, // must exist for email, password auth
@@ -157,7 +159,7 @@ def login(method: str, body: Any):
     res = supabase.table('users').update({ 'last_login': now().isoformat() }).eq('user_id', result[0]['id']).execute()
     return result
     
-def signout(method: str, body: Any):
+def signout(method: str, body: dict):
     """
         [
             machine_id?, 
@@ -178,7 +180,7 @@ def signout(method: str, body: Any):
         return 'error', 501
     return 'Signed out', 200
     
-def events(method: str, body: Any):
+def events(method: str, body: dict):
     """
         [
             access_code,
@@ -235,7 +237,7 @@ def events(method: str, body: Any):
         return 'error', 501
     return res.data, 200
 
-def submissions(method: str, body: Any):
+def submissions(method: str, body: dict):
     """
         [
             access_code,
@@ -297,7 +299,7 @@ def submissions(method: str, body: Any):
         return post()
     return 'invalid method', 403
 
-def users(method: str, body: Any):
+def users(method: str, body: dict):
     """
         [
             access_code,
@@ -339,3 +341,49 @@ def users(method: str, body: Any):
     if hasattr(res, 'code'):
         return 'error', 501
     return res.data, 200
+
+def verify(method: str, body: dict):
+    """
+        [
+            id,
+            email, // email to send the verification
+        ]
+    """
+    
+    if method != 'PUT':
+        return 'invalid method', 403
+        
+    res = supabase.table('user_access_codes').insert({
+        'user_id': body.get('id'),
+        'valid_until': (now() + timedelta(days=1)).isoformat(),
+        'operation': 'verify',
+    }).execute()
+    
+    if hasattr(res, 'code'):
+        return 'error', 501
+    
+    verify_account(body.get('email'), body.get('id'), res.data[0]['access_code'])
+    return ':)', 200
+
+def reset(method: str, body: dict):
+    """
+        [
+            id,
+            email, // email to send the verification
+        ]
+    """
+    
+    if method != 'PUT':
+        return 'invalid method', 403
+        
+    res = supabase.table('user_access_codes').insert({
+        'user_id': body.get('id'),
+        'valid_until': (now() + timedelta(days=1)).isoformat(),
+        'operation': 'reset_password',
+    }).execute()
+    
+    if hasattr(res, 'code'):
+        return 'error', 501
+    
+    reset_password(body.get('email'), body.get('id'), res.data[0]['access_code'])
+    return ':)', 200
