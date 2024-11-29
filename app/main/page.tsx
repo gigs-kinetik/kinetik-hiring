@@ -20,40 +20,40 @@ const PurpleCirclesBackground = () => {
   }, []);
 
   const circlePositions = [
-    { x: "0%", y: "10vh", scrollSpeed: -0.05, size: "500px" },
-    { x: "75%", y: "30vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "0%", y: "10vh", scrollSpeed: -0.05, size: "600px" },
+    { x: "40%", y: "40vh", scrollSpeed: -0.05, size: "700px" },
+    { x: "85%", y: "30vh", scrollSpeed: -0.05, size: "600px" },
     { x: "-25%", y: "80vh", scrollSpeed: -0.05, size: "500px" },
     { x: "-5%", y: "180vh", scrollSpeed: -0.05, size: "500px" },
-    { x: "85%", y: "90vh", scrollSpeed: -0.05, size: "450px" },
-    { x: "40%", y: "150vh", scrollSpeed: -0.05, size: "400px" },
-    { x: "10%", y: "240vh", scrollSpeed: -0.05, size: "350px" },
-    { x: "65%", y: "250vh", scrollSpeed: -0.05, size: "550px" },
-    { x: "-15%", y: "300vh", scrollSpeed: -0.05, size: "320px" },
-    { x: "50%", y: "220vh", scrollSpeed: -0.05, size: "340px" },
-    { x: "90%", y: "280vh", scrollSpeed: -0.05, size: "310px" },
-    { x: "15%", y: "350vh", scrollSpeed: -0.05, size: "380px" },
-    { x: "70%", y: "370vh", scrollSpeed: -0.05, size: "420px" },
-    { x: "-20%", y: "400vh", scrollSpeed: -0.05, size: "400px" },
-    { x: "45%", y: "430vh", scrollSpeed: -0.05, size: "350px" },
-    { x: "80%", y: "470vh", scrollSpeed: -0.05, size: "300px" },
-    { x: "-10%", y: "520vh", scrollSpeed: -0.05, size: "360px" },
-    { x: "60%", y: "540vh", scrollSpeed: -0.05, size: "320px" },
-    { x: "0%", y: "580vh", scrollSpeed: -0.05, size: "400px" },
-    { x: "90%", y: "600vh", scrollSpeed: -0.05, size: "500px" },
-    { x: "-25%", y: "650vh", scrollSpeed: -0.05, size: "420px" },
-    { x: "80%", y: "700vh", scrollSpeed: -0.05, size: "460px" },
-    { x: "20%", y: "750vh", scrollSpeed: -0.05, size: "350px" },
-    { x: "55%", y: "780vh", scrollSpeed: -0.05, size: "380px" },
-    { x: "5%", y: "820vh", scrollSpeed: -0.05, size: "440px" },
-    { x: "-15%", y: "860vh", scrollSpeed: -0.05, size: "300px" },
-    { x: "70%", y: "880vh", scrollSpeed: -0.05, size: "500px" },
-    { x: "-5%", y: "900vh", scrollSpeed: -0.05, size: "500px" },
-    { x: "90%", y: "940vh", scrollSpeed: -0.05, size: "420px" },
-    { x: "10%", y: "980vh", scrollSpeed: -0.05, size: "370px" },
-    { x: "70%", y: "1000vh", scrollSpeed: -0.05, size: "370px" },
-    { x: "30%", y: "1020vh", scrollSpeed: -0.05, size: "420px" },
-    { x: "50%", y: "1060vh", scrollSpeed: -0.05, size: "370px" },
-    { x: "10%", y: "1100vh", scrollSpeed: -0.05, size: "570px" },
+    { x: "5%", y: "110vh", scrollSpeed: -0.05, size: "450px" },
+    { x: "80%", y: "130vh", scrollSpeed: -0.05, size: "650px" },
+    // { x: "10%", y: "240vh", scrollSpeed: -0.05, size: "450px" },
+    // { x: "-15%", y: "300vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "50%", y: "220vh", scrollSpeed: -0.05, size: "440px" },
+    { x: "90%", y: "280vh", scrollSpeed: -0.05, size: "410px" },
+    { x: "-5%", y: "280vh", scrollSpeed: -0.05, size: "780px" },
+    // { x: "70%", y: "370vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "-20%", y: "400vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "45%", y: "430vh", scrollSpeed: -0.05, size: "450px" },
+    // { x: "80%", y: "470vh", scrollSpeed: -0.05, size: "500px" },
+    { x: "-10%", y: "520vh", scrollSpeed: -0.05, size: "460px" },
+    // { x: "60%", y: "540vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "20%", y: "580vh", scrollSpeed: -0.05, size: "600px" },
+    // { x: "90%", y: "600vh", scrollSpeed: -0.05, size: "500px" },
+    // { x: "-25%", y: "650vh", scrollSpeed: -0.05, size: "420px" },
+    { x: "10%", y: "680vh", scrollSpeed: -0.05, size: "460px" },
+    { x: "60%", y: "730vh", scrollSpeed: -0.05, size: "450px" },
+    { x: "50%", y: "810vh", scrollSpeed: -0.05, size: "480px" },
+    { x: "5%", y: "780vh", scrollSpeed: -0.05, size: "540px" },
+    // { x: "-15%", y: "860vh", scrollSpeed: -0.05, size: "600px" },
+    // { x: "70%", y: "880vh", scrollSpeed: -0.05, size: "500px" },
+    // { x: "-5%", y: "900vh", scrollSpeed: -0.05, size: "500px" },
+    // { x: "90%", y: "940vh", scrollSpeed: -0.05, size: "420px" },
+    // { x: "10%", y: "980vh", scrollSpeed: -0.05, size: "470px" },
+    // { x: "70%", y: "1000vh", scrollSpeed: -0.05, size: "570px" },
+    // { x: "30%", y: "1020vh", scrollSpeed: -0.05, size: "420px" },
+    // { x: "50%", y: "1060vh", scrollSpeed: -0.05, size: "470px" },
+    // { x: "10%", y: "1100vh", scrollSpeed: -0.05, size: "570px" },
   ];
 
   return (
@@ -128,9 +128,9 @@ const timelineData = [
       "Spend less time hiring and crowdsource your efforts to get matched with top talent.",
     image: "/hiring.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Host a company and project-relevant challenge on our platform",
+      "Crowdsource multiple high-quality MVP iterations",
+      "Employ Kinetik AI to evaluate your submissions",
     ],
   },
   {
@@ -139,9 +139,9 @@ const timelineData = [
       "Effortlessly onboard your developers with tailored workflows and integrations.",
     image: "/onboarding.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Ensure your developers are comfortable building the project",
+      "Utilize Kinetik AI to guide developers through the dev process",
+      "Manage your developers in an easy and accessible way",
     ],
   },
   {
@@ -150,9 +150,9 @@ const timelineData = [
       "Safeguard your work with automated compliance and regulations.",
     image: "/legal.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Automate legal documents and contracts via Kinetik",
+      "Ensure developers are compliant with your policies",
+      "Let Kinetik handle your gig-related paperwork",
     ],
   },
   {
@@ -161,9 +161,9 @@ const timelineData = [
       "Securely streamline your payments and let us handle the scheduled distribution.",
     image: "/payments.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Schedule auto-payments to developers through Kinetik",
+      "Use Kinetik AI to determine the most optimal payment strategy",
+      "Work via an escrow so your money is properly delivered",
     ],
   },
   {
@@ -172,9 +172,9 @@ const timelineData = [
       "Employ an AI-powered product manager to provide insights to yours ideas and code.",
     image: "/pm.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Produce insights and understand your code with Kinetik AI",
+      "Automate the PM process from checkpoints to deployments",
+      "Minimize the project input and maximize the project output",
     ],
   },
   {
@@ -183,12 +183,142 @@ const timelineData = [
       "Enhance quality assurance and ensure your product meets the highest standards.",
     image: "/testing.png",
     bulletPoints: [
-      "Discuss ideas with the team",
-      "Identify potential challenges",
-      "Draft initial project goals",
+      "Deploy Kinetik AI to provide real-time testing on your code",
+      "Revise your code and ask developers to revisit certain features",
+      "Deploy a market-ready, scalable product in little to no time",
     ],
   },
 ];
+
+const ModalForm = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userType, setUserType] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState([]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsModalOpen(true);
+      document.body.classList.add("overflow-hidden");
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, []);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.classList.remove("overflow-hidden");
+  };
+
+  const handleCheckboxChange = (interest) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest)
+        ? prev.filter((item) => item !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault(); // Prevent default form behavior
+    console.log("User Type:", userType); // Log or use user type
+    console.log("Selected Interests:", selectedInterests); // Log or use selected interests
+    closeModal(); // Close the modal after form submission
+  };
+
+  return (
+    isModalOpen && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        {/* Modal Content */}
+        <div className="bg-white rounded-md shadow-3xl p-6 sm:p-10 w-full max-w-md mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-logo-purple">
+              Welcome to Kinetik!
+            </h2>
+            <button
+              onClick={closeModal}
+              className="text-gray-400 hover:text-gray-600 transition"
+            >
+              ✕
+            </button>
+          </div>
+          <p className="text-sm text-gray-600 mb-6">
+            Help us tailor your experience by answering a few quick questions.
+          </p>
+          <form onSubmit={handleFormSubmit}>
+            {/* Multiple Choice */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Are you a...
+              </label>
+              <div className="flex items-center space-x-4 mb-6">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="company"
+                    checked={userType === "company"}
+                    onChange={(e) => setUserType(e.target.value)}
+                    className="mr-2 focus:ring-logo-purple text-logo-purple"
+                  />
+                  Company
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="userType"
+                    value="developer"
+                    checked={userType === "developer"}
+                    onChange={(e) => setUserType(e.target.value)}
+                    className="mr-2 focus:ring-logo-purple text-logo-purple"
+                  />
+                  Developer
+                </label>
+              </div>
+            </div>
+
+            {/* Checkbox List */}
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                What are you interested in? (Select all that apply)
+              </label>
+              <div className="flex flex-col space-y-2">
+                {[
+                  { label: "Crowdsourced Hiring", value: 0 },
+                  { label: "Streamlined Onboarding", value: 1 },
+                  { label: "Legal Compliance", value: 2 },
+                  { label: "Automated Payments", value: 3 },
+                  { label: "Personalized Management", value: 4 },
+                  { label: "Quality Assurance", value: 5 },
+                ].map((item, index) => (
+                  <label key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      value={item.value}
+                      checked={selectedInterests.includes(item.value)}
+                      onChange={() => handleCheckboxChange(item.value)}
+                      className="mr-2 text-logo-purple focus:ring-logo-purple"
+                    />
+                    {item.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-logo-purple text-white py-2 px-4 rounded-lg hover:bg-logo-purple/90 transition"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  );
+};
 
 export default function LandingPage() {
   useEffect(() => {
@@ -222,13 +352,14 @@ export default function LandingPage() {
   return (
     <div className="relative font-poppins h-full flex flex-col px-6 lg:px-20">
       <PurpleCirclesBackground />
+      <ModalForm />
 
       {/* Navbar */}
       <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex justify-between items-center px-6 lg:px-20 pb-4 pt-6 backdrop-blur-md bg-off-white/30 fixed top-0 left-0 w-full z-50 shadow-md"
+        className="flex justify-between items-center px-6 lg:px-20 pb-4 pt-6 backdrop-blur-md bg-off-white/30 fixed top-0 left-0 w-full z-40 shadow-md"
       >
         <motion.div
           initial={{ opacity: 0 }}
@@ -366,7 +497,7 @@ export default function LandingPage() {
               Backed By
             </motion.div>
             <motion.div
-              className="flex flex-wrap justify-center space-x-4 md:space-x-8 sm:space-y-4 sm:space-x-0"
+              className="flex space-x-8"
               variants={staggerChildrenVariants}
             >
               {["met-logo.png", "aieb-logo.png", "msft-logo.png"].map(
@@ -854,16 +985,19 @@ export default function LandingPage() {
 
       {/* Footer */}
       <motion.div
-        className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-logo-purple h-24 mt-20 border-t-2 border-logo-purple/30"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm px-5 py-5 text-logo-purple h-auto sm:h-24 mt-20 border-t-2 border-logo-purple/30"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <div className="flex flex-col items-start justify-center">
+        {/* Left Section */}
+        <div className="flex flex-col items-center sm:items-start justify-center text-center sm:text-left">
           <div className="pb-1">@2024 Kinetik Tech, LLC.</div>
           <div>All Rights Reserved.</div>
         </div>
+
+        {/* Middle Section */}
         <div className="flex flex-col items-center justify-center">
           <div className="pb-2">Follow us at</div>
           <motion.div className="flex" whileHover={{ scale: 1.1 }}>
@@ -872,11 +1006,13 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaInstagram className="size-4 sm:size-6 text-logo-purple mx-2" />
+              <FaInstagram className="w-6 h-6 text-logo-purple mx-2" />
             </a>
           </motion.div>
         </div>
-        <div className="flex flex-col items-end justify-center">
+
+        {/* Right Section */}
+        <div className="flex flex-col items-center sm:items-end justify-center text-center sm:text-right">
           <div className="pb-1">Contact us at</div>
           <div>info@kinetikgigs.com</div>
         </div>
