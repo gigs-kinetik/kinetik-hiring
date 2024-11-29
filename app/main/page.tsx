@@ -221,10 +221,8 @@ const ModalForm = () => {
   };
 
   const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevent default form behavior
-    console.log("User Type:", userType); // Log or use user type
-    console.log("Selected Interests:", selectedInterests); // Log or use selected interests
-    closeModal(); // Close the modal after form submission
+    e.preventDefault();
+    closeModal();
   };
 
   return (
