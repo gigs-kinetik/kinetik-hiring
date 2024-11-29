@@ -21,9 +21,9 @@ verify_link: str = f'{web_server_link}/verify'
 reset_link: str = f'{web_server_link}/reset'
 
 verify_email = {
-    'from_email': 'arjunkrishnan410@gmail.com',
-    'app_password': 'vqcp vdyk jrmy efmf',
-    'subject': 'Kinetik Gigs Email Verification',
+    'from_email': 'kinetikgigs@gmail.com',
+    'app_password': 'tsox stws qmwy vumg',
+    'subject': 'Kinetik Email Verification',
     'body': lambda x: f'''\
 Please click the link below to verify your email.
 
@@ -32,9 +32,9 @@ Please click the link below to verify your email.
 }
 
 reset_email = {
-    'from_email': 'arjunkrishnan410@gmail.com',
-    'app_password': 'vqcp vdyk jrmy efmf',
-    'subject': 'Kinetik Gigs Password Reset',
+    'from_email': 'kinetikgigs@gmail.com',
+    'app_password': 'tsox stws qmwy vumg',
+    'subject': 'Kinetik Password Reset',
     'body': lambda x: f'''\
 Please click the link below to reset your password.
 
