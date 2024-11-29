@@ -940,29 +940,31 @@ export default function LandingPage() {
             >
               {[
                 {
-                  question: "Who is this service designed for?",
+                  question: "How is Kinetik different than other companies?",
                   answer:
-                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                    "We embed the latest technologies throughout the process to ensure that both companies and developers can operate at rapid speeds, while maximizing quality and efficiency. Our selection services allows teams to tap into top-quality tech developer pools, while our management software allows companies to focus on managing the development with our autonomous technical project manager reviewing, refining, and ensuring progress is on track.",
                 },
                 {
-                  question: "Why use Kinetik when I can do it myself?",
+                  question:
+                    "What kind of technical projects does Kinetik support?",
                   answer:
-                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                    "Our world-class developer pool allows us to facilitate a wide array of development services from mobile development to web development to machine learning to algorithms to blockchain and other technical projects.",
                 },
                 {
-                  question: "We already have PMs, why should I use this?",
+                  question:
+                    "How does the Kinetik hiring process for developers work?",
                   answer:
-                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                    "We believe that finding the perfect developer is the most important part of the process. Companies can post a gig on our platform, highlighting a budget, developer type and development needs. You can also specify any age, citizenship, and location requirements that you have so that we can better silo your search. Developers interested in your gig will submit a short MVP demonstration. From the multiple iterations of the product, you can then choose the developer you would like to more forward with while taking Kinetik's AI analysis in mind. This allows you to pick between multiple developers while taking their work and direction into perspective.",
                 },
                 {
-                  question: "Why should I stay subscribed?",
+                  question: "How does Kinetik help with gig management?",
                   answer:
-                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                    "Our gig management software streamlines the developmental process by simplifying the task into smaller checkpoints. Kinetik AI will create the repository hosting the code, setup the file structure with starter code, and provide instructions for the developer throughout the development process. Our software incrementally checks the developer progress, analyzing the code to determine their status and ensuring their code is sound to the highest quality. We guide the developer through the process to ensure that the technologies, databases, and tech stack meet the expectations of the client, providing real-time feedback and guidance to the developer. The developer's work will be displayed live for the company by analyzing progress of the code.",
                 },
                 {
-                  question: "Is my data safe?",
+                  question: "Is the data safe, who own the code?",
                   answer:
-                    "AD AD Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat ex ut nulla dictum malesuada. Phasellus non molestie dolor. Phasellus porttitor urna a eros porta, vitae efficitur nisl tincidunt.",
+                    "Our algorithms use Fully Homomorphic Encryption to ensure we don't have access to the company’s underlying data. All code will be fully owned by the company, and will be removed from the developer and Kinetik after the gig has been completed.",
                 },
               ].map((faq, index) => (
                 <details
