@@ -35,7 +35,7 @@ export default function LoginPage() {
         await User.verify(user.id, user.email);
       else
         await Company.verify(user.id, user.email);
-      setEmail("Email not verified. Please check your inbox for the verification email.");
+      setError("Email not verified. Please check your inbox for the verification email.");
     }
 
     if (requestCount > 10) {
@@ -49,7 +49,13 @@ export default function LoginPage() {
       return;
     }
     try {
+      let finished = false;
+      setTimeout(() => {
+        if (!finished)
+          alert('Request taking too long');
+      }, 2000)
       await User.resetPassword(email) || await Company.resetPassword(email);
+      finished = true;
       alert("Password reset email sent! Check your inbox.");
       setError("")
     } catch (error) {
