@@ -25,6 +25,8 @@ export default function LoginPage() {
       ++requestCount;
     }
 
+    console.log(user);
+
     // TODO: Implement user verification
     if (user.verified) {
       alert("")

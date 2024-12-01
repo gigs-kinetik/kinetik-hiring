@@ -51,7 +51,7 @@ def master(table, operation):
             'signout': companies.signout, # put
             'companies': companies.companies, # post, put
             'verify': companies.verify, # put
-            'reset': companies.reset, # put
+            'reset-password': companies.reset, # put
         },
         'users': {
             'register': user.register, # post
@@ -62,7 +62,7 @@ def master(table, operation):
             'signout': user.signout, # put
             'users': user.users, # post
             'verify': user.verify, # put
-            'reset': user.reset, # put
+            'reset-password': user.reset, # put
         },
         'events': {
             'get': events.get, # put

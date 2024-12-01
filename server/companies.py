@@ -46,6 +46,8 @@ def register(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
     
+    company_data = res.data[0]
+    
     res = supabase.table('company_machines').upsert({
         'machine_id': body.get('machine_id').strip(),
         'company_id': res.data[0]['company_id'],
@@ -55,12 +57,21 @@ def register(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
     
-    return {
+    result = {
         'access_code': res.data[0]['access_code'],
         'id': res.data[0]['company_id'],
         'email': body.get('email').strip(),
         'name': body.get('name').strip(),
     }, 200
+    
+    keys = 'company_name company_email last_name first_name company_id'.split(' ')
+    for key in keys:
+        del company_data[key]
+    result = {
+        **(result[0]),
+        **(company_data)
+    }, 200
+    return result
     
 def machine_access(method: str, body: dict):
     """
@@ -119,7 +130,7 @@ def login(method: str, body: dict):
     if body.get('machine_id') is not None and (body.get('email') is None or body.get('password') is None):
         return machine_access('PUT', { 'machine_id': body.get('machine_id') })
     
-    res = supabase.table('companies').select('company_id, hashed_password, company_email, company_name, salt').eq('company_email', body.get('email')).execute()
+    res = supabase.table('companies').select('*').eq('company_email', body.get('email')).execute()
 
     if hasattr(res, 'code'):
         return 'error', 501
@@ -154,7 +165,7 @@ def login(method: str, body: dict):
     for key in keys:
         del company_data[key]
     result = {
-        **(result),
+        **(result[0]),
         **(company_data)
     }, 200
     
@@ -385,6 +396,7 @@ def reset(method: str, body: dict):
         ]
     """
     
+    print(method)
     if method != 'PUT':
         return 'invalid method', 403
         

@@ -44,6 +44,8 @@ def register(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
     
+    user_data = res.data[0]
+    
     res = supabase.table('user_machines').upsert({
         'machine_id': body.get('machine_id').strip(),
         'user_id': res.data[0]['user_id'],
@@ -53,13 +55,22 @@ def register(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
     
-    return {
+    result = {
         'access_code': res.data[0]['access_code'],
         'id': res.data[0]['user_id'],
         'email': body.get('email').strip(),
         'first_name': body.get('first_name').strip(),
         'last_name': body.get('last_name').strip(),
     }, 200
+    
+    keys = 'user_email last_name first_name user_id'.split(' ')
+    for key in keys:
+        del user_data[key]
+    result = {
+        **(result[0]),
+        **(user_data)
+    }, 200
+    return result
     
 def machine_access(method: str, body: dict):
     """
@@ -122,19 +133,19 @@ def login(method: str, body: dict):
     if body.get('machine_id') is not None and (body.get('email') is None or body.get('password') is None):
         return machine_access('PUT', { 'machine_id': body.get('machine_id') })
     
-    res = supabase.table('users').select('user_id, hashed_password, user_email, first_name, last_name, salt').eq('user_email', body.get('email')).execute()
+    res = supabase.table('users').select('*').eq('user_email', body.get('email')).execute()
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:
         return 'invalid creds', 404
         
-    email, first_name, last_name = None, None, None
+    email, first_name, last_name, user_data = None, None, None, None
     for user in res.data:
         print(body.get('password').strip())
         print(user['hashed_password'], sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest())
         if user['hashed_password'] != sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest():
             return 'invalid creds', 404
-        email, first_name, last_name = user['user_email'], user['first_name'], user['last_name']
+        email, first_name, last_name, user_data = user['user_email'], user['first_name'], user['last_name'], user
     
     res = supabase.table('user_machines').upsert({
         'machine_id': body.get('machine_id').strip(),
@@ -151,6 +162,14 @@ def login(method: str, body: dict):
         'email': email,
         'first_name': first_name,
         'last_name': last_name,
+    }, 200
+    
+    keys = 'user_email hashed_password salt first_name last_name'.split(' ')
+    for key in keys:
+        del user_data[key]
+    result = {
+        **(result[0]),
+        **(user_data)
     }, 200
     
     res = supabase.table('users').update({ 'last_login': now().isoformat() }).eq('user_id', result[0]['id']).execute()
