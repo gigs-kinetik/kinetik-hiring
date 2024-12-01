@@ -1,4 +1,0 @@
-{
-  "appService.defaultWebAppToDeploy": "undefined/subscriptions/112d1a0f-50d8-4f26-98cf-a83bca8a4d44/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/kinetikgigs",
-  "appService.deploySubpath": "server"
-}
