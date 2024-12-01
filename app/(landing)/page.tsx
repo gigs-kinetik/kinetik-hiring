@@ -27,20 +27,13 @@ const PurpleCirclesBackground = () => {
     { x: "-5%", y: "180vh", scrollSpeed: -0.05, size: "500px" },
     { x: "5%", y: "110vh", scrollSpeed: -0.05, size: "450px" },
     { x: "80%", y: "130vh", scrollSpeed: -0.05, size: "650px" },
-    // { x: "10%", y: "240vh", scrollSpeed: -0.05, size: "450px" },
-    // { x: "-15%", y: "300vh", scrollSpeed: -0.05, size: "420px" },
     { x: "50%", y: "220vh", scrollSpeed: -0.05, size: "440px" },
     { x: "90%", y: "280vh", scrollSpeed: -0.05, size: "410px" },
     { x: "-5%", y: "280vh", scrollSpeed: -0.05, size: "780px" },
-    // { x: "70%", y: "370vh", scrollSpeed: -0.05, size: "420px" },
     { x: "-20%", y: "400vh", scrollSpeed: -0.05, size: "500px" },
     { x: "45%", y: "430vh", scrollSpeed: -0.05, size: "450px" },
-    // { x: "80%", y: "470vh", scrollSpeed: -0.05, size: "500px" },
     { x: "-10%", y: "520vh", scrollSpeed: -0.05, size: "460px" },
-    // { x: "60%", y: "540vh", scrollSpeed: -0.05, size: "420px" },
     { x: "20%", y: "580vh", scrollSpeed: -0.05, size: "600px" },
-    // { x: "90%", y: "600vh", scrollSpeed: -0.05, size: "500px" },
-    // { x: "-25%", y: "650vh", scrollSpeed: -0.05, size: "420px" },
     { x: "10%", y: "680vh", scrollSpeed: -0.05, size: "460px" },
     { x: "60%", y: "730vh", scrollSpeed: -0.05, size: "450px" },
     { x: "50%", y: "810vh", scrollSpeed: -0.05, size: "480px" },
@@ -951,18 +944,17 @@ export default function LandingPage() {
                     "Our world-class developer pool allows us to facilitate a wide array of development services from mobile development to web development to machine learning to algorithms to blockchain and other technical projects.",
                 },
                 {
-                  question:
-                    "How does the Kinetik hiring process for developers work?",
-                  answer:
-                    "We believe that finding the perfect developer is the most important part of the process. Companies can post a gig on our platform, highlighting a budget, developer type and development needs. You can also specify any age, citizenship, and location requirements that you have so that we can better silo your search. Developers interested in your gig will submit a short MVP demonstration. From the multiple iterations of the product, you can then choose the developer you would like to more forward with while taking Kinetik's AI analysis in mind. This allows you to pick between multiple developers while taking their work and direction into perspective.",
-                },
-                {
                   question: "How does Kinetik help with gig management?",
                   answer:
                     "Our gig management software streamlines the developmental process by simplifying the task into smaller checkpoints. Kinetik AI will create the repository hosting the code, setup the file structure with starter code, and provide instructions for the developer throughout the development process. Our software incrementally checks the developer progress, analyzing the code to determine their status and ensuring their code is sound to the highest quality. We guide the developer through the process to ensure that the technologies, databases, and tech stack meet the expectations of the client, providing real-time feedback and guidance to the developer. The developer's work will be displayed live for the company by analyzing progress of the code.",
                 },
                 {
-                  question: "Is the data safe, who own the code?",
+                  question: "How does the hiring process for developers work?",
+                  answer:
+                    "We believe that finding the perfect developer is the most important part of the process. Companies can post a gig on our platform, highlighting a budget, developer type and development needs. You can also specify any age, citizenship, and location requirements that you have so that we can better silo your search. Developers interested in your gig will submit a short MVP demonstration. From the multiple iterations of the product, you can then choose the developer you would like to more forward with while taking Kinetik's AI analysis in mind. This allows you to pick between multiple developers while taking their work and direction into perspective.",
+                },
+                {
+                  question: "Is the data safe? Who owns the code?",
                   answer:
                     "Our algorithms use Fully Homomorphic Encryption to ensure we don't have access to the company’s underlying data. All code will be fully owned by the company, and will be removed from the developer and Kinetik after the gig has been completed.",
                 },
