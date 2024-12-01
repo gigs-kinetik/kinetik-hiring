@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Company, User } from "../../../util/server";
 
 export default function SignupPage() {
@@ -20,20 +20,20 @@ export default function SignupPage() {
   // const [companyName, setCompanyName] = useState("");
   // const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
   const [data, setData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    error: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    error: "",
     isSignedUp: false,
     isLoading: false,
     passwordVisible: false,
     termsAccepted: false,
-    userType: 'Developer',
-    companyName: '',
+    userType: "Developer",
+    companyName: "",
     companyTermsAccepted: false,
-  })
-  const [firstName, setFirstName] = useState('')
+  });
+  const [firstName, setFirstName] = useState("");
   // const {
   //   firstName, lastName, email, password, error, isSignedUp, isLoading, passwordVisible, termsAccepted, userType, companyName, companyTermsAccepted
   // } = data
@@ -53,7 +53,11 @@ export default function SignupPage() {
     // setTermsAccepted(savedTermsAccepted);
   }, []);
 
-  const handleInputChange = (setter: (value: string | boolean) => void, fieldName: string, value: string | boolean) => {
+  const handleInputChange = (
+    setter: (value: string | boolean) => void,
+    fieldName: string,
+    value: string | boolean
+  ) => {
     setter(value);
     sessionStorage.setItem(fieldName, value.toString());
   };
@@ -61,30 +65,50 @@ export default function SignupPage() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     if (!data.termsAccepted) {
-      setData({ error: "You must accept the terms and conditions to sign up.", ...data });
+      setData({
+        error: "You must accept the terms and conditions to sign up.",
+        ...data,
+      });
       return;
     }
     if (data.userType === "Company" && !data.companyTermsAccepted) {
-      setData({ error: "You must accept the company-specific terms and conditions.", ...data });
+      setData({
+        error: "You must accept the company-specific terms and conditions.",
+        ...data,
+      });
       return;
     }
     setData({ isLoading: true, ...data });
     if (data.password.length < 6) {
-      setData({ error: 'Password must be at least 6 characters in length', ...data })
-    } else if (data.userType === 'Developer') {
-      const user = await User.register(data.firstName, data.lastName, data.email, data.password);
+      setData({
+        error: "Password must be at least 6 characters in length",
+        ...data,
+      });
+    } else if (data.userType === "Developer") {
+      const user = await User.register(
+        data.firstName,
+        data.lastName,
+        data.email,
+        data.password
+      );
       if (!user) {
-        setData({ error: 'Email already in use', ...data })
+        setData({ error: "Email already in use", ...data });
       } else {
-        router.push("/login/user")
+        router.push("/login/user");
         setData({ isLoading: false, ...data });
       }
     } else {
-      const company = await Company.register(data.companyName, data.firstName, data.lastName, data.email, data.password);
+      const company = await Company.register(
+        data.companyName,
+        data.firstName,
+        data.lastName,
+        data.email,
+        data.password
+      );
       if (!company) {
-        setData({ error: 'Email already in use', ...data })
+        setData({ error: "Email already in use", ...data });
       } else {
-        router.push('/login/company');
+        router.push("/login/company");
         setData({ isLoading: false, ...data });
       }
     }
@@ -129,7 +153,9 @@ export default function SignupPage() {
                         name="userType"
                         value="Developer"
                         checked={data.userType === "Developer"}
-                        onChange={() => setData({ userType: "Developer", ...data })}
+                        onChange={() =>
+                          setData({ userType: "Developer", ...data })
+                        }
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Developer</span>
@@ -140,7 +166,9 @@ export default function SignupPage() {
                         name="userType"
                         value="Company"
                         checked={data.userType === "Company"}
-                        onChange={() => setData({ userType: "Company", ...data })}
+                        onChange={() =>
+                          setData({ userType: "Company", ...data })
+                        }
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Company</span>
@@ -163,7 +191,8 @@ export default function SignupPage() {
                         value={data.companyName}
                         onChange={(e) =>
                           handleInputChange(
-                            (companyName: string) => setData({ companyName: companyName, ...data }),
+                            (companyName: string) =>
+                              setData({ companyName: companyName, ...data }),
                             "companyName",
                             e.target.value
                           )
@@ -188,8 +217,10 @@ export default function SignupPage() {
                         name="firstName"
                         type="text"
                         value={firstName}
-                        onChange={(e) => // setData({ firstName: e.target.value, ...data })
-                          setFirstName(e.target.value)
+                        onChange={
+                          (
+                            e // setData({ firstName: e.target.value, ...data })
+                          ) => setFirstName(e.target.value)
                           // handleInputChange(
                           //   (firstName: string) => setData({ firstName: firstName, ...data }),
                           //   "firstName",
@@ -216,7 +247,8 @@ export default function SignupPage() {
                         value={data.lastName}
                         onChange={(e) =>
                           handleInputChange(
-                            (lastName: string) => setData({ lastName: lastName, ...data }),
+                            (lastName: string) =>
+                              setData({ lastName: lastName, ...data }),
                             "lastName",
                             e.target.value
                           )
@@ -242,7 +274,11 @@ export default function SignupPage() {
                       autoComplete="email"
                       value={data.email}
                       onChange={(e) =>
-                        handleInputChange((email: string) => setData({ email: email, ...data }), "email", e.target.value)
+                        handleInputChange(
+                          (email: string) => setData({ email: email, ...data }),
+                          "email",
+                          e.target.value
+                        )
                       }
                       required
                       className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
@@ -267,7 +303,8 @@ export default function SignupPage() {
                       value={data.password}
                       onChange={(e) =>
                         handleInputChange(
-                          (password: string) => setData({ password: password, ...data }),
+                          (password: string) =>
+                            setData({ password: password, ...data }),
                           "password",
                           e.target.value
                         )
@@ -295,7 +332,10 @@ export default function SignupPage() {
                       type="checkbox"
                       checked={data.companyTermsAccepted}
                       onChange={() =>
-                        setData({ companyTermsAccepted: !data.companyTermsAccepted, ...data })
+                        setData({
+                          companyTermsAccepted: !data.companyTermsAccepted,
+                          ...data,
+                        })
                       }
                       className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                     />
@@ -316,7 +356,10 @@ export default function SignupPage() {
                     checked={data.termsAccepted}
                     onChange={() => {
                       setData({ termsAccepted: !data.termsAccepted, ...data });
-                      sessionStorage.setItem("termsAccepted", (!data.termsAccepted).toString());
+                      sessionStorage.setItem(
+                        "termsAccepted",
+                        (!data.termsAccepted).toString()
+                      );
                     }}
                     className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                   />

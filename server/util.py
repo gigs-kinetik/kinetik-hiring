@@ -14,10 +14,10 @@ server_port = 8080
 
 server_debug_mode = True
 
-# for local dev and testing
+# for dev
 web_server_link = f'http://localhost:3000'
 
-# for production
+# for prod
 # web_server_link = f'https://kinetikgigs.com'
 
 verify_link: str = f'{web_server_link}/verify'
