@@ -30,7 +30,7 @@ export default function ResetPage() {
         .eq("operation", "reset_password")
         .gt("valid_until", new Date(Date.now()).toUTCString())
         .eq("company_id", id);
-      if (res.error) {
+      if (res.error || res.data.length === 0) {
         company = false;
         res = await supabase
           .from("user_access_codes")
@@ -41,7 +41,7 @@ export default function ResetPage() {
           .eq("user_id", id);
       }
 
-      if (res.error) {
+      if (res.error || res.data.length === 0) {
         alert("Password reset failed!");
         return;
       }

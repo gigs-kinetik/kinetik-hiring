@@ -9,7 +9,6 @@ import { Company, CompanyInstance, User, UserInstance } from "../../../util/serv
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [passwordVisible, setPasswordVisible] = useState(false)
   // const { email, password, error, passwordVisible } = data;
   const router = useRouter();
@@ -22,30 +21,30 @@ export default function LoginPage() {
     // const result = (await Company.login(email, password)) ?? (await User.login(email, password));
     user = (await Company.login(email, password)) ?? (await User.login(email, password));
     if (!user) {
-      setError("Invalid username or password.");
+      alert("Invalid username or password.");
       ++requestCount;
     }
 
     // TODO: Implement user verification
     if (user.verified) {
-      setError("")
+      alert("")
       router.push("/home");
     } else {
       if (user instanceof UserInstance)
         await User.verify(user.id, user.email);
       else
         await Company.verify(user.id, user.email);
-      setError("Email not verified. Please check your inbox for the verification email.");
+      alert("Email not verified. Please check your inbox for the verification email.");
     }
 
     if (requestCount > 10) {
-      setError("Too many attempts, account has been temporarily disabled. Please reset your password.");
+      alert("Too many attempts, account has been temporarily disabled. Please reset your password.");
     }
   };
 
   const handlePasswordReset = async () => {
     if (!email) {
-      setError("Please enter your email address to reset your password.")
+      alert("Please enter your email address to reset your password.")
       return;
     }
     try {
@@ -57,9 +56,9 @@ export default function LoginPage() {
       await User.resetPassword(email) || await Company.resetPassword(email);
       finished = true;
       alert("Password reset email sent! Check your inbox.");
-      setError("")
+      alert("")
     } catch (error) {
-      setError(error.message)
+      alert(error.message)
     }
   };
 
@@ -150,11 +149,6 @@ export default function LoginPage() {
                 Sign In
               </button>
             </div>
-            {error && (
-              <p className="text-red-700 font-medium text-sm text-center">
-                {error}
-              </p>
-            )}
           </form>
         </div>
       </div>

@@ -17,23 +17,25 @@ export default function VerifyPage() {
       let company = true;
       let res = await supabase
         .from("company_access_codes")
-        .select()
+        .select('*')
         .eq("access_code", code)
         .eq("operation", "verify")
         .gt("valid_until", new Date(Date.now()).toUTCString())
         .eq("company_id", id);
-      if (res.error) {
+      if (res.error || res.data.length === 0) {
         company = false;
         res = await supabase
           .from("user_access_codes")
-          .select()
+          .select('*')
           .eq("access_code", code)
           .eq("operation", "verify")
           .gt("valid_until", new Date(Date.now()).toUTCString())
           .eq("user_id", id);
       }
 
-      if (res.error) setMessage("Could not verify email!");
+      console.log(res);
+
+      if (res.error || res.data.length === 0) setMessage("Could not verify email!");
       else if (
         (
           await supabase

@@ -11,7 +11,6 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -33,21 +32,23 @@ export default function SignupPage() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     if (!termsAccepted) {
-      setError("You must accept the terms and conditions to sign up.");
+      alert("You must accept the terms and conditions to sign up.");
       return;
     }
     if (userType === "Company" && !companyTermsAccepted) {
-      setError("You must accept the company-specific terms and conditions.");
+      alert("You must accept the company-specific terms and conditions.");
       return;
     }
     setLoading(true);
     if (password.length < 6) {
-      setError("Password must be at least 6 characters in length");
+      alert("Password must be at least 6 characters in length");
     } else if (userType === "Developer") {
       const user = await User.register(firstName, lastName, email, password);
       if (!user) {
-        setError("Email already in use");
+        alert("Email already in use");
       } else {
+        await User.verify(user.id, user.email);
+        alert('Verification email sent, please check your email');
         router.push("/login");
         setLoading(false);
       }
@@ -60,8 +61,10 @@ export default function SignupPage() {
         password
       );
       if (!company) {
-        setError("Email already in use");
+        alert("Email already in use");
       } else {
+        await Company.verify(company.id, company.email);
+        alert('Verification email sent, please check your email');
         router.push("/login");
         setLoading(false);
       }
@@ -325,11 +328,6 @@ export default function SignupPage() {
                     {loading ? "Signing Up..." : "Sign Up"}
                   </button>
                 </div>
-                {error && (
-                  <p className="text-red-700 font-medium text-sm text-center">
-                    {error}
-                  </p>
-                )}
               </form>
             </div>
           </>
