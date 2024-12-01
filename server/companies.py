@@ -122,17 +122,17 @@ def login(method: str, body: dict):
         return machine_access('PUT', { 'machine_id': body.get('machine_id') })
     
     res = supabase.table('companies').select('company_id, hashed_password, company_email, company_name, salt').eq('company_email', body.get('email')).execute()
-    print(body, '\n', res)
+
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:
         return 'invalid creds', 404
         
-    email, name = None, None
+    email, name, first_name, last_name, company_data = None, None, None, None, None
     for company in res.data:
         if company['hashed_password'] != sha256(apply_salt(body.get('password'), res.data[0]['salt']).encode()).hexdigest():
             return 'invalid creds', 404
-        email, name = company['company_email'], company['company_name']
+        email, name, first_name, last_name, company_data = company['company_email'], company['company_name'], company['first_name'], company['last_name'], company
     
     res = supabase.table('company_machines').upsert({
         'machine_id': body.get('machine_id').strip(),
@@ -148,6 +148,16 @@ def login(method: str, body: dict):
         'id': res.data[0]['company_id'],
         'email': email,
         'name': name,
+        'first_name': first_name,
+        'last_name': last_name,
+    }, 200
+    
+    keys = 'company_name company_email hashed_password salt first_name last_name'.split(' ')
+    for key in keys:
+        del company_data[key]
+    result = {
+        **(result),
+        **(company_data)
     }, 200
     
     res = supabase.table('companies').update({ 'last_login': now().isoformat() }).eq('company_id', result[0]['id']).execute()
@@ -373,7 +383,6 @@ def verify(method: str, body: dict):
 def reset(method: str, body: dict):
     """
         [
-            id,
             email, // email to send the verification
         ]
     """
@@ -381,8 +390,13 @@ def reset(method: str, body: dict):
     if method != 'PUT':
         return 'invalid method', 403
         
+    res = supabase.table('users').select('company_id').eq('company_email', body.get('email')).execute()
+    if hasattr(res, 'code'):
+        return 'error', 501
+    
+    id = res.data[0]['company_id']
     res = supabase.table('company_access_codes').insert({
-        'company_id': body.get('id'),
+        'company_id': id,
         'valid_until': (now() + timedelta(days=1)).isoformat(),
         'operation': 'reset_password',
     }).execute()
@@ -390,5 +404,5 @@ def reset(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
 
-    reset_password(body.get('email'), body.get('id'), res.data[0]['access_code'])
+    reset_password(body.get('email'), id, res.data[0]['access_code'])
     return ':)', 200

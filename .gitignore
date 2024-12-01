@@ -47,4 +47,6 @@ ENV/
 env.bak/
 venv.bak/
 
-._*
+# ._*
+# server/penv
+# server__pycache__

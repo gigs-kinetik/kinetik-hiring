@@ -7,51 +7,19 @@ import { useRouter } from "next/navigation";
 import { Company, User } from "../../../util/server";
 
 export default function SignupPage() {
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [error, setError] = useState("");
-  // const [isSignedUp, setIsSignedUp] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [passwordVisible, setPasswordVisible] = useState(false);
-  // const [termsAccepted, setTermsAccepted] = useState(false);
-  // const [userType, setUserType] = useState("Developer");
-  // const [companyName, setCompanyName] = useState("");
-  // const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
-  const [data, setData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    error: "",
-    isSignedUp: false,
-    isLoading: false,
-    passwordVisible: false,
-    termsAccepted: false,
-    userType: "Developer",
-    companyName: "",
-    companyTermsAccepted: false,
-  });
   const [firstName, setFirstName] = useState("");
-  // const {
-  //   firstName, lastName, email, password, error, isSignedUp, isLoading, passwordVisible, termsAccepted, userType, companyName, companyTermsAccepted
-  // } = data
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSignedUp, setIsSignedUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [userType, setUserType] = useState("Developer");
+  const [companyName, setCompanyName] = useState("");
+  const [companyTermsAccepted, setCompanyTermsAccepted] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    // const savedFirstName = sessionStorage.getItem("firstName");
-    // const savedLastName = sessionStorage.getItem("lastName");
-    // const savedEmail = sessionStorage.getItem("email");
-    // const savedPassword = sessionStorage.getItem("password");
-    // const savedTermsAccepted =
-    //   sessionStorage.getItem("termsAccepted") === "true";
-    // if (savedFirstName) setFirstName(savedFirstName);
-    // if (savedLastName) setLastName(savedLastName);
-    // if (savedEmail) setEmail(savedEmail);
-    // if (savedPassword) setPassword(savedPassword);
-    // setTermsAccepted(savedTermsAccepted);
-  }, []);
 
   const handleInputChange = (
     setter: (value: string | boolean) => void,
@@ -64,59 +32,48 @@ export default function SignupPage() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (!data.termsAccepted) {
-      setData({
-        error: "You must accept the terms and conditions to sign up.",
-        ...data,
-      });
+    if (!termsAccepted) {
+      setError("You must accept the terms and conditions to sign up.")
       return;
     }
-    if (data.userType === "Company" && !data.companyTermsAccepted) {
-      setData({
-        error: "You must accept the company-specific terms and conditions.",
-        ...data,
-      });
+    if (userType === "Company" && !companyTermsAccepted) {
+      setError("You must accept the company-specific terms and conditions.")
       return;
     }
-    setData({ isLoading: true, ...data });
-    if (data.password.length < 6) {
-      setData({
-        error: "Password must be at least 6 characters in length",
-        ...data,
-      });
-    } else if (data.userType === "Developer") {
+    setLoading(true);
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters in length")
+    } else if (userType === "Developer") {
       const user = await User.register(
-        data.firstName,
-        data.lastName,
-        data.email,
-        data.password
+        firstName,
+        lastName,
+        email,
+        password
       );
       if (!user) {
-        setData({ error: "Email already in use", ...data });
+        setError("Email already in use")
       } else {
-        router.push("/login/user");
-        setData({ isLoading: false, ...data });
+        router.push("/login");
+        setLoading(false)
       }
     } else {
       const company = await Company.register(
-        data.companyName,
-        data.firstName,
-        data.lastName,
-        data.email,
-        data.password
+        companyName,
+        firstName,
+        lastName,
+        email,
+        password
       );
       if (!company) {
-        setData({ error: "Email already in use", ...data });
+        setError("Email already in use")
       } else {
-        router.push("/login/company");
-        setData({ isLoading: false, ...data });
+        router.push("/login");
+        setLoading(false)
       }
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setData({ passwordVisible: !data.passwordVisible, ...data });
-  };
+  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
   return (
     <div>
@@ -126,10 +83,10 @@ export default function SignupPage() {
         </Link>
       </button>
       <div className="font-poppins flex h-screen flex-col justify-center px-6 lg:px-8 bg-gradient-to-bl from-logo-purple/95 via-mid-purple/40 via-70% to-transparent">
-        {data.isSignedUp ? (
+        {isSignedUp ? (
           <div className="text-center text-off-white">
             <p>Account created successfully!</p>
-            <p>Email: {data.email}</p>
+            <p>Email: {email}</p>
           </div>
         ) : (
           <>
@@ -152,10 +109,8 @@ export default function SignupPage() {
                         type="radio"
                         name="userType"
                         value="Developer"
-                        checked={data.userType === "Developer"}
-                        onChange={() =>
-                          setData({ userType: "Developer", ...data })
-                        }
+                        checked={userType === "Developer"}
+                        onChange={() => setUserType("Developer")}
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Developer</span>
@@ -165,17 +120,15 @@ export default function SignupPage() {
                         type="radio"
                         name="userType"
                         value="Company"
-                        checked={data.userType === "Company"}
-                        onChange={() =>
-                          setData({ userType: "Company", ...data })
-                        }
+                        checked={userType === "Company"}
+                        onChange={() => setUserType("Company")}
                         className="form-radio text-logo-purple/75 focus:ring-logo-purple focus:ring-2"
                       />
                       <span className="ml-2">Company</span>
                     </label>
                   </div>
                 </div>
-                {data.userType === "Company" && (
+                {userType === "Company" && (
                   <div>
                     <label
                       htmlFor="companyName"
@@ -188,11 +141,10 @@ export default function SignupPage() {
                         id="companyName"
                         name="companyName"
                         type="text"
-                        value={data.companyName}
+                        value={companyName}
                         onChange={(e) =>
                           handleInputChange(
-                            (companyName: string) =>
-                              setData({ companyName: companyName, ...data }),
+                            (companyName: string) => setCompanyName(companyName),
                             "companyName",
                             e.target.value
                           )
@@ -218,14 +170,11 @@ export default function SignupPage() {
                         type="text"
                         value={firstName}
                         onChange={
-                          (
-                            e // setData({ firstName: e.target.value, ...data })
-                          ) => setFirstName(e.target.value)
-                          // handleInputChange(
-                          //   (firstName: string) => setData({ firstName: firstName, ...data }),
-                          //   "firstName",
-                          //   e.target.value
-                          // )
+                          (e) => handleInputChange(
+                            (firstName: string) => setFirstName(firstName),
+                            "firstName",
+                            e.target.value
+                          )
                         }
                         required
                         className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
@@ -244,11 +193,10 @@ export default function SignupPage() {
                         id="lastName"
                         name="lastName"
                         type="text"
-                        value={data.lastName}
+                        value={lastName}
                         onChange={(e) =>
                           handleInputChange(
-                            (lastName: string) =>
-                              setData({ lastName: lastName, ...data }),
+                            (lastName: string) => setLastName(lastName),
                             "lastName",
                             e.target.value
                           )
@@ -272,10 +220,10 @@ export default function SignupPage() {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      value={data.email}
+                      value={email}
                       onChange={(e) =>
                         handleInputChange(
-                          (email: string) => setData({ email: email, ...data }),
+                          (email: string) => setEmail(email),
                           "email",
                           e.target.value
                         )
@@ -298,13 +246,12 @@ export default function SignupPage() {
                     <input
                       id="password"
                       name="password"
-                      type={data.passwordVisible ? "text" : "password"}
+                      type={passwordVisible ? "text" : "password"}
                       autoComplete="current-password"
-                      value={data.password}
+                      value={password}
                       onChange={(e) =>
                         handleInputChange(
-                          (password: string) =>
-                            setData({ password: password, ...data }),
+                          (password: string) => setPassword(password),
                           "password",
                           e.target.value
                         )
@@ -316,7 +263,7 @@ export default function SignupPage() {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                       onClick={togglePasswordVisibility}
                     >
-                      {data.passwordVisible ? (
+                      {passwordVisible ? (
                         <EyeSlashIcon className="h-5 w-5 text-gray-600" />
                       ) : (
                         <EyeIcon className="h-5 w-5 text-gray-600" />
@@ -324,19 +271,14 @@ export default function SignupPage() {
                     </span>
                   </div>
                 </div>
-                {data.userType === "Company" && (
+                {userType === "Company" && (
                   <div className="flex items-center justify-center">
                     <input
                       id="companyTerms"
                       name="companyTerms"
                       type="checkbox"
-                      checked={data.companyTermsAccepted}
-                      onChange={() =>
-                        setData({
-                          companyTermsAccepted: !data.companyTermsAccepted,
-                          ...data,
-                        })
-                      }
+                      checked={companyTermsAccepted}
+                      onChange={() => setCompanyTermsAccepted(!companyTermsAccepted)}
                       className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                     />
                     <label
@@ -353,12 +295,12 @@ export default function SignupPage() {
                     id="terms"
                     name="terms"
                     type="checkbox"
-                    checked={data.termsAccepted}
+                    checked={termsAccepted}
                     onChange={() => {
-                      setData({ termsAccepted: !data.termsAccepted, ...data });
+                      setTermsAccepted(!termsAccepted);
                       sessionStorage.setItem(
                         "termsAccepted",
-                        (!data.termsAccepted).toString()
+                        (!termsAccepted).toString()
                       );
                     }}
                     className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
@@ -380,14 +322,14 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-logo-purple/85 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-logo-purple/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/70"
-                    disabled={data.isLoading}
+                    disabled={loading}
                   >
-                    {data.isLoading ? "Signing Up..." : "Sign Up"}
+                    {loading ? "Signing Up..." : "Sign Up"}
                   </button>
                 </div>
-                {data.error && (
+                {error && (
                   <p className="text-red-700 font-medium text-sm text-center">
-                    {data.error}
+                    {error}
                   </p>
                 )}
               </form>

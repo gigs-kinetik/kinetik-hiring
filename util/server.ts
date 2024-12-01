@@ -79,11 +79,13 @@ const [cinter, uinter, einter] = [
 
 class BasicCompany {
   access_code: string;
-  email: string;
   id: number;
+  email: string;
   name: string;
   first_name: string;
   last_name: string;
+  verified: boolean;
+  last_login: Date
 }
 
 export class CompanyInstance {
@@ -93,6 +95,8 @@ export class CompanyInstance {
   private _name: string;
   private _first_name: string;
   private _last_name: string;
+  private _verified: boolean;
+  private _last_login: Date;
 
   constructor(company: BasicCompany) {
     this._access_code = company.access_code;
@@ -101,6 +105,7 @@ export class CompanyInstance {
     this._name = company.name;
     this._first_name = company.first_name;
     this._last_name = company.last_name;
+    this._last_login = company.last_login;
   }
 
   get accessCode() {
@@ -120,6 +125,12 @@ export class CompanyInstance {
   }
   get lastName() {
     return this._last_name;
+  }
+  get verified() {
+    return this._verified;
+  }
+  get lastLogin() {
+    return this._last_login;
   }
 
   /**
@@ -290,6 +301,8 @@ export class CompanyInstance {
     this._name = company.name;
     this._first_name = company.first_name;
     this._last_name = company.last_name;
+    this._verified = company.verified;
+    this._last_login = company.last_login;
     return this;
   }
 }
@@ -306,6 +319,8 @@ type BasicUser = {
   location: string;
   skills: string[];
   num_events: number;
+  verified: boolean;
+  last_login: Date;
 };
 
 export class UserInstance {
@@ -320,6 +335,8 @@ export class UserInstance {
   private _location: string;
   private _skills: string[];
   private _num_events: number;
+  private _verified: boolean;
+  private _last_login: Date;
 
   constructor(user: BasicUser) {
     this._access_code = user.access_code;
@@ -333,6 +350,9 @@ export class UserInstance {
     this._location = user.location;
     this._skills = user.skills;
     this._num_events = user.num_events;
+    this._verified = user.verified;
+    this._last_login = user.last_login;
+
   }
 
   get accessCode() {
@@ -367,6 +387,12 @@ export class UserInstance {
   }
   get numEvents() {
     return this._num_events;
+  }
+  get verified() {
+    return this._verified;
+  }
+  get lastLogin() { 
+    return this._last_login;
   }
 
   /**
@@ -495,6 +521,13 @@ export class UserInstance {
     this._id = user.id;
     this._first_name = user.first_name;
     this._last_name = user.last_name;
+    this._gender = user.gender;
+    this._country_of_citizenship = user.country_of_citizenship;
+    this._location = user.location;
+    this._skills = user.skills;
+    this._num_events = user.num_events;
+    this._verified = user.verified;
+    this._last_login = user.last_login;
     return this;
   }
 }
@@ -732,12 +765,11 @@ export class Company {
   }
 
   public static async resetPassword(
-    companyId: number,
     emailAddr: string
   ): Promise<boolean> {
     return (
       (
-        await cinter.put("reset-password", { id: companyId, email: emailAddr })
+        await cinter.put("reset-password", { email: emailAddr })
       )[0].status === 200
     );
   }
@@ -937,11 +969,10 @@ export class User {
   }
 
   public static async resetPassword(
-    userId: number,
     emailAddr: string
   ): Promise<boolean> {
     return (
-      (await uinter.put("reset-password", { id: userId, email: emailAddr }))[0]
+      (await uinter.put("reset-password", { email: emailAddr }))[0]
         .status === 200
     );
   }

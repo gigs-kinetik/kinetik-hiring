@@ -368,16 +368,20 @@ def verify(method: str, body: dict):
 def reset(method: str, body: dict):
     """
         [
-            id,
             email, // email to send the verification
         ]
     """
     
     if method != 'PUT':
         return 'invalid method', 403
-        
+    
+    res = supabase.table('users').select('user_id').eq('user_email', body.get('email')).execute()
+    if hasattr(res, 'code'):
+        return 'error', 501
+    
+    id = res.data[0]['user_id']
     res = supabase.table('user_access_codes').insert({
-        'user_id': body.get('id'),
+        'user_id': id,
         'valid_until': (now() + timedelta(days=1)).isoformat(),
         'operation': 'reset_password',
     }).execute()
@@ -385,5 +389,5 @@ def reset(method: str, body: dict):
     if hasattr(res, 'code'):
         return 'error', 501
     
-    reset_password(body.get('email'), body.get('id'), res.data[0]['access_code'])
+    reset_password(body.get('email'), id, res.data[0]['access_code'])
     return ':)', 200

@@ -4,88 +4,60 @@ import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Company, User } from "../../../util/server";
+import { Company, CompanyInstance, User, UserInstance } from "../../../util/server";
 
 export default function LoginPage() {
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-    error: "",
-    passwordVisible: false,
-  });
-  const { email, password, error, passwordVisible } = data;
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  // const { email, password, error, passwordVisible } = data;
   const router = useRouter();
+  let user: CompanyInstance | UserInstance | null = null;
+  // const [user, setUser] = useState<UserInstance | CompanyInstance | null>(null)
 
   const handleLogin = async (e) => {
     e.preventDefault();
     let requestCount = 0;
-    if (
-      (await Company.login(email, password)) ||
-      (await User.login(email, password))
-    ) {
-      router.push("/home");
-    } else {
-      setData({ error: "Invalid username or password.", ...data });
+    // const result = (await Company.login(email, password)) ?? (await User.login(email, password));
+    user = (await Company.login(email, password)) ?? (await User.login(email, password));
+    if (!user) {
+      setError("Invalid username or password.");
       ++requestCount;
     }
 
     // TODO: Implement user verification
-    // if (user.emailVerified) {
-    //   sessionStorage.setItem("userEmail", email);
-    //   const userDocRef = doc(db, "User Information", email);
-    //   const userDoc = await getDoc(userDocRef);
-    //   let userType = "Developer";
-    //   const userData = userDoc.data();
-    //   if (!userData.Type) {
-    //     await updateDoc(userDocRef, { Type: "Developer" });
-    //   } else {
-    //     userType = userData.Type;
-    //   }
-    //   sessionStorage.setItem("userType", userType);
-    //   const options: Intl.DateTimeFormatOptions = { timeZone: "America/Chicago", timeZoneName: "short" };
-    //   const currDate = new Date()
-    //     .toLocaleDateString("en-US", options)
-    //     .split(", ")[0];
-    //   const currTime = new Date().toLocaleTimeString("en-US", options);
-    //   await updateDoc(userDocRef, {
-    //     "Last Login": currDate + ", " + currTime,
-    //   });
-    //   setData({ ...data, error: "" })
-    //   if (userType == "Developer") {
-    //     router.push("/info");
-    //   } else {
-    //     router.push("/home");
-    //   }
-    // } else {
-    //   setData({ ...data, email: "Email not verified. Please check your inbox for the verification email." });
-    // }
+    if (user.verified) {
+      setError("")
+      router.push("/home");
+    } else {
+      if (user instanceof UserInstance)
+        await User.verify(user.id, user.email);
+      else
+        await Company.verify(user.id, user.email);
+      setEmail("Email not verified. Please check your inbox for the verification email.");
+    }
 
     if (requestCount > 10) {
-      setData({
-        ...data,
-        error:
-          "Too many attempts, account has been temporarily disabled. Please reset your password.",
-      });
+      setError("Too many attempts, account has been temporarily disabled. Please reset your password.");
     }
   };
 
   const handlePasswordReset = async () => {
-    // if (!email) {
-    //   setData({ ...data, error: "Please enter your email address to reset your password." })
-    //   return;
-    // }
-    // try {
-    //   await sendPasswordResetEmail(auth, email);
-    //   alert("Password reset email sent! Check your inbox.");
-    //   setData({ ...data, error: "" })
-    // } catch (error) {
-    //   setData({ ...data, error: error.message })
-    // }
+    if (!email) {
+      setError("Please enter your email address to reset your password.")
+      return;
+    }
+    try {
+      await User.resetPassword(email) || await Company.resetPassword(email);
+      alert("Password reset email sent! Check your inbox.");
+      setError("")
+    } catch (error) {
+      setError(error.message)
+    }
   };
 
-  const togglePasswordVisibility = () => {
-    setData({ ...data, passwordVisible: !passwordVisible });
-  };
+  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
   return (
     <div>
@@ -117,12 +89,7 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      email: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                 />
@@ -153,12 +120,7 @@ export default function LoginPage() {
                   type={passwordVisible ? "text" : "password"}
                   autoComplete="current-password"
                   value={password}
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      password: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="block w-full rounded-md border-0 py-1.5 bg-off-white/40 text-gray-900 shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-logo-purple/75 sm:text-sm sm:leading-6"
                 />
