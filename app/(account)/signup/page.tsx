@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { HomeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Company, User } from "../../../util/server";
 
@@ -33,28 +33,23 @@ export default function SignupPage() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     if (!termsAccepted) {
-      setError("You must accept the terms and conditions to sign up.")
+      setError("You must accept the terms and conditions to sign up.");
       return;
     }
     if (userType === "Company" && !companyTermsAccepted) {
-      setError("You must accept the company-specific terms and conditions.")
+      setError("You must accept the company-specific terms and conditions.");
       return;
     }
     setLoading(true);
     if (password.length < 6) {
-      setError("Password must be at least 6 characters in length")
+      setError("Password must be at least 6 characters in length");
     } else if (userType === "Developer") {
-      const user = await User.register(
-        firstName,
-        lastName,
-        email,
-        password
-      );
+      const user = await User.register(firstName, lastName, email, password);
       if (!user) {
-        setError("Email already in use")
+        setError("Email already in use");
       } else {
         router.push("/login");
-        setLoading(false)
+        setLoading(false);
       }
     } else {
       const company = await Company.register(
@@ -65,10 +60,10 @@ export default function SignupPage() {
         password
       );
       if (!company) {
-        setError("Email already in use")
+        setError("Email already in use");
       } else {
         router.push("/login");
-        setLoading(false)
+        setLoading(false);
       }
     }
   };
@@ -144,7 +139,8 @@ export default function SignupPage() {
                         value={companyName}
                         onChange={(e) =>
                           handleInputChange(
-                            (companyName: string) => setCompanyName(companyName),
+                            (companyName: string) =>
+                              setCompanyName(companyName),
                             "companyName",
                             e.target.value
                           )
@@ -169,8 +165,8 @@ export default function SignupPage() {
                         name="firstName"
                         type="text"
                         value={firstName}
-                        onChange={
-                          (e) => handleInputChange(
+                        onChange={(e) =>
+                          handleInputChange(
                             (firstName: string) => setFirstName(firstName),
                             "firstName",
                             e.target.value
@@ -278,7 +274,9 @@ export default function SignupPage() {
                       name="companyTerms"
                       type="checkbox"
                       checked={companyTermsAccepted}
-                      onChange={() => setCompanyTermsAccepted(!companyTermsAccepted)}
+                      onChange={() =>
+                        setCompanyTermsAccepted(!companyTermsAccepted)
+                      }
                       className="h-4 w-4 text-logo-purple/75 border-gray-300 rounded focus:ring-logo-purple"
                     />
                     <label

@@ -3,8 +3,6 @@ from hashlib import sha256
 import pytz
 from datetime import datetime, timedelta
 from util import supabase, verify_account, reset_password
-import smtplib
-from email.message import EmailMessage
 
 """
 Operations:

@@ -38,7 +38,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Environments
+# environments
 .env
 .venv
 env/
@@ -47,6 +47,8 @@ ENV/
 env.bak/
 venv.bak/
 
+# server routes
 ._*
 server/penv/
 server/__pycache__/
+server/.venv/

@@ -1,7 +1,6 @@
 import logging
-from flask import Flask, Response, jsonify, request
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-import json
 from typing import Callable, Any
 from util import server_port, server_debug_mode
 import companies, user, events
