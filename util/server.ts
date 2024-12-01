@@ -1,6 +1,4 @@
-import { lockfilePatchPromise } from "next/dist/build/swc";
 import { getAccessCode, getDeviceId, setAccessCode } from "./device";
-import { useRouter, redirect, RedirectType, useParams } from "next/navigation";
 
 // for dev
 // const PORT = 8080;
@@ -85,7 +83,7 @@ class BasicCompany {
   first_name: string;
   last_name: string;
   verified: boolean;
-  last_login: Date
+  last_login: Date;
 }
 
 export class CompanyInstance {
@@ -352,7 +350,6 @@ export class UserInstance {
     this._num_events = user.num_events;
     this._verified = user.verified;
     this._last_login = user.last_login;
-
   }
 
   get accessCode() {
@@ -391,7 +388,7 @@ export class UserInstance {
   get verified() {
     return this._verified;
   }
-  get lastLogin() { 
+  get lastLogin() {
     return this._last_login;
   }
 
@@ -764,13 +761,10 @@ export class Company {
     );
   }
 
-  public static async resetPassword(
-    emailAddr: string
-  ): Promise<boolean> {
+  public static async resetPassword(emailAddr: string): Promise<boolean> {
     return (
-      (
-        await cinter.put("reset-password", { email: emailAddr })
-      )[0].status === 200
+      (await cinter.put("reset-password", { email: emailAddr }))[0].status ===
+      200
     );
   }
 }
@@ -968,12 +962,10 @@ export class User {
     );
   }
 
-  public static async resetPassword(
-    emailAddr: string
-  ): Promise<boolean> {
+  public static async resetPassword(emailAddr: string): Promise<boolean> {
     return (
-      (await uinter.put("reset-password", { email: emailAddr }))[0]
-        .status === 200
+      (await uinter.put("reset-password", { email: emailAddr }))[0].status ===
+      200
     );
   }
 }

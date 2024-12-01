@@ -1,6 +1,3 @@
-from email.message import EmailMessage
-import smtplib
-from typing import Any
 import random
 from hashlib import sha256
 import pytz

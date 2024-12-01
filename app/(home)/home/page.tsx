@@ -4,11 +4,17 @@ import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
-import { BasicEvent, BasicSubmission, Company, CompanyInstance, get, UserInstance } from "../../../util/server";
+import {
+  BasicEvent,
+  BasicSubmission,
+  CompanyInstance,
+  get,
+  UserInstance,
+} from "../../../util/server";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const router = useRouter()
+  const router = useRouter();
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [challenges, setChallenges] = useState<BasicEvent[]>([]);
@@ -25,7 +31,7 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [user, setUser] = useState<UserInstance | CompanyInstance | null>(null);
-  const [events, setEvents] = useState<BasicEvent[]>([])
+  const [events, setEvents] = useState<BasicEvent[]>([]);
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
@@ -34,16 +40,17 @@ export default function HomePage() {
     const fetchData = async () => {
       setUser(await get());
       const company = user instanceof CompanyInstance;
-      if (!user)
-        return;
+      if (!user) return;
 
       if (company) {
         setChallenges(await user.getEvents());
         setEvents(await user.getEvents());
       } else {
-        setFilteredEvents(await user.queryEvents({
-          // insert query
-        }));
+        setFilteredEvents(
+          await user.queryEvents({
+            // insert query
+          })
+        );
         setSubmissions((await user.getSubmissions()) ?? []);
         setEvents(await user.getSubmissionEvents());
       }
@@ -55,7 +62,7 @@ export default function HomePage() {
   }, []);
 
   const handleApplyClick = useCallback((eventId: number) => {
-    router.push(`/apply/${eventId}`)
+    router.push(`/apply/${eventId}`);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -105,20 +112,26 @@ export default function HomePage() {
   };
 
   const handleDelete = async (eventId: number) => {
-    if (!(user instanceof CompanyInstance))
-      return;
+    if (!(user instanceof CompanyInstance)) return;
 
     setIsDeleting(true);
-    await user.deleteEvent(eventId)
+    await user.deleteEvent(eventId);
     setChallenges(await user.getEvents());
     setIsDeleting(false);
   };
 
-  const isApplied = useCallback((eventId: number) => {
-    return submissions.filter(sub => sub.event_id === eventId).length > 0;
-  }, [submissions])
+  const isApplied = useCallback(
+    (eventId: number) => {
+      return submissions.filter((sub) => sub.event_id === eventId).length > 0;
+    },
+    [submissions]
+  );
 
-  const handlePay = async (eventId: number, prizeAmount: number, percentage: number) => {
+  const handlePay = async (
+    eventId: number,
+    prizeAmount: number,
+    percentage: number
+  ) => {
     // if (percentage == 10) {
     //   const userDocRef = doc(db, "Events", eventId);
     //   await updateDoc(userDocRef, {
@@ -150,25 +163,23 @@ export default function HomePage() {
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
     } finally {
-      if (!(user instanceof CompanyInstance))
-        return;
+      if (!(user instanceof CompanyInstance)) return;
       if (percentage === 10)
         await user.updateEvent({
           event_id: eventId,
           payment_status: 1,
-        })
+        });
       else if (percentage === 90)
         await user.updateEvent({
           event_id: eventId,
           payment_status: 2,
-        })
+        });
     }
   };
 
-  if (!user)
-    return null;
+  if (!user) return null;
 
-  if ((user instanceof UserInstance) && !loading) {
+  if (user instanceof UserInstance && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
         <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
@@ -181,10 +192,7 @@ export default function HomePage() {
             {events.map((event) => {
               console.log(filteredEvents, event);
               if (filteredEvents.includes(event.event_id)) {
-                if (
-                  event.payment_status > 0 &&
-                  event.end_time
-                ) {
+                if (event.payment_status > 0 && event.end_time) {
                   const eventDate = new Date(event.end_time.getMilliseconds());
                   if (eventDate > new Date()) {
                     return (
@@ -246,7 +254,9 @@ export default function HomePage() {
                             <div className="font-poppins text-sm text-gray-500">
                               Submit by{" "}
                               {event.end_time &&
-                                new Date(event.end_time.getMilliseconds()).toLocaleTimeString("en-US", {
+                                new Date(
+                                  event.end_time.getMilliseconds()
+                                ).toLocaleTimeString("en-US", {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                   timeZone: "America/Los_Angeles",
@@ -254,7 +264,9 @@ export default function HomePage() {
                                 })}{" "}
                               on{" "}
                               {event.end_time &&
-                                new Date(event.end_time.getMilliseconds()).toLocaleDateString("en-US", {
+                                new Date(
+                                  event.end_time.getMilliseconds()
+                                ).toLocaleDateString("en-US", {
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
@@ -278,7 +290,7 @@ export default function HomePage() {
     );
   }
 
-  if ((user instanceof CompanyInstance) && !loading) {
+  if (user instanceof CompanyInstance && !loading) {
     if (challenges.length > 0) {
       return (
         <div className="flex flex-row max-w-full max-h-full">
@@ -322,16 +334,14 @@ export default function HomePage() {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 font-poppins">
                       <div className="flex flex-col w-full sm:w-auto">
                         <div className="flex flex-wrap gap-2 mb-2">
-                          {event.prize_list
-                            .slice(0, 3)
-                            .map((prize, index) => (
-                              <div
-                                key={index}
-                                className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
-                              >
-                                ${prize} Cash Prize
-                              </div>
-                            ))}
+                          {event.prize_list.slice(0, 3).map((prize, index) => (
+                            <div
+                              key={index}
+                              className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
+                            >
+                              ${prize} Cash Prize
+                            </div>
+                          ))}
                         </div>
                         <div className="font-poppins text-xs text-gray-500">
                           {event["Company"]}
@@ -358,9 +368,7 @@ export default function HomePage() {
                               );
                             }
                           }}
-                          disabled={
-                            event.payment_status > 0
-                          }
+                          disabled={event.payment_status > 0}
                         >
                           {event.payment_status % 2 === 0
                             ? "Approved"
@@ -380,7 +388,9 @@ export default function HomePage() {
                           }`}
                           onClick={() => {
                             if (
-                              event.payment_status < 3 && event.payment_status % 2 === 0 && event.report_url
+                              event.payment_status < 3 &&
+                              event.payment_status % 2 === 0 &&
+                              event.report_url
                             ) {
                               handlePay(
                                 event.event_id,
@@ -390,8 +400,7 @@ export default function HomePage() {
                             }
                           }}
                           disabled={
-                            event.payment_status === 4 ||
-                            !event.report_url
+                            event.payment_status === 4 || !event.report_url
                           }
                         >
                           {event.payment_status === 4
@@ -435,21 +444,19 @@ export default function HomePage() {
                       <div className="mb-2 sm:mb-0 font-poppins">
                         Deadline set for{" "}
                         {event.end_time &&
-                          event.end_time
-                            .toLocaleTimeString("en-US", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "America/Los_Angeles",
-                              timeZoneName: "short",
-                            })}{" "}
+                          event.end_time.toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            timeZone: "America/Los_Angeles",
+                            timeZoneName: "short",
+                          })}{" "}
                         on{" "}
                         {event.end_time &&
-                          event.end_time
-                            .toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
+                          event.end_time.toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                       </div>
                       <div className="font-poppins">
                         {event["Required Skills"]?.join(", ")}
@@ -465,9 +472,7 @@ export default function HomePage() {
                             : "bg-logo-purple/85 hover:bg-logo-purple"
                         }`}
                         onClick={() => {
-                          if (
-                            event.payment_status <= 1
-                          ) {
+                          if (event.payment_status <= 1) {
                             handlePay(
                               event.event_id,
                               event["Prize Amount"],
@@ -475,9 +480,7 @@ export default function HomePage() {
                             );
                           }
                         }}
-                        disabled={
-                          event.payment_status === 2
-                        }
+                        disabled={event.payment_status === 2}
                       >
                         {event.payment_status === 2
                           ? "Approved"
@@ -491,13 +494,17 @@ export default function HomePage() {
                             ? "bg-green-600/90 cursor-not-allowed"
                             : event.payment_status === 3
                             ? "bg-orange-500/90 hover:bg-orange-600"
-                            : (event.payment_status % 2 === 0 && event.payment_status < 3) && event.report_url
+                            : event.payment_status % 2 === 0 &&
+                              event.payment_status < 3 &&
+                              event.report_url
                             ? "bg-logo-purple/85 hover:bg-logo-purple"
                             : "cursor-not-allowed opacity-50 bg-gray-400"
                         }`}
                         onClick={() => {
                           if (
-                            (event.payment_status % 2 === 0 && event.payment_status < 3) && event.report_url
+                            event.payment_status % 2 === 0 &&
+                            event.payment_status < 3 &&
+                            event.report_url
                           ) {
                             handlePay(
                               event.event_id,
@@ -619,7 +626,9 @@ export default function HomePage() {
                       <input
                         value={cashAmount}
                         placeholder="Enter just the number with no commas (ex: 5000)."
-                        onChange={(e) => setCashAmount(parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          setCashAmount(parseFloat(e.target.value))
+                        }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -630,7 +639,9 @@ export default function HomePage() {
                       <input
                         type="text"
                         value={requiredSkills}
-                        onChange={(e) => setRequiredSkills(e.target.value.split(';'))}
+                        onChange={(e) =>
+                          setRequiredSkills(e.target.value.split(";"))
+                        }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -639,8 +650,14 @@ export default function HomePage() {
                       Other Prizes/Incentives (semicolon-separated){" "}
                       <input
                         type="text"
-                        value={prizes.map(prize => `$${prize} Case Prize`)}
-                        onChange={(e) => setPrizes(e.target.value.split(';').map(s => parseFloat(s.substring(1))))}
+                        value={prizes.map((prize) => `$${prize} Case Prize`)}
+                        onChange={(e) =>
+                          setPrizes(
+                            e.target.value
+                              .split(";")
+                              .map((s) => parseFloat(s.substring(1)))
+                          )
+                        }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                       />
                     </label>

@@ -1,5 +1,4 @@
 from email.message import EmailMessage
-import os
 import smtplib
 from supabase import create_client, Client
 
