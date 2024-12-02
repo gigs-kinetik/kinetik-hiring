@@ -5,8 +5,8 @@ import { getAccessCode, getDeviceId, setAccessCode } from "./device";
 // const SERVER_URL = `http://localhost:${PORT}`;
 
 // for prod
-// const SERVER_URL = `https://kinetikgigs.azurewebsites.net`;
-const SERVER_URL = `https://kinetik-flask-server.azurewebsites.net`
+const SERVER_URL = `https://kinetik-server.azurewebsites.net`;
+// const SERVER_URL = `https://kinetik-flask-server.azurewebsites.net`
 
 export type Json = {
   [key: string]:
