@@ -29,7 +29,6 @@ export default function LoginPage() {
 
     // TODO: Implement user verification
     if (user.verified) {
-      alert("")
       router.push("/home");
     } else {
       if (user instanceof UserInstance)
@@ -58,7 +57,6 @@ export default function LoginPage() {
       await User.resetPassword(email) || await Company.resetPassword(email);
       finished = true;
       alert("Password reset email sent! Check your inbox.");
-      alert("")
     } catch (error) {
       alert(error.message)
     }

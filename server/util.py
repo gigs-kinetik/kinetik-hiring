@@ -11,7 +11,7 @@ supabase: Client = create_client(url, key)
 
 server_port = 8080
 
-server_debug_mode = True
+server_debug_mode = False
 
 # for dev
 web_server_link = f'http://localhost:3000'
