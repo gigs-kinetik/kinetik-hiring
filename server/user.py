@@ -220,7 +220,7 @@ def events(method: str, body: dict):
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    res = supabase.table('events').select(', '.join('event_id created_at company_id event_name start_time end_time short_description long_description prize submissions'.split()))
+    res = supabase.table('events').select(', '.join('*'.split()))
     
     if body.get('event_name') is not None:
         res = res.eq('event_name', f'%{body.get('event_name')}%')

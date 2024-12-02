@@ -5,8 +5,8 @@ import { getAccessCode, getDeviceId, setAccessCode } from "./device";
 // const SERVER_URL = `http://localhost:${PORT}`;
 
 // for prod
-const SERVER_URL = `https://kinetik-server.azurewebsites.net`;
-// const SERVER_URL = `https://kinetik-flask-server.azurewebsites.net`
+// const SERVER_URL = `https://kinetik-server.azurewebsites.net`;
+const SERVER_URL = `https://kinetik-flask-server.azurewebsites.net`
 
 export type Json = {
   [key: string]:
@@ -414,7 +414,7 @@ export class UserInstance {
     let data: Json = {};
     for (const option in options)
       if (options[option]) data[option] = options[option];
-    const [res, json] = await uinter.post("events", {
+    const [res, json] = await uinter.put("events", {
       id: this.id,
       ...data,
     });

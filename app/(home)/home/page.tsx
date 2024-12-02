@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
   const router = useRouter();
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState<BasicEvent[]>([]);
   const [challenges, setChallenges] = useState<BasicEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [deadline, setDeadline] = useState("");
@@ -38,7 +38,6 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setUser(await get());
       const company = user instanceof CompanyInstance;
       if (!user) return;
 
@@ -46,20 +45,21 @@ export default function HomePage() {
         setChallenges(await user.getEvents());
         setEvents(await user.getEvents());
       } else {
-        setFilteredEvents(
-          await user.queryEvents({
-            // insert query
-          })
-        );
+        const queriedEvents = await user.queryEvents({});
+        setEvents(queriedEvents);
         setSubmissions((await user.getSubmissions()) ?? []);
-        setEvents(await user.getSubmissionEvents());
+        const submittedEvents = await user.getSubmissionEvents();
+        setFilteredEvents(queriedEvents!.filter(e => !submittedEvents.some(a => a.event_id === e.event_id)));
       }
 
       setLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [user]);
+
+  if (!user)
+    get().then(user => setUser(user));
 
   const handleApplyClick = useCallback((eventId: number) => {
     router.push(`/apply/${eventId}`);
@@ -132,17 +132,6 @@ export default function HomePage() {
     prizeAmount: number,
     percentage: number
   ) => {
-    // if (percentage == 10) {
-    //   const userDocRef = doc(db, "Events", eventId);
-    //   await updateDoc(userDocRef, {
-    //     InitPaid: "Pending",
-    //   });
-    // } else if (percentage == 90) {
-    //   const userDocRef = doc(db, "Events", eventId);
-    //   await updateDoc(userDocRef, {
-    //     FinalPaid: "Pending",
-    //   });
-    // }
     try {
       const stripe = await stripePromise;
       const response = await fetch("/home/create-payment-intent", {
@@ -190,9 +179,10 @@ export default function HomePage() {
           </div>
           <div className="w-full mt-4 space-y-4">
             {events.map((event) => {
-              console.log(filteredEvents, event);
-              if (filteredEvents.includes(event.event_id)) {
-                if (event.payment_status > 0 && event.end_time) {
+              if (filteredEvents.some(e => e.event_id === event.event_id)) {
+                console.log('Inside if', event)
+                if (event.payment_status > 0 && (!event.end_time || event.end_time > new Date(Date.now()))) {
+                  console.log('Inside if if', event)
                   const eventDate = new Date(event.end_time.getMilliseconds());
                   if (eventDate > new Date()) {
                     return (
