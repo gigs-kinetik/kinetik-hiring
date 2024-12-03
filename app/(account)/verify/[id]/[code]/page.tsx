@@ -33,22 +33,14 @@ export default function VerifyPage() {
           .eq("user_id", id);
       }
 
-      console.log(res);
-
-      if (res.error || res.data.length === 0) setMessage("Could not verify email!");
-      else if (
-        (
-          await supabase
-            .from(company ? "companies" : "users")
-            .update({ verified: true })
-            .eq(`${company ? "company" : "user"}_id`, id)
-        ).error
-      )
-        setMessage("Could not verify email!");
-      else
-        setMessage(
-          "Email has been verified. This page can be closed safely now."
-        );
+      if (res.error || !res.data || res.data.length === 0 || Math.floor(res.status / 100) !== 2) setMessage("Could not verify email!");
+      else {
+        res = await supabase.from(company ? "companies" : "users").update({ verified: true }).eq(`${company ? "company" : "user"}_id`, id);
+        if (Math.floor(res.status / 100) === 2)
+          setMessage("Email has been verified. This page can be closed safely now.");
+        else
+          setMessage("Could not verify email!");
+      }
     }
 
     fetch();

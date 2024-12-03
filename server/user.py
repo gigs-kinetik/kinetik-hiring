@@ -141,8 +141,6 @@ def login(method: str, body: dict):
         
     email, first_name, last_name, user_data = None, None, None, None
     for user in res.data:
-        print(body.get('password').strip())
-        print(user['hashed_password'], sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest())
         if user['hashed_password'] != sha256(apply_salt(body.get('password').strip(), res.data[0]['salt']).encode()).hexdigest():
             return 'invalid creds', 404
         email, first_name, last_name, user_data = user['user_email'], user['first_name'], user['last_name'], user

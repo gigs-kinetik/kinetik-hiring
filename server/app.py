@@ -6,7 +6,7 @@ from util import server_port, server_debug_mode
 import companies, user, events
 
 app = Flask(__name__)
-cors = CORS(app) # allow CORS for all domains on all routes.
+cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/', methods='GET POST'.split())
@@ -14,28 +14,16 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def root():
     return jsonify({ 'Message': 'Hello world!' }, 200)
 
-# naming scheme -> /table/operation
-# expected parameters (as needed):
-# !IMPORTANT: get requests should populate the data in the header, not the body
 """
-{
-    id: int
-    access_code: string
-    machine_id: string
-    ... other parameters needed
-}
-"""
-
-"""
-Tables:
-companies
-company_access_codes
-company_machines
-events
-submissions
-user_access_codes
-user_machines
-users
+    Tables:
+    companies
+    company_access_codes
+    company_machines
+    events
+    submissions
+    user_access_codes
+    user_machines
+    users
 """
 
 @app.route('/<table>/<operation>', methods='GET POST PUT DELETE'.split())

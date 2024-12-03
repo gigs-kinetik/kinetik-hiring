@@ -396,7 +396,6 @@ def reset(method: str, body: dict):
         ]
     """
     
-    print(method)
     if method != 'PUT':
         return 'invalid method', 403
         
