@@ -4,13 +4,11 @@ import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
-import { useRouter } from "next/navigation";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
 
 export default function HomePage() {
-  const router = useRouter();
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<BasicEvent[]>([]);
   const [challenges, setChallenges] = useState<BasicEvent[]>([]);
@@ -36,7 +34,6 @@ export default function HomePage() {
     const fetchData = async () => {
       const company = user instanceof CompanyInstance;
       if (!user) return;
-
       if (company) {
         setChallenges(await user.getEvents());
         setEvents(await user.getEvents());
@@ -51,20 +48,15 @@ export default function HomePage() {
           )
         );
       }
-
       setLoading(false);
     };
-
     fetchData();
   }, [user]);
 
   if (!user) getInstance().then((user) => setUser(user));
 
-  const handleApplyClick = useCallback((eventId: number) => {
-    router.push(`/apply/${eventId}`);
-  }, []);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
+    setIsModalOpen(false);
     e.preventDefault();
     if (isNaN(cashAmount)) {
       alert("Please enter a valid cash amount number.");
@@ -86,7 +78,7 @@ export default function HomePage() {
     }
     const skills = requiredSkills.map((skill) => skill.trim());
     if (user instanceof CompanyInstance) {
-      user.addEvent({
+      const event = await user.addEvent({
         event_name: eventName,
         short_description: shortDescription,
         long_description: longDescription,
@@ -97,6 +89,7 @@ export default function HomePage() {
         payment_status: 0,
       });
       setChallenges(await user.getEvents());
+      console.log(event);
     }
     setDeadline("");
     setDeadlineTime("");
@@ -106,13 +99,11 @@ export default function HomePage() {
     setCashAmount(NaN);
     setPrizeList([]);
     setRequiredSkills([]);
-    setIsModalOpen(false);
     setIsSubmitting(false);
   };
 
   const handleDelete = async (eventId: number) => {
     if (!(user instanceof CompanyInstance)) return;
-
     setIsDeleting(true);
     await user.deleteEvent(eventId);
     setChallenges(await user.getEvents());
@@ -125,6 +116,15 @@ export default function HomePage() {
     },
     [submissions]
   );
+
+  function toDatetime(datetime: any) {
+    const date = new Date(datetime);
+
+    const formattedDate = date.toLocaleDateString();
+    const formattedTime = date.toLocaleTimeString();
+
+    return formattedDate + " at " + formattedTime;
+  }
 
   const handlePay = async (
     eventId: number,
@@ -215,8 +215,8 @@ export default function HomePage() {
                             </div>
                             <Link
                               href={`/apply/${encodeURIComponent(
-                                event.event_id
-                              )}`}
+                                event.event_name
+                              )}-${encodeURIComponent(event.event_id)}`}
                               className="w-fit h-fit rounded-lg"
                             >
                               <button
@@ -225,10 +225,7 @@ export default function HomePage() {
                                     ? "bg-green-600/90 cursor-not-allowed"
                                     : "bg-logo-purple/85 hover:bg-logo-purple"
                                 }`}
-                                onClick={() =>
-                                  !isApplied(event.event_id) &&
-                                  handleApplyClick(event.event_id)
-                                }
+                                onClick={() => !isApplied(event.event_id)}
                                 disabled={isApplied(event.event_id)}
                               >
                                 {isApplied(event.event_id)
@@ -243,25 +240,7 @@ export default function HomePage() {
                           </div>
                           <div className="lg:flex hidden flex-row justify-between">
                             <div className="font-poppins text-sm text-gray-500">
-                              Submit by{" "}
-                              {event.end_time &&
-                                new Date(
-                                  event.end_time.getMilliseconds()
-                                ).toLocaleTimeString("en-US", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  timeZone: "America/Los_Angeles",
-                                  timeZoneName: "short",
-                                })}{" "}
-                              on{" "}
-                              {event.end_time &&
-                                new Date(
-                                  event.end_time.getMilliseconds()
-                                ).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}
+                              Submit by {toDatetime(event.end_time)}
                             </div>
                             <div className="font-poppins text-sm pr-2 text-gray-500">
                               {event.required_skills.join(", ")}
@@ -282,7 +261,7 @@ export default function HomePage() {
   }
 
   if (user instanceof CompanyInstance && !loading) {
-    if (challenges.length > 0) {
+    if (challenges.length >= 0) {
       return (
         <div className="flex flex-row max-w-full max-h-full">
           {isDeleting && (
@@ -429,28 +408,14 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className="font-poppins text-sm mt-2 mb-4 text-logo-purple">
-                      {event["Short Description"] || "No description available"}
+                      {event.short_description || "No description available"}
                     </div>
                     <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-500">
                       <div className="mb-2 sm:mb-0 font-poppins">
-                        Deadline set for{" "}
-                        {event.end_time &&
-                          event.end_time.toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            timeZone: "America/Los_Angeles",
-                            timeZoneName: "short",
-                          })}{" "}
-                        on{" "}
-                        {event.end_time &&
-                          event.end_time.toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                        Deadline set for {toDatetime(event.end_time)}
                       </div>
                       <div className="font-poppins">
-                        {event["Required Skills"]?.join(", ")}
+                        {event.required_skills?.join(", ")}
                       </div>
                     </div>
                     <div className="flex sm:hidden flex-wrap gap-2 w-full mt-4">
@@ -547,17 +512,22 @@ export default function HomePage() {
             </div>
           </div>
           {isModalOpen && (
-            <div
-              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-              onClick={() => setIsModalOpen(false)}
-            >
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
               <div
-                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto relative"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
-                  Add New Event
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                  <div className="text-xl font-semibold text-logo-purple">
+                    Add An Event
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="text-gray-400 hover:text-gray-600 transition"
+                  >
+                    ✕
+                  </button>
+                </div>
                 <form onSubmit={handleSubmit}>
                   <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
                     <label className="block mb-2">
@@ -625,27 +595,25 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-4">
-                      Required Skills (semicolon-separated){" "}
+                      Required Skills (comma-separated){" "}
                       <span className="text-red-500">*</span>
                       <input
                         type="text"
                         value={requiredSkills}
                         onChange={(e) =>
-                          setRequiredSkills(e.target.value.split(";"))
+                          setRequiredSkills(e.target.value.split(","))
                         }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
                     </label>
                     <label className="block mb-2">
-                      Other Prizes/Incentives (semicolon-separated){" "}
+                      Other Prizes/Incentives (comma-separated){" "}
                       <input
                         type="text"
                         value={prizeList}
                         onChange={(e) =>
-                          setPrizeList(
-                            e.target.value.split(";").map((s) => s.substring(1))
-                          )
+                          setPrizeList(e.target.value.split(","))
                         }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                       />
