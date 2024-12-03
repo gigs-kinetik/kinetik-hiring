@@ -17,7 +17,7 @@ export default function VerifyPage() {
       let company = true;
       let res = await supabase
         .from("company_access_codes")
-        .select('*')
+        .select("*")
         .eq("access_code", code)
         .eq("operation", "verify")
         .gt("valid_until", new Date(Date.now()).toUTCString())
@@ -26,20 +26,30 @@ export default function VerifyPage() {
         company = false;
         res = await supabase
           .from("user_access_codes")
-          .select('*')
+          .select("*")
           .eq("access_code", code)
           .eq("operation", "verify")
           .gt("valid_until", new Date(Date.now()).toUTCString())
           .eq("user_id", id);
       }
 
-      if (res.error || !res.data || res.data.length === 0 || Math.floor(res.status / 100) !== 2) setMessage("Could not verify email!");
+      if (
+        res.error ||
+        !res.data ||
+        res.data.length === 0 ||
+        Math.floor(res.status / 100) !== 2
+      )
+        setMessage("Could not verify email!");
       else {
-        res = await supabase.from(company ? "companies" : "users").update({ verified: true }).eq(`${company ? "company" : "user"}_id`, id);
+        res = await supabase
+          .from(company ? "companies" : "users")
+          .update({ verified: true })
+          .eq(`${company ? "company" : "user"}_id`, id);
         if (Math.floor(res.status / 100) === 2)
-          setMessage("Email has been verified. This page can be closed safely now.");
-        else
-          setMessage("Could not verify email!");
+          setMessage(
+            "Email has been verified. This page can be closed safely now."
+          );
+        else setMessage("Could not verify email!");
       }
     }
 
