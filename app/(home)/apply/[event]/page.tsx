@@ -10,6 +10,7 @@ import {
   CompanyInstance,
   UserInstance,
 } from "../../../../util/wrapper/instance";
+import { Company } from "../../../../util/wrapper/static";
 
 export default function ApplyPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function ApplyPage() {
   const [validationError, setValidationError] = useState("");
   const [event, setEvent] = useState<BasicEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [company, setCompany] = useState<CompanyInstance>(null);
   const [user, setUser] = useState<CompanyInstance | UserInstance | null>(null);
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function ApplyPage() {
       if (!user) setUser(await getInstance());
       if (eventId && user && user instanceof UserInstance) {
         const event = await getEvent(parseInt(eventId as string));
+        // setCompany(await Company.getById(event.company_id));
         setEvent(event);
         const submissions = await user.getSubmissions();
         if (
@@ -47,6 +50,15 @@ export default function ApplyPage() {
 
     func();
   }, [router, user]);
+
+  function toDatetime(datetime: any) {
+    const date = new Date(datetime);
+
+    const formattedDate = date.toLocaleDateString();
+    const formattedTime = date.toLocaleTimeString();
+
+    return formattedDate + " at " + formattedTime;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -106,31 +118,13 @@ export default function ApplyPage() {
           <div className="flex flex-row justify-between">
             <div className="flex flex-col">
               <div className="font-poppins mb-2 lg:flex lg:text-sm hidden text-gray-500">
-                Sponsored by {event["Company"]}
+                Sponsored by
               </div>
               <div className="font-poppins lg:text-3xl text-xl font-semibold text-logo-purple">
-                {event["Event Name"]}
+                {event.event_name}
               </div>
               <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
-                Submit by{" "}
-                {event["Deadline"] &&
-                  new Date(
-                    event["Deadline"]["_seconds"] * 1000
-                  ).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    timeZone: "America/Los_Angeles",
-                    timeZoneName: "short",
-                  })}{" "}
-                on{" "}
-                {event["Deadline"] &&
-                  new Date(
-                    event["Deadline"]["_seconds"] * 1000
-                  ).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                Submit by {toDatetime(event.end_time)}
               </div>
             </div>
           </div>
@@ -138,51 +132,30 @@ export default function ApplyPage() {
             Task
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            {event["Long Description"]}
+            {event.long_description}
           </div>
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-            Please contact {event["Contact"]} for any questions.
+            Please contact info@kinetikgigs.com for any questions.
           </div>
-          {event["Features"] && event["Features"].length > 0 && (
-            <div>
-              <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
-                Features
-              </div>
-              <ul
-                className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
-                style={{
-                  listStyleType: "disc",
-                  paddingLeft: "20px",
-                }}
-              >
-                {event["Features"].map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-              </ul>
-            </div>
-          )}
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Prize Pool
           </div>
-          {event["Prizes Description"] ? (
-            <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-              {event["Prizes Description"]}
-            </div>
+          {event.prize_list && event.prize_list.length > 0 ? (
+            <ul
+              className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
+              style={{
+                listStyleType: "disc",
+                paddingLeft: "20px",
+              }}
+            >
+              {event.prize_list.map((prize, index) => (
+                <li key={index}>{prize}</li>
+              ))}
+            </ul>
           ) : (
-            event["Prize List"] &&
-            event["Prize List"].length > 0 && (
-              <ul
-                className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
-                style={{
-                  listStyleType: "disc",
-                  paddingLeft: "20px",
-                }}
-              >
-                {event["Prize List"].map((prize, index) => (
-                  <li key={index}>{prize}</li>
-                ))}
-              </ul>
-            )
+            <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
+              {event.prize_list || "No prizes available"}
+            </div>
           )}
           <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
             Skill Requirements
@@ -190,9 +163,9 @@ export default function ApplyPage() {
           <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
             This challenge will require you to utilize the following skills to
             the best of your ability:{" "}
-            {event["Required Skills"] && (
+            {event.required_skills && (
               <span className="font-poppins text-sm pr-2 text-logo-purple">
-                {event["Required Skills"].join(", ")}.
+                {event.required_skills.join(", ")}.
               </span>
             )}
           </div>
