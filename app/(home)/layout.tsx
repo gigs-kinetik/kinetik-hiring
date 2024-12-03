@@ -35,6 +35,10 @@ export default function HomeLayout({ children }) {
     return null;
   }
 
+  const handleProfile = () => {
+    router.push("/profile");
+  };
+
   const handleSignOut = () => {
     sessionStorage.clear();
     signout();
@@ -84,9 +88,12 @@ export default function HomeLayout({ children }) {
                   className="w-64 my-2 font-poppins text-sm origin-top-right rounded-lg p-1 font-normal text-logo-purple bg-white border-box border-2 border-off-white"
                 >
                   <MenuItem>
-                    <div className="group w-full font-semibold items-center gap-2 py-3 px-3 overflow-hidden border-box border-b-2 border-off-white">
-                      Welcome!
-                    </div>
+                    <button
+                      className="group flex w-full items-center gap-2 py-3 px-3 hover:bg-off-white hover:font-semibold"
+                      onClick={handleProfile}
+                    >
+                      My Account
+                    </button>
                   </MenuItem>
                   <MenuItem>
                     <button
