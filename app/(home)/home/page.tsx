@@ -20,7 +20,8 @@ export default function HomePage() {
     const [eventName, setEventName] = useState("");
     const [longDescription, setLongDescription] = useState("");
     const [shortDescription, setShortDescription] = useState("");
-    const [cashAmount, setCashAmount] = useState<number>(NaN);
+    const [cashAmount, setCashAmount] = useState<number>(0);
+    const [cashAmountString, setCashAmountString] = useState('0');
     const [prizeList, setPrizeList] = useState<string[]>([]);
     const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,15 +41,17 @@ export default function HomePage() {
             if (!user) return;
 
             if (company) {
-                setChallenges(await user.getEvents());
-                setEvents(await user.getEvents());
+                const result = await user.getEvents();
+                console.log(result);
+                setChallenges(result ?? []);
+                setEvents(await user.getEvents() ?? []);
             } else {
-                const queriedEvents = await user.queryEvents({});
+                const queriedEvents = await user.queryEvents({}) ?? [];
                 setEvents(queriedEvents);
                 setSubmissions((await user.getSubmissions()) ?? []);
-                const submittedEvents = await user.getSubmissionEvents();
+                const submittedEvents = await user.getSubmittedEvents() ?? [];
                 setFilteredEvents(
-                    queriedEvents!.filter(
+                    queriedEvents.filter(
                         (e) =>
                             !submittedEvents.some(
                                 (a) => a.event_id === e.event_id
@@ -101,7 +104,7 @@ export default function HomePage() {
                 end_time: pstDateTime,
                 payment_status: 0,
             });
-            setChallenges(await user.getEvents());
+            setChallenges(await user.getEvents() ?? []);
         }
         setDeadline("");
         setDeadlineTime("");
@@ -120,7 +123,7 @@ export default function HomePage() {
 
         setIsDeleting(true);
         await user.deleteEvent(eventId);
-        setChallenges(await user.getEvents());
+        setChallenges(await user.getEvents() ?? []);
         setIsDeleting(false);
     };
 
@@ -149,7 +152,7 @@ export default function HomePage() {
             });
             const data = await response.json();
             if (response.ok) {
-                await stripe.redirectToCheckout({
+                await stripe!.redirectToCheckout({
                     sessionId: data.id,
                 });
             } else {
@@ -185,18 +188,14 @@ export default function HomePage() {
                     </div>
                     <div className="w-full mt-4 space-y-4">
                         {events.map((event) => {
-                            if (
-                                filteredEvents.some(
-                                    (e) => e.event_id === event.event_id
-                                )
-                            ) {
-                                event.end_time = new Date(event.end_time);
+                            if (filteredEvents.some((e) => e.event_id === event.event_id)) {
+                                const end = new Date(event.end_time ?? Date.now());
                                 if (
                                     event.payment_status > 0 &&
                                     (!event.end_time ||
                                         event.end_time > new Date(Date.now()))
                                 ) {
-                                    const eventDate = event.end_time;
+                                    const eventDate = end;
                                     if (eventDate > new Date()) {
                                         return (
                                             <div
@@ -281,32 +280,30 @@ export default function HomePage() {
                                                     <div className="lg:flex hidden flex-row justify-between">
                                                         <div className="font-poppins text-sm text-gray-500">
                                                             Submit by{" "}
-                                                            {event.end_time &&
-                                                                new Date(
-                                                                    event.end_time.getMilliseconds()
-                                                                ).toLocaleTimeString(
-                                                                    "en-US",
-                                                                    {
-                                                                        hour: "2-digit",
-                                                                        minute: "2-digit",
-                                                                        timeZone:
-                                                                            "America/Los_Angeles",
-                                                                        timeZoneName:
-                                                                            "short",
-                                                                    }
-                                                                )}{" "}
+                                                            {new Date(
+                                                                end.getMilliseconds()
+                                                            ).toLocaleTimeString(
+                                                                "en-US",
+                                                                {
+                                                                    hour: "2-digit",
+                                                                    minute: "2-digit",
+                                                                    timeZone:
+                                                                        "America/Los_Angeles",
+                                                                    timeZoneName:
+                                                                        "short",
+                                                                }
+                                                            )}{" "}
                                                             on{" "}
-                                                            {event.end_time &&
-                                                                new Date(
-                                                                    event.end_time.getMilliseconds()
-                                                                ).toLocaleDateString(
-                                                                    "en-US",
-                                                                    {
-                                                                        year: "numeric",
-                                                                        month: "long",
-                                                                        day: "numeric",
-                                                                    }
-                                                                )}
+                                                            {new Date(
+                                                                end.getMilliseconds()
+                                                            ).toLocaleDateString(
+                                                                "en-US",
+                                                                {
+                                                                    year: "numeric",
+                                                                    month: "long",
+                                                                    day: "numeric",
+                                                                }
+                                                            )}
                                                         </div>
                                                         <div className="font-poppins text-sm pr-2 text-gray-500">
                                                             {event.required_skills.join(
@@ -329,43 +326,45 @@ export default function HomePage() {
     }
 
     if (user instanceof CompanyInstance && !loading) {
-        if (challenges.length > 0) {
-            return (
-                <div className="flex flex-row max-w-full max-h-full">
-                    {isDeleting && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="text-white text-lg">
-                                Deleting...
-                            </div>
+        // if (challenges.length > 0) {
+        return (
+            <div className="flex flex-row max-w-full max-h-full">
+                {isDeleting && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="text-white text-lg">
+                            Deleting...
                         </div>
-                    )}
-                    <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
-                        <div className="flex justify-between w-full">
-                            <div className="flex justify-between w-full items-center">
-                                <div className="flex items-center space-x-2">
-                                    <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
-                                        Your Dashboard
-                                    </p>
-                                    <a
-                                        href="https://firebasestorage.googleapis.com/v0/b/gigapp-8cc4b.appspot.com/o/Kinetik%20x%20Sponsors.pdf?alt=media&token=2f8e537c-2dfe-484e-8e23-b89e156b4f54"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <button className="rounded-full border border-logo-purple text-logo-purple font-poppins font-medium text-sm h-5 w-5 flex items-center justify-center mt-1.5">
-                                            i
-                                        </button>
-                                    </a>
-                                </div>
-                                <button
-                                    className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
-                                    onClick={() => setIsModalOpen(true)}
+                    </div>
+                )}
+                <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
+                    <div className="flex justify-between w-full">
+                        <div className="flex justify-between w-full items-center">
+                            <div className="flex items-center space-x-2">
+                                <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
+                                    Your Dashboard
+                                </p>
+                                <a
+                                    href="https://firebasestorage.googleapis.com/v0/b/gigapp-8cc4b.appspot.com/o/Kinetik%20x%20Sponsors.pdf?alt=media&token=2f8e537c-2dfe-484e-8e23-b89e156b4f54"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                 >
-                                    +
-                                </button>
+                                    <button className="rounded-full border border-logo-purple text-logo-purple font-poppins font-medium text-sm h-5 w-5 flex items-center justify-center mt-1.5">
+                                        i
+                                    </button>
+                                </a>
                             </div>
+                            <button
+                                className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                +
+                            </button>
                         </div>
-                        <div className="w-full mt-4 space-y-4">
-                            {challenges.map((event) => (
+                    </div>
+                    <div className="w-full mt-4 space-y-4">
+                        {challenges.map((event) => {
+                            const end = new Date(event.end_time!);
+                            return (
                                 <div
                                     key={event.event_name}
                                     className="bg-white h-fit rounded-lg p-5"
@@ -398,7 +397,7 @@ export default function HomePage() {
                                                         event.payment_status > 0
                                                             ? "bg-green-600/90 cursor-not-allowed"
                                                             : event.payment_status <
-                                                              0
+                                                            0
                                                             ? "bg-orange-500/90"
                                                             : "bg-logo-purple/85 hover:bg-logo-purple"
                                                     }`}
@@ -425,7 +424,7 @@ export default function HomePage() {
                                                     0
                                                         ? "Approved"
                                                         : event.payment_status !==
-                                                          0
+                                                        0
                                                         ? "Pending"
                                                         : "Pay"}
                                                 </button>
@@ -435,11 +434,11 @@ export default function HomePage() {
                                                         4
                                                             ? "bg-green-600/90 cursor-not-allowed"
                                                             : event.payment_status ===
-                                                              3
+                                                            3
                                                             ? "bg-orange-500/90 hover:bg-orange-600"
                                                             : event.payment_status !==
-                                                                  1 &&
-                                                              event.report_url
+                                                                1 &&
+                                                            event.report_url
                                                             ? "bg-logo-purple/85 hover:bg-logo-purple"
                                                             : "cursor-not-allowed opacity-50 bg-gray-400"
                                                     }`}
@@ -470,7 +469,7 @@ export default function HomePage() {
                                                     {event.payment_status === 4
                                                         ? "Completed"
                                                         : event.payment_status ===
-                                                          3
+                                                        3
                                                         ? "Pending"
                                                         : "Disburse"}
                                                 </button>
@@ -515,28 +514,26 @@ export default function HomePage() {
                                         <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-500">
                                             <div className="mb-2 sm:mb-0 font-poppins">
                                                 Deadline set for{" "}
-                                                {event.end_time &&
-                                                    event.end_time.toLocaleTimeString(
-                                                        "en-US",
-                                                        {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                            timeZone:
-                                                                "America/Los_Angeles",
-                                                            timeZoneName:
-                                                                "short",
-                                                        }
-                                                    )}{" "}
+                                                {end.toLocaleTimeString(
+                                                    "en-US",
+                                                    {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        timeZone:
+                                                            "America/Los_Angeles",
+                                                        timeZoneName:
+                                                            "short",
+                                                    }
+                                                )}{" "}
                                                 on{" "}
-                                                {event.end_time &&
-                                                    event.end_time.toLocaleDateString(
-                                                        "en-US",
-                                                        {
-                                                            year: "numeric",
-                                                            month: "long",
-                                                            day: "numeric",
-                                                        }
-                                                    )}
+                                                {end.toLocaleDateString(
+                                                    "en-US",
+                                                    {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric",
+                                                    }
+                                                )}
                                             </div>
                                             <div className="font-poppins">
                                                 {event["Required Skills"]?.join(
@@ -550,7 +547,7 @@ export default function HomePage() {
                                                     event.payment_status === 2
                                                         ? "bg-green-600/90 cursor-not-allowed"
                                                         : event.payment_status ===
-                                                          1
+                                                        1
                                                         ? "bg-orange-500/90"
                                                         : "bg-logo-purple/85 hover:bg-logo-purple"
                                                 }`}
@@ -583,14 +580,14 @@ export default function HomePage() {
                                                     event.payment_status === 4
                                                         ? "bg-green-600/90 cursor-not-allowed"
                                                         : event.payment_status ===
-                                                          3
+                                                        3
                                                         ? "bg-orange-500/90 hover:bg-orange-600"
                                                         : event.payment_status %
-                                                              2 ===
-                                                              0 &&
-                                                          event.payment_status <
-                                                              3 &&
-                                                          event.report_url
+                                                            2 ===
+                                                            0 &&
+                                                        event.payment_status <
+                                                            3 &&
+                                                        event.report_url
                                                         ? "bg-logo-purple/85 hover:bg-logo-purple"
                                                         : "cursor-not-allowed opacity-50 bg-gray-400"
                                                 }`}
@@ -654,182 +651,179 @@ export default function HomePage() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            )
+                        })}
+                    </div>
+                </div>
+                {isModalOpen && (
+                    <div
+                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                        onClick={() => setIsModalOpen(false)}
+                    >
+                        <div
+                            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                                Add New Event
+                            </h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
+                                    <label className="block mb-2">
+                                        Event Name{" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <input
+                                            type="text"
+                                            value={eventName}
+                                            onChange={(e) =>
+                                                setEventName(e.target.value)
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Deadline Date{" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <input
+                                            type="date"
+                                            value={deadline}
+                                            onChange={(e) =>
+                                                setDeadline(e.target.value)
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Deadline Time (PST){" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <input
+                                            type="time"
+                                            value={deadlineTime}
+                                            onChange={(e) =>
+                                                setDeadlineTime(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Short Description{" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <textarea
+                                            value={shortDescription}
+                                            placeholder="Enter a quick synopsis of what you need."
+                                            onChange={(e) =>
+                                                setShortDescription(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Long Description{" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <textarea
+                                            value={longDescription}
+                                            placeholder="Enter the complete requirements for your project."
+                                            onChange={(e) =>
+                                                setLongDescription(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Total Cash Amount (in USD){" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <input
+                                            value={cashAmountString}
+                                            placeholder="Enter just the number with no commas (ex: 5000)."
+                                            type="number"
+                                            onChange={(e) => {
+                                                    setCashAmountString(e.target.value)
+                                                    setCashAmount(parseFloat(e.target.value))
+                                                }
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-4">
+                                        Required Skills
+                                        (semicolon-separated){" "}
+                                        <span className="text-red-500">
+                                            *
+                                        </span>
+                                        <input
+                                            type="text"
+                                            value={requiredSkills}
+                                            onChange={(e) =>
+                                                setRequiredSkills(
+                                                    e.target.value.split(
+                                                        ";"
+                                                    )
+                                                )
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                            required
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Other Prizes/Incentives
+                                        (semicolon-separated){" "}
+                                        <input
+                                            type="text"
+                                            value={prizeList.join(';')}
+                                            onChange={(e) =>
+                                                setPrizeList(
+                                                    e.target.value
+                                                        .split(";")
+                                                )
+                                            }
+                                            className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                                        />
+                                    </label>
+                                    <div className="flex justify-center">
+                                        <button
+                                            type="submit"
+                                            className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting
+                                                ? "Submitting..."
+                                                : "Submit"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    {isModalOpen && (
-                        <div
-                            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-                            onClick={() => setIsModalOpen(false)}
-                        >
-                            <div
-                                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
-                                    Add New Event
-                                </h2>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
-                                        <label className="block mb-2">
-                                            Event Name{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <input
-                                                type="text"
-                                                value={eventName}
-                                                onChange={(e) =>
-                                                    setEventName(e.target.value)
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Deadline Date{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <input
-                                                type="date"
-                                                value={deadline}
-                                                onChange={(e) =>
-                                                    setDeadline(e.target.value)
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Deadline Time (PST){" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <input
-                                                type="time"
-                                                value={deadlineTime}
-                                                onChange={(e) =>
-                                                    setDeadlineTime(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Short Description{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <textarea
-                                                value={shortDescription}
-                                                placeholder="Enter a quick synopsis of what you need."
-                                                onChange={(e) =>
-                                                    setShortDescription(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Long Description{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <textarea
-                                                value={longDescription}
-                                                placeholder="Enter the complete requirements for your project."
-                                                onChange={(e) =>
-                                                    setLongDescription(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Total Cash Amount (in USD){" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <input
-                                                value={cashAmount}
-                                                placeholder="Enter just the number with no commas (ex: 5000)."
-                                                onChange={(e) =>
-                                                    setCashAmount(
-                                                        parseFloat(
-                                                            e.target.value
-                                                        )
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-4">
-                                            Required Skills
-                                            (semicolon-separated){" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
-                                            <input
-                                                type="text"
-                                                value={requiredSkills}
-                                                onChange={(e) =>
-                                                    setRequiredSkills(
-                                                        e.target.value.split(
-                                                            ";"
-                                                        )
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                                required
-                                            />
-                                        </label>
-                                        <label className="block mb-2">
-                                            Other Prizes/Incentives
-                                            (semicolon-separated){" "}
-                                            <input
-                                                type="text"
-                                                value={prizeList}
-                                                onChange={(e) =>
-                                                    setPrizeList(
-                                                        e.target.value
-                                                            .split(";")
-                                                            .map((s) =>
-                                                                s.substring(1)
-                                                            )
-                                                    )
-                                                }
-                                                className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                                            />
-                                        </label>
-                                        <div className="flex justify-center">
-                                            <button
-                                                type="submit"
-                                                className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
-                                                disabled={isSubmitting}
-                                            >
-                                                {isSubmitting
-                                                    ? "Submitting..."
-                                                    : "Submit"}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        } else {
-            return <div></div>;
-        }
+                )}
+            </div>
+        );
+        // } else {
+        //     return <div></div>;
+        // }
     }
     return <div></div>;
 }

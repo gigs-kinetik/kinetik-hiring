@@ -11,7 +11,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 SERVER_PORT = 8080
 
-SERVER_DEBUG_ON = False
+SERVER_DEBUG_ON = True
 
 # for dev
 WEBSITE_BASE_LINK = f'http://localhost:3000'
@@ -53,17 +53,17 @@ Please click the link below to reset your password.
 # IGNORE EVERYTHING PAST THIS AS SIMPLE HELPER FUNCTIONS
 #
 
-server = smtplib.SMTP('smtp.gmail.com', 587)
 def send_mail(from_email: str, from_password: str, to_email: list[str], subject: str, message: str):
     msg = EmailMessage()
     msg['Subject'] = subject
     msg['From'] = from_email
     msg['To'] = ', '.join(to_email)
     msg.set_content(message)
-    server.set_debuglevel(1)
-    server.starttls()
-    server.login(from_email, from_password)  # user & password
-    server.send_message(msg)
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.set_debuglevel(False)
+        server.starttls()
+        server.login(from_email, from_password)  # user & password
+        server.send_message(msg)
 
 def verify_account(to: str, id: int, access_code: str):
     send_mail(VERIFICATION_EMAIL_CONFIG['from_email'], VERIFICATION_EMAIL_CONFIG['app_password'], [to], VERIFICATION_EMAIL_CONFIG['subject'], VERIFICATION_EMAIL_CONFIG['body'](f'{VERIFICATION_LINK}/{id}/{access_code}'))

@@ -354,7 +354,11 @@ def users(method: str, body: dict):
     res = supabase.table('users').update(d).eq('user_id', body.get('id')).execute()
     if hasattr(res, 'code'):
         return 'error', 501
-    return res.data, 200
+    keys = 'id email'.split(' ')
+    for key in keys:
+        res.data[0][key] = res.data[0][f'user_{key}']
+        del res.data[0][f'user_{key}']
+    return res.data[0], 200
 
 def verify(method: str, body: dict):
     """

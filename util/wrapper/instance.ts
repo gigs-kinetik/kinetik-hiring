@@ -15,13 +15,17 @@ export class CompanyInstance {
 
     // DO NOT EVER USE THIS CONSTRUCTOR
     constructor(company: BasicCompany) {
-        this._access_code = company.access_code;
-        this._email = company.email;
-        this._id = company.id;
-        this._name = company.name;
-        this._first_name = company.first_name;
-        this._last_name = company.last_name;
-        this._last_login = company.last_login;
+        // this._access_code = company.access_code;
+        // this._email = company.email;
+        // this._id = company.id;
+        // this._name = company.name;
+        // this._first_name = company.first_name;
+        // this._last_name = company.last_name;
+        // this._last_login = company.last_login;
+        // this._verified = company.verified;
+        for (const key in company) {
+            this[`_${key}`] = company[key]
+        }
     }
 
     // Accessors to the private members
@@ -259,19 +263,9 @@ export class UserInstance {
 
     // DO NOT EVER USE THIS CONSTRUCTOR
     constructor(user: BasicUser) {
-        this._access_code = user.access_code;
-        this._email = user.email;
-        this._first_name = user.first_name;
-        this._last_name = user.last_name;
-        this._id = user.id;
-        this._age = user.age;
-        this._gender = user.gender;
-        this._country_of_citizenship = user.country_of_citizenship;
-        this._location = user.location;
-        this._skills = user.skills;
-        this._num_events = user.num_events;
-        this._verified = user.verified;
-        this._last_login = user.last_login;
+        for (const key in user) {
+            this[`_${key}`] = user[key]
+        }
     }
 
     // Accessors to the private members
@@ -359,7 +353,7 @@ export class UserInstance {
      * Get all events this user has submitted to
      * @returns 
      */
-    public async getSubmissionEvents(): Promise<BasicEvent[] | null> {
+    public async getSubmittedEvents(): Promise<BasicEvent[] | null> {
         const [res, json] = await EventServer.put("get-submissions", {
             id: this.id,
         });
@@ -385,7 +379,7 @@ export class UserInstance {
         let data: Json = {};
         for (const option in options)
             if (options[option]) data[option] = options[option];
-        const [res, json] = await UserServer.post("events", {
+        const [res, json] = await UserServer.post("submissions", {
             id: this.id,
             ...data,
         });

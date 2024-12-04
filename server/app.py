@@ -2,7 +2,7 @@ import logging
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from typing import Callable, Any
-from util import server_port, server_debug_mode
+from util import SERVER_PORT, SERVER_DEBUG_ON
 import companies, user, events
 
 app = Flask(__name__)
@@ -63,4 +63,4 @@ def master(table, operation):
 
 if __name__ == '__main__':
     logging.getLogger('flask_cors').level = logging.DEBUG
-    app.run(port=server_port, debug=server_debug_mode)
+    app.run(port=SERVER_PORT, debug=SERVER_DEBUG_ON)

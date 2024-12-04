@@ -10,6 +10,7 @@ import {
     CompanyInstance,
     UserInstance,
 } from "../../../../util/wrapper/instance";
+import { Company } from "../../../../util/wrapper/static";
 
 export default function ApplyPage() {
     const router = useRouter();
@@ -23,9 +24,8 @@ export default function ApplyPage() {
     const [validationError, setValidationError] = useState("");
     const [event, setEvent] = useState<BasicEvent | null>(null);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<CompanyInstance | UserInstance | null>(
-        null
-    );
+    const [user, setUser] = useState<CompanyInstance | UserInstance | null>(null);
+    const [sponsor, setSponsor] = useState<CompanyInstance | null>(null);
 
     useEffect(() => {
         async function func() {
@@ -33,15 +33,20 @@ export default function ApplyPage() {
             if (eventId && user && user instanceof UserInstance) {
                 const event = await getEvent(parseInt(eventId as string));
                 setEvent(event);
-                const submissions = await user.getSubmissions();
-                if (
-                    submissions.filter((sub) => sub.event_id === event.event_id)
-                        .length > 0
-                ) {
-                    router.push("/home");
-                } else {
-                    setLoading(false);
+
+                if (!event) {
+                    alert('Fatal event error!');
+                    router.push('/home');
                 }
+
+                Company.getById(event.company_id).then(c => setSponsor(c));
+                user.getSubmissions().then(submissions => {
+                    if (submissions && submissions.some((sub) => sub.event_id === event.event_id)) {
+                        router.push("/home");
+                    } else {
+                        setLoading(false);
+                    }
+                })
             } else {
                 setLoading(false);
             }
@@ -63,10 +68,10 @@ export default function ApplyPage() {
 
         try {
             if (user instanceof UserInstance) {
-                await user.createSubmission({
-                    event_id: event.event_id,
-                    project_name: `${user.firstName} ${user.lastName}'s -> ${event.event_name}`,
-                    project_description: `${user.firstName} ${user.lastName}'s -> ${event.event_name} -> Description`,
+                const res = await user.createSubmission({
+                    event_id: event!.event_id,
+                    project_name: `${user.firstName} ${user.lastName}'s -> ${event!.event_name}`,
+                    project_description: `${user.firstName} ${user.lastName}'s -> ${event!.event_name} -> Description`,
                     project_link: projectLink,
                     project_video_link: videoLink,
                     resume_link: resumeLink,
@@ -76,9 +81,14 @@ export default function ApplyPage() {
                         additionalLink3,
                     ].filter((link) => link.length > 0),
                 });
+
+                if (!res) {
+                    alert('Submission failed')
+                    return;
+                }
             } else {
                 alert("You are not a user!");
-                throw new Error("Not a user");
+                return;
             }
 
             router.push("/home");
@@ -108,27 +118,23 @@ export default function ApplyPage() {
                     <div className="flex flex-row justify-between">
                         <div className="flex flex-col">
                             <div className="font-poppins mb-2 lg:flex lg:text-sm hidden text-gray-500">
-                                Sponsored by {event["Company"]}
+                                Sponsored by {(sponsor ?? { name: '...' }).name}
                             </div>
                             <div className="font-poppins lg:text-3xl text-xl font-semibold text-logo-purple">
-                                {event["Event Name"]}
+                                {event.event_name}
                             </div>
                             <div className="font-poppins mt-2 lg:flex lg:text-xs hidden text-gray-500">
                                 Submit by{" "}
-                                {event["Deadline"] &&
-                                    new Date(
-                                        event["Deadline"]["_seconds"] * 1000
-                                    ).toLocaleTimeString("en-US", {
+                                {event.end_time &&
+                                    new Date(event.end_time).toLocaleTimeString("en-US", {
                                         hour: "2-digit",
                                         minute: "2-digit",
                                         timeZone: "America/Los_Angeles",
                                         timeZoneName: "short",
                                     })}{" "}
                                 on{" "}
-                                {event["Deadline"] &&
-                                    new Date(
-                                        event["Deadline"]["_seconds"] * 1000
-                                    ).toLocaleDateString("en-US", {
+                                {event.end_time &&
+                                    new Date(event.end_time).toLocaleDateString("en-US", {
                                         year: "numeric",
                                         month: "long",
                                         day: "numeric",
@@ -140,29 +146,11 @@ export default function ApplyPage() {
                         Task
                     </div>
                     <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-                        {event["Long Description"]}
+                        {event.long_description}
                     </div>
                     <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
-                        Please contact {event["Contact"]} for any questions.
+                        Please contact {(sponsor ?? { email: '...' }).email} for any questions.
                     </div>
-                    {event["Features"] && event["Features"].length > 0 && (
-                        <div>
-                            <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
-                                Features
-                            </div>
-                            <ul
-                                className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
-                                style={{
-                                    listStyleType: "disc",
-                                    paddingLeft: "20px",
-                                }}
-                            >
-                                {event["Features"].map((feature, index) => (
-                                    <li key={index}>{feature}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                     <div className="font-poppins sm:text-lg font-semibold text-sm mt-4 text-logo-purple">
                         Prize Pool
                     </div>
@@ -171,8 +159,8 @@ export default function ApplyPage() {
                             {event["Prizes Description"]}
                         </div>
                     ) : (
-                        event["Prize List"] &&
-                        event["Prize List"].length > 0 && (
+                        event.prize_list &&
+                        event.prize_list.length > 0 && (
                             <ul
                                 className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple"
                                 style={{
@@ -180,7 +168,7 @@ export default function ApplyPage() {
                                     paddingLeft: "20px",
                                 }}
                             >
-                                {event["Prize List"].map((prize, index) => (
+                                {event.prize_list.map((prize, index) => (
                                     <li key={index}>{prize}</li>
                                 ))}
                             </ul>
@@ -192,9 +180,9 @@ export default function ApplyPage() {
                     <div className="font-poppins sm:text-sm text-xs mt-1 mb-4 text-logo-purple">
                         This challenge will require you to utilize the following
                         skills to the best of your ability:{" "}
-                        {event["Required Skills"] && (
+                        {event.required_skills && (
                             <span className="font-poppins text-sm pr-2 text-logo-purple">
-                                {event["Required Skills"].join(", ")}.
+                                {event.required_skills.join(", ")}.
                             </span>
                         )}
                     </div>

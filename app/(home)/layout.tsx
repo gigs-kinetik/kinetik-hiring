@@ -13,22 +13,22 @@ import {
     Transition,
 } from "@headlessui/react";
 import { FaInstagram } from "react-icons/fa";
-import { get, signout } from "../../util/wrapper/server";
+import { getInstance, signout } from "../../util/wrapper/globals";
 
 export default function HomeLayout({ children }) {
     const [loggedIn, setLoggedIn] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        async function getInstance() {
-            const accountInstance = await get();
+        async function fetchInstance() {
+            const accountInstance = await getInstance();
             if (accountInstance) {
                 setLoggedIn(true);
             } else {
                 router.push("/login");
             }
         }
-        getInstance();
+        fetchInstance();
     }, [router]);
 
     if (!loggedIn) {

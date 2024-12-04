@@ -333,6 +333,8 @@ def companies(method: str, body: dict):
         ]
     """
     
+    keys = 'id name email'.split(' ')
+    
     def post():
         salt = (lambda: ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=32)) + ''.join(random.choices('abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780!@#$%^&*()~`_-+={}[]|\\:";\'<>,.?/', k=random.randint(1, 32))))()
         result = machine_access('PUT', { 'access_code': body.get('access_code') })
@@ -352,13 +354,19 @@ def companies(method: str, body: dict):
         res = supabase.table('companies').update(d).execute()
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data, 200
+        for key in keys:
+            res.data[0][key] = res.data[0][f'company_{key}']
+            del res.data[0][f'company_{key}']
+        return res.data[0], 200
     
     def put():
-        res = supabase.table('companies').select('*').eq('company_id', int(body.get('id').strip())).execute()
+        res = supabase.table('companies').select('*').eq('company_id', body.get('id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data, 200
+        for key in keys:
+            res.data[0][key] = res.data[0][f'company_{key}']
+            del res.data[0][f'company_{key}']
+        return res.data[0], 200
     
     if method == 'POST':
         return post()

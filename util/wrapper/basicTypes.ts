@@ -73,7 +73,7 @@ export type BasicUser = {
  * Event data (you can use this)
  */
 export type BasicEvent = {
-    company_id: 11;
+    company_id: number;
     created_at: Date;
     start_time: Date;
     end_time: Date | null;
