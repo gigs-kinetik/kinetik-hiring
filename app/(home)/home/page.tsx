@@ -7,6 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
@@ -29,6 +30,8 @@ export default function HomePage() {
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
+
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -389,6 +392,9 @@ export default function HomePage() {
                               alert(
                                 "Report is not available yet. Please check 24 hours after the completion of the event."
                               );
+                            } else {
+                              e.preventDefault();
+                              router.push(`/${encodeURIComponent(event.event_id)}`)
                             }
                           }}
                           className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
