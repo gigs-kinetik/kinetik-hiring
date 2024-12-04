@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
-import { useRouter } from "next/navigation";
 import { Company } from "../../../util/wrapper/static";
 
 export default function HomePage() {
@@ -138,14 +137,6 @@ export default function HomePage() {
         setChallenges(await user.getEvents() ?? []);
         setIsDeleting(false);
     };
-    const handleDelete = async (eventId: number) => {
-        if (!(user instanceof CompanyInstance)) return;
-
-        setIsDeleting(true);
-        await user.deleteEvent(eventId);
-        setChallenges(await user.getEvents() ?? []);
-        setIsDeleting(false);
-    };
 
     const isApplied = useCallback(
         (eventId: number) => {
@@ -162,45 +153,7 @@ export default function HomePage() {
 
         return formattedDate + " at " + formattedTime;
     }
-
-    const handlePay = async (
-        eventId: number,
-        prizeAmount: number,
-        percentage: number
-    ) => {
-        try {
-            const stripe = await stripePromise;
-            const response = await fetch("/home/create-payment-intent", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ eventId, prizeAmount, percentage }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                await stripe!.redirectToCheckout({
-                    sessionId: data.id,
-                });
-            } else {
-                alert("An error occurred. Please try again.");
-            }
-        } catch (error) {
-            alert("An unexpected error occurred. Please try again.");
-        } finally {
-            if (!(user instanceof CompanyInstance)) return;
-            if (percentage === 10)
-                await user.updateEvent({
-                    event_id: eventId,
-                    payment_status: 1,
-                });
-            else if (percentage === 90)
-                await user.updateEvent({
-                    event_id: eventId,
-                    payment_status: 2,
-                });
-        }
-    };
+    
     const handlePay = async (
         eventId: number,
         prizeAmount: number,
