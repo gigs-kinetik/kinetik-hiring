@@ -73,20 +73,21 @@ export type BasicUser = {
  * Event data (you can use this)
  */
 export type BasicEvent = {
-    company_id: number;
-    created_at: Date;
-    start_time: Date;
-    end_time: Date | null;
-    event_id: number;
-    event_name: string;
-    short_description: string;
-    long_description: string;
-    payment_status: 0 | 1 | 2 | 3 | 4; // 0 = none, 1 = pending, 2 = init, 3 = pending, 4 = final
-    prize: number;
-    submissions: number;
-    prize_list: string[];
-    required_skills: string[];
-    report_url: string;
+  company_id: number;
+  company_name: string;
+  created_at: Date;
+  start_time: Date;
+  end_time: Date | null;
+  event_id: number;
+  event_name: string;
+  short_description: string;
+  long_description: string;
+  payment_status: 0 | 1 | 2 | 3 | 4; // 0 = none, 1 = pending, 2 = init, 3 = pending, 4 = final
+  prize: number;
+  submissions: number;
+  prize_list: string[];
+  required_skills: string[];
+  report_url: string;
 };
 
 /**

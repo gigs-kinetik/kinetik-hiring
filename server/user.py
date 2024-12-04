@@ -93,7 +93,11 @@ def machine_access(method: str, body: dict):
     else:
         res = res.eq('machine_id', body.get('machine_id')).gt('valid_until', now().isoformat())
         
-    res = res.execute()
+    try:
+        res = res.execute()
+    except Exception as a:
+        return a, 501
+    
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:

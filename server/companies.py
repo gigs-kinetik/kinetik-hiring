@@ -241,7 +241,7 @@ def events(method: str, body: dict):
                 **d,
             }).execute()
         else:
-            req_keys = 'event_name, company_id, short_description, long_description, prize'.split(', ')
+            req_keys = 'event_name, company_id, short_description, long_description, prize, machine_id'.split(', ')
             for key in req_keys:
                 if key in d:
                     del d[key]
@@ -256,13 +256,13 @@ def events(method: str, body: dict):
             
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data[0], 200
+        return res.data, 200
     
     def delete():
         res = supabase.table('events').delete().eq('event_id', body.get('event_id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data[0], 200
+        return res.data, 200
     
     if method == 'PUT':
         return put()
@@ -302,7 +302,7 @@ def submissions(method: str, body: dict):
         )
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data, 200
+        return res.data[0], 200
     
     def delete():
         if body.get('submission_id') is None:

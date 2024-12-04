@@ -360,6 +360,17 @@ export class UserInstance {
         if (res.status !== 200) return null;
         return json as BasicEvent[];
     }
+  /**
+   * Get all events this user has submitted to
+   * @returns
+   */
+  public async getSubmissionEvents(): Promise<BasicEvent[] | null> {
+    const [res, json] = await EventServer.put("get-submissions", {
+      id: this.id,
+    });
+    if (res.status !== 200) return null;
+    return json as BasicEvent[];
+  }
 
     /**
      * Create a submission for an event, null on request fail
