@@ -18,7 +18,7 @@ export default function HomePage() {
   const [eventName, setEventName] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [shortDescription, setShortDescription] = useState("");
-  const [cashAmount, setCashAmount] = useState<number>(NaN);
+  const [cashAmount, setCashAmount] = useState<number>(0);
   const [prizeList, setPrizeList] = useState<string[]>([]);
   const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -585,7 +585,6 @@ export default function HomePage() {
                       Total Cash Amount (in USD){" "}
                       <span className="text-red-500">*</span>
                       <input
-                        value={cashAmount}
                         placeholder="Enter just the number with no commas (ex: 5000)."
                         onChange={(e) =>
                           setCashAmount(parseFloat(e.target.value))
