@@ -98,11 +98,7 @@ export default function HomePage() {
                 timeZone: "America/Los_Angeles",
             })
         );
-        // if (prizeList.length == 0) {
-        //     prizeList.push(`$${cashAmount} Cash Prize`);
-        // } else {
-        //     prizeList.unshift(`$${cashAmount} Cash Prize`);
-        // }
+
         const skills = requiredSkills.map((skill) => skill.trim());
         if (user instanceof CompanyInstance) {
             user.addEvent({
@@ -122,7 +118,7 @@ export default function HomePage() {
         setEventName("");
         setLongDescription("");
         setShortDescription("");
-        setCashAmount(NaN);
+        setCashAmount(0);
         setPrizeList([]);
         setRequiredSkills([]);
         setIsModalOpen(false);
@@ -153,7 +149,7 @@ export default function HomePage() {
 
         return formattedDate + " at " + formattedTime;
     }
-    
+
     const handlePay = async (
         eventId: number,
         prizeAmount: number,
@@ -238,9 +234,7 @@ export default function HomePage() {
                                             </div>
                                             </div>
                                             <Link
-                                            href={`/apply/${encodeURIComponent(
-                                                event.event_name
-                                            )}-${encodeURIComponent(event.event_id)}`}
+                                            href={`/apply/${encodeURIComponent(event.event_id)}`}
                                             className="w-fit h-fit rounded-lg"
                                             >
                                             <button
@@ -726,7 +720,7 @@ export default function HomePage() {
                                         </span>
                                         <input
                                             type="text"
-                                            value={requiredSkills}
+                                            value={requiredSkills.join(';')}
                                             onChange={(e) =>
                                                 setRequiredSkills(
                                                     e.target.value.split(";")

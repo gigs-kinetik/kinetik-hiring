@@ -80,33 +80,40 @@ def machine_access(method: str, body: dict):
             id,
         ]
     """
+    print('a')
     if method != 'PUT': 
         return 'invalid method', 403
     
+    print('a')
     res = supabase.table('user_machines').select(
         'user_id,'
         'access_code,'
         'users (first_name, last_name, user_email, skills, location, country_of_citizenship, gender, age)'
     )
+    print('a')
     if body.get('access_code') is not None:
         res = res.eq('access_code', body.get('access_code')).gt('valid_until', now().isoformat())
     else:
         res = res.eq('machine_id', body.get('machine_id')).gt('valid_until', now().isoformat())
         
+    print('a')
     try:
         res = res.execute()
     except Exception as a:
         return a, 501
     
+    print('a')
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:
         return 'invalid access', 404
     
+    print('a')
     a = res.data[0]['users']
     a['email'] = a['user_email']
     del a['user_email']
     
+    print('a')
     return {
         'access_code': res.data[0]['access_code'],
         'id': res.data[0]['user_id'],

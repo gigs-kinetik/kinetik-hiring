@@ -21,6 +21,7 @@ def get_submissions(method: str, body: dict):
     if method != 'PUT':
         return 'invalid method', 403
     
+    print(body)
     res = supabase.table('submissions').select('events(*)').eq('user_id', body.get('id')).execute()
     if hasattr(res, 'code'):
         return 'error', 404
