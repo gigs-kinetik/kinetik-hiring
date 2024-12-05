@@ -42,7 +42,7 @@ def generate_json_from_conversation(conversation_str):
 
     return response.choices[0].message.content
 
-def handle_conversation(method, data):
+def challenge_generator(method, data):
     print("handling convo")
     if method != 'POST':
         return 'Method not allowed', 405

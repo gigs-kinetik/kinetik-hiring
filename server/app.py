@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from typing import Callable, Any
 from util import SERVER_PORT, SERVER_DEBUG_ON
-import companies, user, events, chat
+import companies, user, events, agents
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -56,8 +56,8 @@ def master(table, operation):
             'get': events.get, # put
             'get-submissions': events.get_submissions, # put
         },
-        'chat': {
-            'conversation': chat.handle_conversation, # post
+        'ml-agents': {
+            'challenge-generator': agents.challenge_generator, # post
         }
     }
     if table not in filter or operation not in filter[table]:
