@@ -92,8 +92,11 @@ def machine_access(method: str, body: dict):
         res = res.eq('access_code', body.get('access_code')).gt('valid_until', now().isoformat())
     else:
         res = res.eq('machine_id', body.get('machine_id')).gt('valid_until', now().isoformat())
-        
-    res = res.execute()
+    
+    try:
+        res = res.execute()
+    except Exception as e:
+        return 'fatal error', 501
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:
@@ -322,7 +325,8 @@ def companies(method: str, body: dict):
     """
         [
             access_code,
-            id, // only needed param for the put version
+            id, // only needed param for the put version (take as array if array boolean set to true)
+            array?, only define if array
             
             first_name?,
             last_name?,
@@ -360,9 +364,17 @@ def companies(method: str, body: dict):
         return res.data[0], 200
     
     def put():
-        res = supabase.table('companies').select('*').eq('company_id', body.get('id')).execute()
+        array = 'array' in body
+        res = supabase.table('companies').select('*').in_('company_id', body.get('id') if array else [body.get('id')]).execute()
         if hasattr(res, 'code'):
             return 'error', 501
+        if array:
+            for i in range(len(res.data)):
+                for key in keys:
+                    res.data[i][key] = res.data[i][f'company_{key}']
+                    del res.data[i][f'company_{key}']
+            return res.data, 200
+        
         for key in keys:
             res.data[0][key] = res.data[0][f'company_{key}']
             del res.data[0][f'company_{key}']

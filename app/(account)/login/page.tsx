@@ -24,7 +24,6 @@ export default function LoginPage() {
             User.login(email, password),
         ]);
         user = a ?? b;
-        console.log(user);
         setBMessage("Sign In");
         if (!user) {
             alert("Invalid username or password.");

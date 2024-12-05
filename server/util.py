@@ -11,7 +11,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 SERVER_PORT = 8080
 
-SERVER_DEBUG_ON = True
+SERVER_DEBUG_ON = False
 
 # for dev
 WEBSITE_BASE_LINK = f'http://localhost:3000'

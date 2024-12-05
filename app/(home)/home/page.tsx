@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useReducer } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
@@ -45,30 +45,23 @@ export default function HomePage() {
             if (company) {
                 const result = await user.getEvents();
                 setChallenges(result ?? []);
-                setEvents(await user.getEvents() ?? []);
+                setEvents(result ?? []);
 
-                for (const event of (result ?? [])) {
-                    Company.getById(event.company_id).then(c => {
-                        if (c)
-                            setEventCompanyMap({ ...eventCompanyMap, [event.event_id]: c });
-                    })
-                }
+                let buf = {}
+                filteredEvents.forEach(e => buf[e.event_id] = user);
+                setEventCompanyMap(buf);
             } else {
                 const [queriedEvents, submissions, submittedEvents] = await Promise.all([ user.queryEvents({}), user.getSubmissions(), user.getSubmittedEvents() ])
-                const filteredEvents: BasicEvent[] = []
-                for (const event of (queriedEvents ?? [])) {
-                    let found = false;
-                    for (const a of (submittedEvents ?? []))
-                        if (a.event_id === event.event_id) {
-                            found = true;
-                            break;
-                        }
-                    if (!found)
-                        filteredEvents.push(event)
-                }
-                setEvents(events ?? []);
+                const filteredEvents: BasicEvent[] = (queriedEvents ?? []).filter(e => !(submittedEvents ?? []).some(s => s.event_id === e.event_id));
+                setEvents(filteredEvents);
                 setSubmissions(submissions ?? []);
                 setFilteredEvents(filteredEvents);
+
+                let buf = {}
+                const comps = await Company.bulkGetById([...new Set(filteredEvents.map(e => e.company_id))]);
+                if (comps)
+                    filteredEvents.forEach(e => buf[e.event_id] = comps?.find(v => v.id === e.company_id))
+                setEventCompanyMap(buf);
             }
 
             setLoading(false);
@@ -82,6 +75,19 @@ export default function HomePage() {
     const handleApplyClick = useCallback((eventId: number) => {
         router.push(`/apply/${eventId}`);
     }, []);
+
+    const resetEventModal = () => {
+        setDeadline("");
+        setDeadlineTime("");
+        setEventName("");
+        setLongDescription("");
+        setShortDescription("");
+        setCashAmount(0);
+        setPrizeList([]);
+        setRequiredSkills([]);
+        setIsSubmitting(false);
+        setCashAmountString('0');
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,7 +107,7 @@ export default function HomePage() {
 
         const skills = requiredSkills.map((skill) => skill.trim());
         if (user instanceof CompanyInstance) {
-            user.addEvent({
+            await user.addEvent({
                 event_name: eventName,
                 short_description: shortDescription,
                 long_description: longDescription,
@@ -111,7 +117,7 @@ export default function HomePage() {
                 end_time: pstDateTime,
                 payment_status: 0,
             });
-            setChallenges(await user.getEvents() ?? []);
+            user.getEvents().then(result => setChallenges(result ?? []));
         }
         setDeadline("");
         setDeadlineTime("");
@@ -227,7 +233,7 @@ export default function HomePage() {
                                                     ))}
                                             </div>
                                             <div className="font-poppins text-xs md:text-sm text-gray-500">
-                                                {eventCompanyMap[event.event_id] ? eventCompanyMap[event.event_id].name : '...'}
+                                                {(eventCompanyMap[event.event_id] && eventCompanyMap[event.event_id].name) || '...'}
                                             </div>
                                             <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
                                                 {event.event_name}
@@ -306,7 +312,10 @@ export default function HomePage() {
                             </div>
                             <button
                                 className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={() => {
+                                    resetEventModal();
+                                    setIsModalOpen(true);
+                                }}
                             >
                                 +
                             </button>
@@ -335,7 +344,7 @@ export default function HomePage() {
                                                         ))}
                                                 </div>
                                                 <div className="font-poppins text-xs text-gray-500">
-                                                    {eventCompanyMap[event.event_id] ? eventCompanyMap[event.event_id].name : '...'}
+                                                    {(eventCompanyMap[event.event_id] && eventCompanyMap[event.event_id].name) || '...'}
                                                 </div>
                                                 <div className="font-poppins text-lg font-semibold text-logo-purple">
                                                     {event.event_name}
@@ -600,7 +609,10 @@ export default function HomePage() {
                 {isModalOpen && (
                     <div
                         className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-                        onClick={() => setIsModalOpen(false)}
+                        onClick={() => {
+                            resetEventModal();
+                            setIsModalOpen(false);
+                        }}
                     >
                         <div
                             className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"

@@ -1,6 +1,6 @@
 // This file houses the static Company and User classes
 
-import { BasicEvent, Json, BasicSubmission, Gender } from "./basicTypes";
+import { BasicEvent, Json, BasicSubmission, Gender, BasicCompany } from "./basicTypes";
 import { CompanyServer, UserServer } from "./fetcher";
 import { CompanyInstance, UserInstance } from "./instance";
 
@@ -42,6 +42,17 @@ export class Company {
         const [res, json] = await CompanyServer.put("companies", { id: companyId });
         if (res.status !== 200) return null;
         return new CompanyInstance(json);
+    }
+
+    /**
+     * Get the CompanyInstance given the company id by bulk if you have a lot of ids to query. Useful to limit memory copy overhead
+     * @param ids 
+     * @returns 
+     */
+    public static async bulkGetById(ids: number[]): Promise<CompanyInstance[] | null> {
+        const [res, json] = await CompanyServer.put("companies", { id: ids, array: true });
+        if (res.status !== 200) return null;
+        return json.map((elem: BasicCompany) => new CompanyInstance(elem));
     }
 
     /**

@@ -80,40 +80,40 @@ def machine_access(method: str, body: dict):
             id,
         ]
     """
-    print('a')
+    
     if method != 'PUT': 
         return 'invalid method', 403
     
-    print('a')
+    
     res = supabase.table('user_machines').select(
         'user_id,'
         'access_code,'
         'users (first_name, last_name, user_email, skills, location, country_of_citizenship, gender, age)'
     )
-    print('a')
+    
     if body.get('access_code') is not None:
         res = res.eq('access_code', body.get('access_code')).gt('valid_until', now().isoformat())
     else:
         res = res.eq('machine_id', body.get('machine_id')).gt('valid_until', now().isoformat())
         
-    print('a')
+    
     try:
         res = res.execute()
     except Exception as a:
         return a, 501
     
-    print('a')
+    
     if hasattr(res, 'code'):
         return 'error', 501
     if len(res.data) == 0:
         return 'invalid access', 404
     
-    print('a')
+    
     a = res.data[0]['users']
     a['email'] = a['user_email']
     del a['user_email']
     
-    print('a')
+    
     return {
         'access_code': res.data[0]['access_code'],
         'id': res.data[0]['user_id'],
@@ -229,7 +229,7 @@ def events(method: str, body: dict):
     if result[1] != 200 or result[0].get('id') != body.get('id'):
         return 'invalid token', 400
     
-    res = supabase.table('events').select(', '.join('*'.split()))
+    res = supabase.table('events').select('*')
     
     if body.get('event_name') is not None:
         res = res.eq('event_name', f'%{body.get('event_name')}%')
@@ -257,7 +257,6 @@ def events(method: str, body: dict):
         res = res.lte('submissions', body.get('submissions_upper'))
         
     res = res.execute()
-    
     if hasattr(res, 'code'):
         return 'error', 501
     return res.data, 200
@@ -285,7 +284,7 @@ def submissions(method: str, body: dict):
         return 'invalid token', 400
     
     def put():
-        res = supabase.table('submissions').select(', '.join('*'.split())).eq('user_id', body.get('id')).execute()
+        res = supabase.table('submissions').select('*').eq('user_id', body.get('id')).execute()
         if hasattr(res, 'code'):
             return 'error', 501
         return res.data, 200
