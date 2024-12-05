@@ -186,7 +186,7 @@ const timelineData = [
 const ModalForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userType, setUserType] = useState("");
-  const [selectedInterests, setSelectedInterests] = useState([]);
+  const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -205,7 +205,7 @@ const ModalForm = () => {
     document.body.classList.remove("overflow-hidden");
   };
 
-  const handleCheckboxChange = (interest) => {
+  const handleCheckboxChange = (interest: any) => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
         ? prev.filter((item) => item !== interest)
@@ -213,7 +213,7 @@ const ModalForm = () => {
     );
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: any) => {
     // TODO: update to database
     e.preventDefault();
     closeModal();
@@ -322,8 +322,8 @@ export default function LandingPage() {
   const calculateLineFill = () => {
     const scrollTop = window.scrollY;
     const windowHeight = window.innerHeight;
-    const timelineHeight = document.getElementById("timeline").offsetHeight;
-    const offsetTop = document.getElementById("timeline").offsetTop;
+    const timelineHeight = document.getElementById("timeline")!.offsetHeight;
+    const offsetTop = document.getElementById("timeline")!.offsetTop;
 
     const progress = Math.max(
       0,

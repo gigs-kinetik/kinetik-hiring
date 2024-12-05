@@ -10,9 +10,11 @@ import { Company, User } from "./static";
  * IMPORTANT: If this function returns null, forward to the /login path
  * @returns
  */
-export async function getInstance(): Promise<CompanyInstance | UserInstance | null> {
-    const [a, b] = await Promise.all([Company.get(), User.get()]);
-    return a ?? b;
+export async function getInstance(): Promise<
+  CompanyInstance | UserInstance | null
+> {
+  const [a, b] = await Promise.all([Company.get(), User.get()]);
+  return a ?? b;
 }
 
 /**
@@ -20,7 +22,7 @@ export async function getInstance(): Promise<CompanyInstance | UserInstance | nu
  * @returns
  */
 export async function signout(): Promise<boolean> {
-    return Company.signoutFromDevice() || User.signOutOfDevice();
+  return Company.signoutFromDevice() || User.signOutOfDevice();
 }
 
 /**
@@ -29,8 +31,8 @@ export async function signout(): Promise<boolean> {
  * @param eventId
  * @returns
  */
-export async function getEvent(eventId: number): Promise<BasicEvent> {
-    const [res, json] = await EventServer.put("get", { event_id: eventId });
-    if (res.status !== 200) return null;
-    return json as BasicEvent;
+export async function getEvent(eventId: number): Promise<BasicEvent | null> {
+  const [res, json] = await EventServer.put("get", { event_id: eventId });
+  if (res.status !== 200) return null;
+  return json as BasicEvent;
 }
