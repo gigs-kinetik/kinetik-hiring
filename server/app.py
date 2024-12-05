@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from typing import Callable, Any
 from util import SERVER_PORT, SERVER_DEBUG_ON
-import companies, user, events
+import companies, user, events, chat
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -55,6 +55,9 @@ def master(table, operation):
         'events': {
             'get': events.get, # put
             'get-submissions': events.get_submissions, # put
+        },
+        'chat': {
+            'conversation': chat.handle_conversation, # post
         }
     }
     if table not in filter or operation not in filter[table]:

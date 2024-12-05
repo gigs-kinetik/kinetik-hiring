@@ -7,7 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
-import { Company } from "../../../util/wrapper/static";
+import { Company, Chat } from "../../../util/wrapper/static";
 
 export default function HomePage() {
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
@@ -36,6 +36,8 @@ export default function HomePage() {
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
+  const [chatMessages, setChatMessages] = useState([{ role: "assistant", content: "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?" }]);
+  const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,6 +183,43 @@ export default function HomePage() {
           event_id: eventId,
           payment_status: 2,
         });
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (chatInput.trim() === "") return;
+
+    const newMessage = { role: "user", content: chatInput.replace(/\n/g, "<br>") };
+    const updatedMessages = [...chatMessages, newMessage];
+    setChatMessages(updatedMessages);
+    setChatInput("");
+
+    try {
+      const data = await Chat.sendMessage(updatedMessages, chatInput);
+
+      if (data) {
+        setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
+
+        // Populate form fields with filled_json values
+        const filledJson = JSON.parse(data.filled_json);
+        if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
+        if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
+        if (filledJson["deadline_time"]) setDeadlineTime(filledJson["deadline_time"]);
+        if (filledJson["short_description"]) setShortDescription(filledJson["short_desc"]);
+        if (filledJson["long_description"]) setLongDescription(filledJson["long_desc"]);
+        if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
+        if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"]);
+        if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"]);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -540,127 +579,147 @@ export default function HomePage() {
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div
-              className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
+              className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[75vh] overflow-y-auto flex"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-logo-purple">
-                  Add An Event
+              <div className="w-1/2 pr-4">
+                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                  Add New Event
                 </h2>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 transition"
-                >
-                  ✕
-                </button>
+                <form onSubmit={handleSubmit}>
+                  <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
+                    <label className="block mb-2">
+                      Event Name <span className="text-red-500">*</span>
+                      <input
+                        type="text"
+                        value={eventName}
+                        onChange={(e) => setEventName(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Deadline Date <span className="text-red-500">*</span>
+                      <input
+                        type="date"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Deadline Time (PST) <span className="text-red-500">*</span>
+                      <input
+                        type="time"
+                        value={deadlineTime}
+                        onChange={(e) => setDeadlineTime(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Short Description <span className="text-red-500">*</span>
+                      <textarea
+                        value={shortDescription}
+                        placeholder="Enter a quick synopsis of what you need."
+                        onChange={(e) => setShortDescription(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Long Description <span className="text-red-500">*</span>
+                      <textarea
+                        value={longDescription}
+                        placeholder="Enter the complete requirements for your project."
+                        onChange={(e) => setLongDescription(e.target.value)}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Total Cash Amount (in USD) <span className="text-red-500">*</span>
+                      <input
+                        value={cashAmountString}
+                        placeholder="Enter just the number with no commas (ex: 5000)."
+                        type="number"
+                        onChange={(e) => {
+                          setCashAmountString(e.target.value);
+                          setCashAmount(parseFloat(e.target.value));
+                          prizeList[0] = `$${e.target.value} Cash Amount`;
+                          setPrizeList(prizeList);
+                        }}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-4">
+                      Required Skills (semicolon-separated) <span className="text-red-500">*</span>
+                      <input
+                        type="text"
+                        value={requiredSkills.join(';')}
+                        onChange={(e) => setRequiredSkills(e.target.value.split(";"))}
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                        required
+                      />
+                    </label>
+                    <label className="block mb-2">
+                      Other Prizes/Incentives (semicolon-separated)
+                      <input
+                        type="text"
+                        value={prizeList.slice(1).join(";")}
+                        onChange={(e) =>
+                          setPrizeList([
+                            `$${cashAmount} Cash Amount`,
+                            ...e.target.value.split(";"),
+                          ])
+                        }
+                        className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
+                      />
+                    </label>
+                    <div className="flex justify-center">
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </div>
+                </form>
               </div>
-              <form onSubmit={handleSubmit}>
-                <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
-                  <label className="block mb-2">
-                    Event Name <span className="text-red-500">*</span>
+              <div className="w-1/2 pl-4 border-l border-gray-300">
+                <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
+                  Chat Section
+                </h2>
+                <div className="flex flex-col h-full">
+                  <div className="flex-grow overflow-y-auto p-2 border border-gray-300 rounded-md">
+                    {chatMessages.map((msg, index) => (
+                      <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                        <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4">
                     <input
                       type="text"
-                      value={eventName}
-                      onChange={(e) => setEventName(e.target.value)}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Deadline Date <span className="text-red-500">*</span>
-                    <input
-                      type="date"
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Deadline Time (PST) <span className="text-red-500">*</span>
-                    <input
-                      type="time"
-                      value={deadlineTime}
-                      onChange={(e) => setDeadlineTime(e.target.value)}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Short Description <span className="text-red-500">*</span>
-                    <textarea
-                      value={shortDescription}
-                      placeholder="Enter a quick synopsis of what you need."
-                      onChange={(e) => setShortDescription(e.target.value)}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Long Description <span className="text-red-500">*</span>
-                    <textarea
-                      value={longDescription}
-                      placeholder="Enter the complete requirements for your project."
-                      onChange={(e) => setLongDescription(e.target.value)}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Total Cash Amount (in USD){" "}
-                    <span className="text-red-500">*</span>
-                    <input
-                      value={cashAmountString}
-                      placeholder="Enter just the number with no commas (ex: 5000)."
-                      type="number"
-                      onChange={(e) => {
-                        setCashAmountString(e.target.value);
-                        setCashAmount(parseFloat(e.target.value));
-                        prizeList[0] = `$${e.target.value} Cash Amount`;
-                        setPrizeList(prizeList);
-                      }}
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-4">
-                    Required Skills (semicolon-separated){" "}
-                    <span className="text-red-500">*</span>
-                    <input
-                      type="text"
-                      value={requiredSkills.join(";")}
-                      onChange={(e) =>
-                        setRequiredSkills(e.target.value.split(";"))
-                      }
-                      className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
-                      required
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Other Prizes/Incentives (semicolon-separated){" "}
-                    <input
-                      type="text"
-                      value={prizeList.slice(1).join(";")}
-                      onChange={(e) =>
-                        setPrizeList([
-                          `$${cashAmount} Cash Amount`,
-                          ...e.target.value.split(";"),
-                        ])
-                      }
+                      placeholder="Type your message..."
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
                       className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                     />
-                  </label>
-                  <div className="flex justify-center">
                     <button
-                      type="submit"
-                      className="rounded-lg bg-logo-purple/85 text-white font-poppins w-32 h-10 font-medium mt-2"
-                      disabled={isSubmitting}
+                      onClick={handleSendMessage}
+                      className="rounded-lg bg-logo-purple/85 text-white font-poppins w-full h-10 font-medium mt-2"
                     >
-                      {isSubmitting ? "Submitting..." : "Submit"}
+                      Send
                     </button>
                   </div>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         )}

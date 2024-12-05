@@ -19,7 +19,7 @@ export type Json = {
 export type Gender = "male" | "female" | "other" | "undefined";
 
 // List of allowed tables to request endpoints on
-export type Table = "companies" | "users" | "events";
+export type Table = "companies" | "users" | "events" | "chat";
 
 // List of allowed operations that can act as endpoints
 export type Operation =
@@ -34,7 +34,8 @@ export type Operation =
   | "get" // EVENTS TABLE ONLY
   | "get-submissions" // EVENTS TABLE ONLY
   | "verify"
-  | "reset-password";
+  | "reset-password"
+  | "conversation";
 
 /**
  * Company data (DO NOT EVER USE THIS : FOR INTERNAL USE ONLY)
