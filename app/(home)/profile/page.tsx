@@ -27,15 +27,19 @@ interface FormData {
 }
 
 function UserProfile() {
-  const router = useRouter();
-  const [userType, setUserType] = useState<"developer" | "company">("developer");
+  const [userType, setUserType] = useState<"developer" | "company">(
+    "developer"
+  );
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     companyName: "",
   });
-  
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [availableSkills] = useState([
     "JavaScript",
     "React",
@@ -72,7 +76,6 @@ function UserProfile() {
   const [loading, setLoading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -99,18 +102,21 @@ function UserProfile() {
           twitter: "",
           github: "",
           resume: "",
-          location: (instance instanceof UserInstance ? instance.location : ""),
-          age: (instance instanceof UserInstance ? instance.age : ""),
-          gender: (instance instanceof UserInstance ? instance.gender : ""),
-          skills: (instance instanceof UserInstance ? instance.skills : []),
-          citizenship: (instance instanceof UserInstance ? instance.countryOfCitizenship : ""),
+          location: instance instanceof UserInstance ? instance.location : "",
+          age: instance instanceof UserInstance ? instance.age : "",
+          gender: instance instanceof UserInstance ? instance.gender : "",
+          skills: instance instanceof UserInstance ? instance.skills : [],
+          citizenship:
+            instance instanceof UserInstance
+              ? instance.countryOfCitizenship
+              : "",
         } as FormData);
       } else if (instance instanceof Company) {
         setUserType("company");
         setFormData({
           firstName: instance.firstName || "",
           lastName: instance.lastName || "",
-          companyName: (instance instanceof CompanyInstance ? instance.name : ""),
+          companyName: instance instanceof CompanyInstance ? instance.name : "",
         });
       }
       setLoading(false);
@@ -120,7 +126,9 @@ function UserProfile() {
     fetchData();
   }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -149,34 +157,46 @@ function UserProfile() {
       setMessage({ type: "error", text: "Please enter your old password." });
       return;
     }
-  
+
     if (formData.newPassword !== formData.confirmPassword) {
       setMessage({ type: "error", text: "New passwords do not match!" });
       return;
     }
-  
+
     try {
       // Fetch the current user or company instance
       const instance = await getInstance();
-  
+
       // Check if the current instance is a User or Company
-      if (instance instanceof UserInstance || instance instanceof CompanyInstance) {
+      if (
+        instance instanceof UserInstance ||
+        instance instanceof CompanyInstance
+      ) {
         // Pass the old and new passwords to the backend for validation and update
         const updatedInstance = await instance.update({
           password: formData.newPassword,
         });
-  
+
         if (updatedInstance) {
           setMessage({ type: "success", text: "Password reset successfully!" });
         } else {
-          setMessage({ type: "error", text: "Failed to reset password. Please try again." });
+          setMessage({
+            type: "error",
+            text: "Failed to reset password. Please try again.",
+          });
         }
       } else {
-        setMessage({ type: "error", text: "Invalid user or company instance." });
+        setMessage({
+          type: "error",
+          text: "Invalid user or company instance.",
+        });
       }
     } catch (error) {
       console.error("Error resetting password:", error);
-      setMessage({ type: "error", text: "Failed to reset password. Please try again." });
+      setMessage({
+        type: "error",
+        text: "Failed to reset password. Please try again.",
+      });
     }
   };
 
@@ -209,7 +229,10 @@ function UserProfile() {
       setMessage({ type: "success", text: "Profile updated successfully!" });
     } catch (error) {
       console.error("Error updating profile:", error);
-      setMessage({ type: "error", text: "Failed to update profile. Please try again." });
+      setMessage({
+        type: "error",
+        text: "Failed to update profile. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -217,18 +240,21 @@ function UserProfile() {
 
   if (loading) return <div>Loading...</div>;
 
-return (
-  <div className="p-6 sm:p-8 md:p-10 lg:p-12 bg-white rounded-lg max-w-full md:max-w-5xl mx-auto shadow-lg font-poppins">
-    {/* Inline Message */}
-    {message && (
-      <div
-        className={`p-3 mb-4 rounded-lg ${
-          message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-        }`}
-      >
-        {message.text}
-      </div>
-    )}
+  return (
+    <div className=" mt-10 mb-10 p-6 sm:p-8 md:p-10 lg:p-12 bg-white rounded-lg max-w-full md:max-w-5xl mx-auto shadow-lg font-poppins">
+      {/* Inline Message */}
+      {message && (
+        <div
+          className={`p-3 mb-4 rounded-lg ${
+            message.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
       {/* Profile Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center">
@@ -239,9 +265,12 @@ return (
           />
           <div>
             <p className="text-xl font-semibold">
-              {formData.firstName || "First Name"} {formData.lastName || "Last Name"}
+              {formData.firstName || "First Name"}{" "}
+              {formData.lastName || "Last Name"}
             </p>
-            <p className="text-gray-500">{userType === "developer" ? "Developer" : "Company"}</p>
+            <p className="text-gray-500">
+              {userType === "developer" ? "Developer" : "Company"}
+            </p>
             <p className="text-gray-500">example@example.com</p>
           </div>
         </div>
@@ -282,252 +311,275 @@ return (
             placeholder="Your Last Name"
           />
         </div>
-{userType === "company" && (
-  <div>
-    <label className="block text-sm font-medium mb-2">Company Name</label>
-    <input
-      type="text"
-      name="companyName"
-      value={formData.companyName}
-      onChange={handleChange}
-      className="w-full p-3 border rounded-lg"
-      placeholder="Your Company Name"
-    />
-  </div>
-)}
-{userType === "developer" && (
-  <>
-    <div>
-      <label className="block text-sm font-medium mb-2">LinkedIn URL</label>
-      <input
-        type="url"
-        name="linkedIn"
-        value={formData.linkedIn || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="LinkedIn Profile"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Twitter URL</label>
-      <input
-        type="url"
-        name="twitter"
-        value={formData.twitter || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="Twitter Profile"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">GitHub URL</label>
-      <input
-        type="url"
-        name="github"
-        value={formData.github || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="GitHub Profile"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Resume URL</label>
-      <input
-        type="url"
-        name="resume"
-        value={formData.resume || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="Resume Link"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Location</label>
-      <input
-        type="text"
-        name="location"
-        value={formData.location || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="City, State, Country"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Age</label>
-      <input
-        type="number"
-        name="age"
-        value={formData.age || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-        placeholder="Your Age"
-      />
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Gender</label>
-      <select
-        name="gender"
-        value={formData.gender || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-      >
-        <option value="">Select</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Country of Citizenship</label>
-      <select
-        name="citizenship"
-        value={formData.citizenship || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg"
-      >
-        <option value="">Select a country</option>
-        {countries.map((country, index) => (
-          <option key={index} value={country}>
-            {country}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div>
-      <label className="block text-sm font-medium mb-2">Skills</label>
-      <select
-        name="skills"
-        className="w-full p-3 border rounded-lg"
-        onChange={handleSkillChange}
-        value=""
-      >
-        <option value="">Select a skill</option>
-        {availableSkills.map((skill, index) => (
-          <option key={index} value={skill}>
-            {skill}
-          </option>
-        ))}
-      </select>
-      <div className="mt-4 flex flex-wrap">
-        {(formData.skills || []).map((skill, index) => (
-          <span
-            key={index}
-            className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full mr-2 mb-2 flex items-center"
-          >
-            {skill}
-            <button
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  skills: prev.skills?.filter((s) => s !== skill),
-                }))
-              }
-              className="ml-2 text-red-500"
-            >
-              ✕
-            </button>
-          </span>
-        ))}
+        {userType === "company" && (
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Company Name
+            </label>
+            <input
+              type="text"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Your Company Name"
+            />
+          </div>
+        )}
+        {userType === "developer" && (
+          <>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                LinkedIn URL
+              </label>
+              <input
+                type="url"
+                name="linkedIn"
+                value={formData.linkedIn || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="LinkedIn Profile"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Twitter URL
+              </label>
+              <input
+                type="url"
+                name="twitter"
+                value={formData.twitter || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="Twitter Profile"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                GitHub URL
+              </label>
+              <input
+                type="url"
+                name="github"
+                value={formData.github || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="GitHub Profile"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Resume URL
+              </label>
+              <input
+                type="url"
+                name="resume"
+                value={formData.resume || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="Resume Link"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="City, State, Country"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Age</label>
+              <input
+                type="number"
+                name="age"
+                value={formData.age || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+                placeholder="Your Age"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+              >
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Country of Citizenship
+              </label>
+              <select
+                name="citizenship"
+                value={formData.citizenship || ""}
+                onChange={handleChange}
+                className="w-full p-3 border rounded-lg"
+              >
+                <option value="">Select a country</option>
+                {countries.map((country, index) => (
+                  <option key={index} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Skills</label>
+              <select
+                name="skills"
+                className="w-full p-3 border rounded-lg"
+                onChange={handleSkillChange}
+                value=""
+              >
+                <option value="">Select a skill</option>
+                {availableSkills.map((skill, index) => (
+                  <option key={index} value={skill}>
+                    {skill}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-4 flex flex-wrap">
+                {(formData.skills || []).map((skill, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full mr-2 mb-2 flex items-center"
+                  >
+                    {skill}
+                    <button
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          skills: prev.skills?.filter((s) => s !== skill),
+                        }))
+                      }
+                      className="ml-2 text-red-500"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+              {formData.otherSkill !== undefined && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Other Skill
+                  </label>
+                  <input
+                    type="text"
+                    name="otherSkill"
+                    value={formData.otherSkill}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        otherSkill: e.target.value,
+                      }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && formData.otherSkill?.trim()) {
+                        e.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
+                        setFormData((prev) => ({
+                          ...prev,
+                          skills: [
+                            ...(prev.skills || []),
+                            formData.otherSkill!.trim(),
+                          ],
+                          otherSkill: "", // Clear the Other Skill input field
+                        }));
+                      }
+                    }}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Specify your skill and press Enter"
+                  />
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
-      {formData.otherSkill !== undefined && (
-  <div className="mt-4">
-    <label className="block text-sm font-medium mb-2">Other Skill</label>
-    <input
-      type="text"
-      name="otherSkill"
-      value={formData.otherSkill}
-      onChange={(e) =>
-        setFormData((prev) => ({
-          ...prev,
-          otherSkill: e.target.value,
-        }))
-      }
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && formData.otherSkill?.trim()) {
-          e.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
-          setFormData((prev) => ({
-            ...prev,
-            skills: [...(prev.skills || []), formData.otherSkill!.trim()],
-            otherSkill: "", // Clear the Other Skill input field
-          }));
-        }
-      }}
-      className="w-full p-3 border rounded-lg"
-      placeholder="Specify your skill and press Enter"
-    />
-  </div>
-)}
-    </div>
-  </>
-)}
-</div>
 
-<div className="flex justify-start space-x-4 mt-4">
-  {/* Reset Password Modal Trigger */}
-  <button
-    onClick={() => setShowPasswordModal(true)}
-    className="bg-blue-500 text-white px-5 py-2 rounded-lg"
-  >
-    Reset Password
-  </button>
-
-  {/* Delete Account */}
-  <button className="bg-red-500 text-white px-5 py-2 rounded-lg">
-    Delete Account
-  </button>
-</div>
-
-{/* Reset Password Modal */}
-{showPasswordModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-      <h2 className="text-xl font-semibold mb-4">Reset Password</h2>
-      <label className="block text-sm font-medium mb-2">Old Password</label>
-      <input
-        type="password"
-        name="oldPassword"
-        value={formData.oldPassword || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg mb-4"
-        placeholder="Enter your old password"
-      />
-      <label className="block text-sm font-medium mb-2">New Password</label>
-      <input
-        type="password"
-        name="newPassword"
-        value={formData.newPassword || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg mb-4"
-        placeholder="Enter new password"
-      />
-      <label className="block text-sm font-medium mb-2">Confirm New Password</label>
-      <input
-        type="password"
-        name="confirmPassword"
-        value={formData.confirmPassword || ""}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg mb-4"
-        placeholder="Confirm new password"
-      />
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-start space-x-4 mt-4">
+        {/* Reset Password Modal Trigger */}
         <button
-          onClick={() => setShowPasswordModal(false)}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handlePasswordReset}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          onClick={() => setShowPasswordModal(true)}
+          className="bg-blue-500 text-white px-5 py-2 rounded-lg"
         >
           Reset Password
         </button>
+
+        {/* Delete Account */}
+        <button className="bg-red-500 text-white px-5 py-2 rounded-lg">
+          Delete Account
+        </button>
       </div>
+
+      {/* Reset Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Reset Password</h2>
+            <label className="block text-sm font-medium mb-2">
+              Old Password
+            </label>
+            <input
+              type="password"
+              name="oldPassword"
+              value={formData.oldPassword || ""}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-4"
+              placeholder="Enter your old password"
+            />
+            <label className="block text-sm font-medium mb-2">
+              New Password
+            </label>
+            <input
+              type="password"
+              name="newPassword"
+              value={formData.newPassword || ""}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-4"
+              placeholder="Enter new password"
+            />
+            <label className="block text-sm font-medium mb-2">
+              Confirm New Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword || ""}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg mb-4"
+              placeholder="Confirm new password"
+            />
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePasswordReset}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Reset Password
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-</div>
-);
+  );
 }
 
 export default UserProfile;
