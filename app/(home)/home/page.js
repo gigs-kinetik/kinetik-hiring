@@ -18,6 +18,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
+import { Chat } from "../../../util/wrapper/static";
 
 export default function HomePage() {
   const events = useEvents();
@@ -242,33 +243,27 @@ export default function HomePage() {
     setChatInput("");
 
     try {
-      const response = await fetch("http://localhost:8080/chat/conversation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ conversation_history: updatedMessages, user_input: chatInput }),
-      });
+      const data = await Chat.sendMessage(updatedMessages, chatInput);
 
-      const data = await response.json();
-      setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
+      if (data) {
+        setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
 
-      // Populate form fields with filled_json valuesc
-      const filledJson = JSON.parse(data.filled_json);
-      console.log(data.filled_json)
-      console.log(filledJson['event_name'])
-      if (filledJson["event_name"]) console.log('true');
-      if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
-      if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
-      if (filledJson["deadline_time"]) {
-        setDeadlineTime(filledJson["deadline_time"]);
+        // Populate form fields with filled_json values
+        const filledJson = JSON.parse(data.filled_json);
+        console.log(data.filled_json);
+        console.log(filledJson['event_name']);
+        if (filledJson["event_name"]) console.log('true');
+        if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
+        if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
+        if (filledJson["deadline_time"]) {
+          setDeadlineTime(filledJson["deadline_time"]);
+        }
+        if (filledJson["short_description"]) setShortDescription(filledJson["short_desc"]);
+        if (filledJson["long_description"]) setLongDescription(filledJson["long_desc"]);
+        if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
+        if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"].join("; "));
+        if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"].join("; "));
       }
-      if (filledJson["short_description"]) setShortDescription(filledJson["short_desc"]);
-      if (filledJson["long_description"]) setLongDescription(filledJson["long_desc"]);
-      if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
-      if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"].join("; "));
-      if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"].join("; "));
-
     } catch (error) {
       console.error("Error sending message:", error);
     }

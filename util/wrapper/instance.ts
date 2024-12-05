@@ -8,7 +8,7 @@ import {
   Gender,
   BasicUser,
 } from "./basicTypes";
-import { CompanyServer, UserServer, EventServer } from "./fetcher";
+import { CompanyServer, UserServer, EventServer, ChatServer } from "./fetcher";
 
 export class CompanyInstance {
   private _access_code: string;

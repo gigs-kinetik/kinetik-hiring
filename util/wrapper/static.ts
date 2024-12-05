@@ -7,7 +7,7 @@ import {
   Gender,
   BasicCompany,
 } from "./basicTypes";
-import { CompanyServer, UserServer } from "./fetcher";
+import { CompanyServer, UserServer, ChatServer } from "./fetcher";
 import { CompanyInstance, UserInstance } from "./instance";
 
 export class Company {
@@ -459,5 +459,25 @@ export class User {
       (await UserServer.put("reset-password", { email: emailAddr }))[0]
         .status === 200
     );
+  }
+}
+
+export class Chat {
+  /**
+   * Send a message to the chat endpoint and get a response
+   * @param conversationHistory
+   * @param userInput
+   * @returns
+   */
+  public static async sendMessage(
+    conversationHistory: { role: string; content: string }[],
+    userInput: string
+  ): Promise<{ assistant_response: string; filled_json: string } | null> {
+    const [res, json] = await ChatServer.post("conversation", {
+      conversation_history: conversationHistory,
+      user_input: userInput,
+    });
+    if (res.status !== 200) return null;
+    return json;
   }
 }
