@@ -7,7 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
-import { Company, Chat } from "../../../util/wrapper/static";
+import { Company, MLAgent } from "../../../util/wrapper/static";
 
 export default function HomePage() {
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
@@ -36,7 +36,8 @@ export default function HomePage() {
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
-  const [chatMessages, setChatMessages] = useState([{ role: "assistant", content: "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?" }]);
+  const [chatMessages, setChatMessages] = useState([ {role: 'system', content: `Don't include messy blobs of text. Your responses should only be a chat.`},
+    { role: "assistant", content: "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?" }]);
   const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
@@ -195,19 +196,22 @@ export default function HomePage() {
     setChatInput("");
 
     try {
-      const data = await Chat.sendMessage(updatedMessages, chatInput);
+      const data = await MLAgent.sendChallengeGenerationMessage(updatedMessages, chatInput);
 
       if (data) {
         setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
 
         // Populate form fields with filled_json values
         const filledJson = JSON.parse(data.filled_json);
-        if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
+        if (filledJson["event_name"] && !eventName) setEventName(filledJson["event_name"]);
         if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
         if (filledJson["deadline_time"]) setDeadlineTime(filledJson["deadline_time"]);
-        if (filledJson["short_description"]) setShortDescription(filledJson["short_desc"]);
-        if (filledJson["long_description"]) setLongDescription(filledJson["long_desc"]);
-        if (filledJson["cash_prize"]) setCashAmount(filledJson["cash_prize"]);
+        if (filledJson["short_description"]) setShortDescription(filledJson["short_description"]);
+        if (filledJson["long_description"]) setLongDescription(filledJson["long_description"]);
+        if (filledJson["cash_prize"]) {
+          setCashAmount(Number(filledJson["cash_prize"]));
+          setCashAmountString(filledJson["cash_prize"].toString());
+        }
         if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"]);
         if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"]);
       }
@@ -696,7 +700,7 @@ export default function HomePage() {
                 </h2>
                 <div className="flex flex-col h-full">
                   <div className="flex-grow overflow-y-auto p-2 border border-gray-300 rounded-md">
-                    {chatMessages.map((msg, index) => (
+                    {chatMessages.slice(1).map((msg, index) => (
                       <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
                         <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
                       </div>
