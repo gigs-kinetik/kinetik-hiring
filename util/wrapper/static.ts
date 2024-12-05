@@ -7,7 +7,7 @@ import {
   Gender,
   BasicCompany,
 } from "./basicTypes";
-import { CompanyServer, UserServer, ChatServer } from "./fetcher";
+import { CompanyServer, UserServer, MLAgentServer } from "./fetcher";
 import { CompanyInstance, UserInstance } from "./instance";
 
 export class Company {
@@ -462,18 +462,18 @@ export class User {
   }
 }
 
-export class Chat {
+export class MLAgent {
   /**
    * Send a message to the chat endpoint and get a response
    * @param conversationHistory
    * @param userInput
    * @returns
    */
-  public static async sendMessage(
+  public static async sendChallengeGenerationMessage(
     conversationHistory: { role: string; content: string }[],
     userInput: string
   ): Promise<{ assistant_response: string; filled_json: string } | null> {
-    const [res, json] = await ChatServer.post("conversation", {
+    const [res, json] = await MLAgentServer.post("challenge-generator", {
       conversation_history: conversationHistory,
       user_input: userInput,
     });

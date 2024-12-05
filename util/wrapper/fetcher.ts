@@ -60,9 +60,9 @@ function intermediate(table: Table) {
  * Specializations of the abstraction above, intellisense for methods and such is complete with this
  * This is the abstraction layer used in the functionlity in the server.ts file
  */
-export const [CompanyServer, UserServer, EventServer, ChatServer] = [
+export const [CompanyServer, UserServer, EventServer, MLAgentServer] = [
   intermediate("companies"),
   intermediate("users"),
   intermediate("events"),
-  intermediate("chat"),
+  intermediate("ml-agents"),
 ];
