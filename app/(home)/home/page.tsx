@@ -1,17 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback, useReducer } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { loadStripe } from "@stripe/stripe-js";
-import { useRouter } from "next/navigation";
 import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
 import { Company } from "../../../util/wrapper/static";
 
 export default function HomePage() {
-  const router = useRouter();
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<BasicEvent[]>([]);
   const [challenges, setChallenges] = useState<BasicEvent[]>([]);
@@ -43,7 +41,6 @@ export default function HomePage() {
     const fetchData = async () => {
       const company = user instanceof CompanyInstance;
       if (!user) return;
-
       if (company) {
         const result = await user.getEvents();
         setChallenges(result ?? []);
@@ -77,7 +74,6 @@ export default function HomePage() {
           );
         setEventCompanyMap(buf);
       }
-
       setLoading(false);
     };
 
@@ -85,10 +81,6 @@ export default function HomePage() {
   }, [user]);
 
   if (!user) getInstance().then((user) => setUser(user));
-
-  const handleApplyClick = useCallback((eventId: number) => {
-    router.push(`/apply/${eventId}`);
-  }, []);
 
   const resetEventModal = () => {
     setDeadline("");
@@ -133,16 +125,8 @@ export default function HomePage() {
       });
       user.getEvents().then((result) => setChallenges(result ?? []));
     }
-    setDeadline("");
-    setDeadlineTime("");
-    setEventName("");
-    setLongDescription("");
-    setShortDescription("");
-    setCashAmount(0);
-    setPrizeList([]);
-    setRequiredSkills([]);
+    resetEventModal();
     setIsModalOpen(false);
-    setIsSubmitting(false);
   };
 
   const handleDelete = async (eventId: number) => {
@@ -160,15 +144,6 @@ export default function HomePage() {
     },
     [submissions]
   );
-
-  function toDatetime(datetime: any) {
-    const date = new Date(datetime);
-
-    const formattedDate = date.toLocaleDateString();
-    const formattedTime = date.toLocaleTimeString();
-
-    return formattedDate + " at " + formattedTime;
-  }
 
   const handlePay = async (
     eventId: number,
@@ -248,9 +223,7 @@ export default function HomePage() {
                               ))}
                             </div>
                             <div className="font-poppins text-xs md:text-sm text-gray-500">
-                              {(eventCompanyMap[event.event_id] &&
-                                eventCompanyMap[event.event_id].name) ||
-                                "..."}
+                              ...
                             </div>
                             <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
                               {event.event_name}
@@ -281,7 +254,19 @@ export default function HomePage() {
                         </div>
                         <div className="lg:flex hidden flex-row justify-between">
                           <div className="font-poppins text-sm text-gray-500">
-                            Submit by {toDatetime(event.end_time)}
+                            Submit by{" "}
+                            {end.toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZone: "America/Los_Angeles",
+                              timeZoneName: "short",
+                            })}{" "}
+                            on{" "}
+                            {end.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </div>
                           <div className="font-poppins text-sm pr-2 text-gray-500">
                             {event.required_skills.join(", ")}
@@ -358,9 +343,7 @@ export default function HomePage() {
                           ))}
                         </div>
                         <div className="font-poppins text-xs text-gray-500">
-                          {(eventCompanyMap[event.event_id] &&
-                            eventCompanyMap[event.event_id].name) ||
-                            "..."}
+                          ...
                         </div>
                         <div className="font-poppins text-lg font-semibold text-logo-purple">
                           {event.event_name}
@@ -555,20 +538,22 @@ export default function HomePage() {
           </div>
         </div>
         {isModalOpen && (
-          <div
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-            onClick={() => {
-              resetEventModal();
-              setIsModalOpen(false);
-            }}
-          >
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div
               className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-lg max-h-[75vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
-                Add New Event
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-logo-purple">
+                  Add An Event
+                </h2>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  ✕
+                </button>
+              </div>
               <form onSubmit={handleSubmit}>
                 <div className="font-poppins text-sm mt-4 text-gray-600 space-y-4">
                   <label className="block mb-2">
@@ -681,9 +666,6 @@ export default function HomePage() {
         )}
       </div>
     );
-    // } else {
-    //     return <div></div>;
-    // }
   }
   return <div></div>;
 }

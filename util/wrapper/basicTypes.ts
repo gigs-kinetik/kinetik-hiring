@@ -74,7 +74,6 @@ export type BasicUser = {
  */
 export type BasicEvent = {
   company_id: number;
-  company_name: string;
   created_at: Date;
   start_time: Date;
   end_time: Date | null;

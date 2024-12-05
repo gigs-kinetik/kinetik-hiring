@@ -205,7 +205,7 @@ const ModalForm = () => {
     document.body.classList.remove("overflow-hidden");
   };
 
-  const handleCheckboxChange = (interest: any) => {
+  const handleCheckboxChange = (interest: number) => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
         ? prev.filter((item) => item !== interest)
@@ -270,33 +270,35 @@ const ModalForm = () => {
               </div>
             </div>
 
-            {/* Checkbox List */}
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                What are you interested in? (Select all that apply)
-              </label>
-              <div className="flex flex-col space-y-2">
-                {[
-                  { label: "Crowdsourced Hiring", value: 0 },
-                  { label: "Streamlined Onboarding", value: 1 },
-                  { label: "Legal Compliance", value: 2 },
-                  { label: "Automated Payments", value: 3 },
-                  { label: "Personalized Management", value: 4 },
-                  { label: "Quality Assurance", value: 5 },
-                ].map((item, index) => (
-                  <label key={index} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      value={item.value}
-                      checked={selectedInterests.includes(item.value)}
-                      onChange={() => handleCheckboxChange(item.value)}
-                      className="mr-2 text-logo-purple focus:ring-logo-purple"
-                    />
-                    {item.label}
-                  </label>
-                ))}
+            {/* Show Interest Options Only if "Company" is Selected */}
+            {userType === "company" && (
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  What are you interested in? (Select all that apply)
+                </label>
+                <div className="flex flex-col space-y-2">
+                  {[
+                    { label: "Crowdsourced Hiring", value: 0 },
+                    { label: "Streamlined Onboarding", value: 1 },
+                    { label: "Legal Compliance", value: 2 },
+                    { label: "Automated Payments", value: 3 },
+                    { label: "Personalized Management", value: 4 },
+                    { label: "Quality Assurance", value: 5 },
+                  ].map((item, index) => (
+                    <label key={index} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        value={item.value}
+                        checked={selectedInterests.includes(item.value)}
+                        onChange={() => handleCheckboxChange(item.value)}
+                        className="mr-2 text-logo-purple focus:ring-logo-purple"
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Submit Button */}
             <button
