@@ -3,6 +3,8 @@ import openai
 # Set up your OpenAI API key
 openai.api_key = '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'
 
+analyze_client = openai.OpenAI(api_key=openai.api_key)
+
 # Function to get response from OpenAI's GPT-3.5-turbo model
 def get_gpt_response(messages):
     response = openai.chat.completions.create(  # Updated method name for v1.0.0+
@@ -18,32 +20,26 @@ def initialize_conversation(initial_context_path):
 
 # Function to generate JSON based on conversation
 def generate_json_from_conversation(conversation_str):
+    prompt = """Extract data from the conversation. Please respond in JSON format:
+    {
+        event_name: ..., // string
+        deadline_date: ..., // date
+        deadline_time: ..., // time in HH:mm:ss 24 hour
+        short_description: ..., // str
+        long_description : ..., // str
+        cash_prize: ..., // integer
+        required_skills: ..., // List[str]
+        other_prizes: ..., // List[str]
+    }""" + conversation_str
 
-    prompt = """
-    Populate an empty JSON dictionary based on our conversation.
-    Use inferred values from the context we've discussed. Below is the empty JSON structure for reference:
-
-    {}
-
-    You can fill in keys and values as you understand from our dialogue, adding relevant fields and values as needed. Make sure the following keys are filled out. Put 'null' if you don't know.
-
-    event_name: [some string]
-    deadline: [date and time]
-    short_desc: [some string less than 50 words]
-    long_desc : [some longer string]
-    cash_prize: [some number]
-    required_skills: [a bunch of strings separated by commas]
-    other_prizes: [a comma separated list of strings]
-
-    Here is the conversation:
-    """ + conversation_str
-
-    response = openai.chat.completions.create(
+    response = analyze_client.beta.chat.completions.parse(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": prompt}
-        ]
+        ],
+        response_format={"type": "json_object"}
     )
+
     return response.choices[0].message.content
 
 def challenge_generator(method, data):
