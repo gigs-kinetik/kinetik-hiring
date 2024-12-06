@@ -305,7 +305,7 @@ def submissions(method: str, body: dict):
         )
         if hasattr(res, 'code'):
             return 'error', 501
-        return res.data[0], 200
+        return res.data, 200
     
     def delete():
         if body.get('submission_id') is None:

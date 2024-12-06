@@ -132,7 +132,7 @@ const SubmissionsPage = ({ params }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
-            {/* {submissions.map((submission) => (
+            {submissions.map((submission) => (
               <div
                 key={submission.submission_id}
                 className="border rounded-md bg-gray-100 cursor-pointer"
@@ -148,7 +148,7 @@ const SubmissionsPage = ({ params }) => {
               >
                 {submission.project_name}
               </div>
-            ))} */}
+            ))}
           </div>
         </div>
       </div>
