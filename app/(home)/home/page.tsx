@@ -8,8 +8,10 @@ import { BasicSubmission, BasicEvent } from "../../../util/wrapper/basicTypes";
 import { UserInstance, CompanyInstance } from "../../../util/wrapper/instance";
 import { getInstance } from "../../../util/wrapper/globals";
 import { Company, MLAgent } from "../../../util/wrapper/static";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<BasicEvent[]>([]);
   const [challenges, setChallenges] = useState<BasicEvent[]>([]);
@@ -36,8 +38,17 @@ export default function HomePage() {
   const stripePromise = loadStripe(
     "pk_live_51Psqxk2NzaRLv3FPnIDdQY520MHxYTkNRqNwhxZcNAMa9s3TDassr9bjbGDdUE9pWyvh9LF8SqdLP8xJK7w9VFW5003VQjKFRc"
   );
-  const [chatMessages, setChatMessages] = useState([ {role: 'system', content: `Don't include messy blobs of text. Your responses should only be a chat.`},
-    { role: "assistant", content: "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?" }]);
+  const [chatMessages, setChatMessages] = useState([
+    {
+      role: "system",
+      content: `Don't include messy blobs of text. Your responses should only be a chat.`,
+    },
+    {
+      role: "assistant",
+      content:
+        "Hello! I'm Gigbot, here to help you create an exciting challenge on Kinetik. To get started, could you please provide me with a brief summary of the event you have in mind?",
+    },
+  ]);
   const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
@@ -201,35 +212,61 @@ export default function HomePage() {
       other_prizes: prizeList,
     });
 
-    const oldValues = { role: 'system', content: `Here are the current values that exist. Do not fill in values that you do not know and are not prompted to fill in. ${currentFormValues}\nDon't include messy blobs of text. Your responses should only be a chat.` };
-    const newMessage = { role: "user", content: chatInput.replace(/\n/g, "<br>") };
-    const systemMessages = chatMessages.filter(message => message.role === 'system');
-    const firstSystemMessage = systemMessages.length > 0 ? [systemMessages[0]] : [];
-    const filteredChatMessages = firstSystemMessage.concat(chatMessages.filter(message => message.role !== 'system'));
+    const oldValues = {
+      role: "system",
+      content: `Here are the current values that exist. Do not fill in values that you do not know and are not prompted to fill in. ${currentFormValues}\nDon't include messy blobs of text. Your responses should only be a chat.`,
+    };
+    const newMessage = {
+      role: "user",
+      content: chatInput.replace(/\n/g, "<br>"),
+    };
+    const systemMessages = chatMessages.filter(
+      (message) => message.role === "system"
+    );
+    const firstSystemMessage =
+      systemMessages.length > 0 ? [systemMessages[0]] : [];
+    const filteredChatMessages = firstSystemMessage.concat(
+      chatMessages.filter((message) => message.role !== "system")
+    );
 
     const updatedMessages = [...filteredChatMessages, oldValues, newMessage];
     setChatMessages(updatedMessages);
     setChatInput("");
 
     try {
-      const data = await MLAgent.sendChallengeGenerationMessage(updatedMessages, chatInput);
+      const data = await MLAgent.sendChallengeGenerationMessage(
+        updatedMessages,
+        chatInput
+      );
 
       if (data) {
-        setChatMessages([...updatedMessages, { role: "assistant", content: data.assistant_response.replace(/\n/g, "<br>") }]);
+        setChatMessages([
+          ...updatedMessages,
+          {
+            role: "assistant",
+            content: data.assistant_response.replace(/\n/g, "<br>"),
+          },
+        ]);
 
         // Populate form fields with filled_json values
         const filledJson = JSON.parse(data.filled_json);
         if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
-        if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
-        if (filledJson["deadline_time"]) setDeadlineTime(filledJson["deadline_time"]);
-        if (filledJson["short_description"]) setShortDescription(filledJson["short_description"]);
-        if (filledJson["long_description"]) setLongDescription(filledJson["long_description"]);
+        if (filledJson["deadline_date"])
+          setDeadline(filledJson["deadline_date"]);
+        if (filledJson["deadline_time"])
+          setDeadlineTime(filledJson["deadline_time"]);
+        if (filledJson["short_description"])
+          setShortDescription(filledJson["short_description"]);
+        if (filledJson["long_description"])
+          setLongDescription(filledJson["long_description"]);
         if (filledJson["cash_prize"]) {
           setCashAmount(Number(filledJson["cash_prize"]));
           setCashAmountString(filledJson["cash_prize"].toString());
         }
-        if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"]);
-        if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"]);
+        if (filledJson["required_skills"])
+          setRequiredSkills(filledJson["required_skills"]);
+        if (filledJson["other_prizes"])
+          setPrizeList(filledJson["other_prizes"]);
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -460,22 +497,16 @@ export default function HomePage() {
                             : "Disburse"}
                         </button>
                         <a
-                          href={event.report_url || "#"}
+                          href="#"
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => {
-                            if (!event.report_url) {
-                              e.preventDefault();
-                              alert(
-                                "Report is not available yet. Please check 24 hours after the completion of the event."
-                              );
-                            }
+                            e.preventDefault();
+                            router.push(
+                              `/${encodeURIComponent(event.event_id)}`
+                            );
                           }}
-                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
-                            event.report_url
-                              ? "bg-logo-purple/85 hover:bg-logo-purple"
-                              : "cursor-not-allowed opacity-50 bg-gray-400"
-                          }`}
+                          className="rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 bg-logo-purple/85 hover:bg-logo-purple"
                         >
                           See Report
                         </a>
@@ -509,86 +540,6 @@ export default function HomePage() {
                       <div className="font-poppins">
                         {event.required_skills?.join(", ")}
                       </div>
-                    </div>
-                    <div className="flex sm:hidden flex-wrap gap-2 w-full mt-4">
-                      <button
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.payment_status === 2
-                            ? "bg-green-600/90 cursor-not-allowed"
-                            : event.payment_status === 1
-                            ? "bg-orange-500/90"
-                            : "bg-logo-purple/85 hover:bg-logo-purple"
-                        }`}
-                        onClick={() => {
-                          if (event.payment_status <= 1) {
-                            handlePay(event.event_id, event.prize, 10);
-                          }
-                        }}
-                        disabled={event.payment_status === 2}
-                      >
-                        {event.payment_status === 2
-                          ? "Approved"
-                          : event.payment_status === 1
-                          ? "Pending"
-                          : "Pay"}
-                      </button>
-                      <button
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.payment_status === 4
-                            ? "bg-green-600/90 cursor-not-allowed"
-                            : event.payment_status === 3
-                            ? "bg-orange-500/90 hover:bg-orange-600"
-                            : event.payment_status % 2 === 0 &&
-                              event.payment_status < 3 &&
-                              event.report_url
-                            ? "bg-logo-purple/85 hover:bg-logo-purple"
-                            : "cursor-not-allowed opacity-50 bg-gray-400"
-                        }`}
-                        onClick={() => {
-                          if (
-                            event.payment_status % 2 === 0 &&
-                            event.payment_status < 3 &&
-                            event.report_url
-                          ) {
-                            handlePay(event.event_id, event.prize, 90);
-                          }
-                        }}
-                        disabled={
-                          event.payment_status === 4 || !event.report_url
-                        }
-                      >
-                        {event.payment_status === 4
-                          ? "Completed"
-                          : event.payment_status === 3
-                          ? "Pending"
-                          : "Disburse"}
-                      </button>
-                      <a
-                        href={event.report_url || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          if (!event.report_url) {
-                            e.preventDefault();
-                            alert(
-                              "Report is not available yet. Please check 24 hours after the completion of the event."
-                            );
-                          }
-                        }}
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow ${
-                          event.report_url
-                            ? "bg-logo-purple/85 hover:bg-logo-purple"
-                            : "cursor-not-allowed opacity-50 bg-gray-400"
-                        }`}
-                      >
-                        See Report
-                      </a>
-                      <button
-                        onClick={() => handleDelete(event.event_id)}
-                        className="rounded-lg p-2 transition-colors duration-300 flex-grow"
-                      >
-                        <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500 mx-auto" />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -629,7 +580,8 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-2">
-                      Deadline Time (PST) <span className="text-red-500">*</span>
+                      Deadline Time (PST){" "}
+                      <span className="text-red-500">*</span>
                       <input
                         type="time"
                         value={deadlineTime}
@@ -659,7 +611,8 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-2">
-                      Total Cash Amount (in USD) <span className="text-red-500">*</span>
+                      Total Cash Amount (in USD){" "}
+                      <span className="text-red-500">*</span>
                       <input
                         value={cashAmountString}
                         placeholder="Enter just the number with no commas (ex: 5000)."
@@ -675,11 +628,14 @@ export default function HomePage() {
                       />
                     </label>
                     <label className="block mb-4">
-                      Required Skills (semicolon-separated) <span className="text-red-500">*</span>
+                      Required Skills (semicolon-separated){" "}
+                      <span className="text-red-500">*</span>
                       <input
                         type="text"
-                        value={requiredSkills.join(';')}
-                        onChange={(e) => setRequiredSkills(e.target.value.split(";"))}
+                        value={requiredSkills.join(";")}
+                        onChange={(e) =>
+                          setRequiredSkills(e.target.value.split(";"))
+                        }
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
                       />
@@ -719,8 +675,20 @@ export default function HomePage() {
                     {chatMessages.slice(1).map((msg, index) => {
                       if (msg.role === "system") return null;
                       return (
-                        <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
-                          <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        <div
+                          key={index}
+                          className={`mb-2 ${
+                            msg.role === "user" ? "text-right" : "text-left"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block p-2 rounded-lg ${
+                              msg.role === "user"
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-black"
+                            }`}
+                            dangerouslySetInnerHTML={{ __html: msg.content }}
+                          />
                         </div>
                       );
                     })}
