@@ -190,8 +190,24 @@ export default function HomePage() {
   const handleSendMessage = async () => {
     if (chatInput.trim() === "") return;
 
+    const currentFormValues = JSON.stringify({
+      event_name: eventName,
+      deadline_date: deadline,
+      deadline_time: deadlineTime,
+      short_description: shortDescription,
+      long_description: longDescription,
+      cash_prize: cashAmount,
+      required_skills: requiredSkills,
+      other_prizes: prizeList,
+    });
+
+    const oldValues = { role: 'system', content: `Here are the current values that exist. Do not fill in values that you do not know and are not prompted to fill in. ${currentFormValues}\nDon't include messy blobs of text. Your responses should only be a chat.` };
     const newMessage = { role: "user", content: chatInput.replace(/\n/g, "<br>") };
-    const updatedMessages = [...chatMessages, newMessage];
+    const systemMessages = chatMessages.filter(message => message.role === 'system');
+    const firstSystemMessage = systemMessages.length > 0 ? [systemMessages[0]] : [];
+    const filteredChatMessages = firstSystemMessage.concat(chatMessages.filter(message => message.role !== 'system'));
+
+    const updatedMessages = [...filteredChatMessages, oldValues, newMessage];
     setChatMessages(updatedMessages);
     setChatInput("");
 
@@ -203,7 +219,7 @@ export default function HomePage() {
 
         // Populate form fields with filled_json values
         const filledJson = JSON.parse(data.filled_json);
-        if (filledJson["event_name"] && !eventName) setEventName(filledJson["event_name"]);
+        if (filledJson["event_name"]) setEventName(filledJson["event_name"]);
         if (filledJson["deadline_date"]) setDeadline(filledJson["deadline_date"]);
         if (filledJson["deadline_time"]) setDeadlineTime(filledJson["deadline_time"]);
         if (filledJson["short_description"]) setShortDescription(filledJson["short_description"]);
@@ -700,11 +716,14 @@ export default function HomePage() {
                 </h2>
                 <div className="flex flex-col h-full">
                   <div className="flex-grow overflow-y-auto p-2 border border-gray-300 rounded-md">
-                    {chatMessages.slice(1).map((msg, index) => (
-                      <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
-                        <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
-                      </div>
-                    ))}
+                    {chatMessages.slice(1).map((msg, index) => {
+                      if (msg.role === "system") return null;
+                      return (
+                        <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                          <span className={`inline-block p-2 rounded-lg ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`} dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="mt-4">
                     <input

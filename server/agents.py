@@ -21,7 +21,7 @@ def initialize_conversation(initial_context_path):
 
 # Function to generate JSON based on conversation
 def generate_json_from_conversation(conversation_str):
-    prompt = """Extract data from the conversation. Please respond in JSON format:
+    prompt = """Extract data from the conversation.  if all the values are null try to fill them in. ONLY CHANGE WHAT THE USER PROMPTS YOU TO CHANGE AND LEAVE ALL OTHER VALUES NULL.  Please respond in JSON format:
     {
         event_name: ..., // string
         deadline_date: ..., // date
