@@ -13,6 +13,8 @@ SERVER_PORT = 8080
 
 SERVER_DEBUG_ON = False
 
+OPEN_AI_KEY = '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'
+
 # for dev
 WEBSITE_BASE_LINK = f'http://localhost:3000'
 
