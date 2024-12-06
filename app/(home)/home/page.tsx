@@ -125,6 +125,9 @@ export default function HomePage() {
       })
     );
 
+    prizeList[0] = `$${cashAmount} Cash Amount`;
+    setPrizeList(prizeList);
+
     const skills = requiredSkills.map((skill) => skill.trim());
     if (user instanceof CompanyInstance) {
       await user.addEvent({
@@ -620,8 +623,6 @@ export default function HomePage() {
                         onChange={(e) => {
                           setCashAmountString(e.target.value);
                           setCashAmount(parseFloat(e.target.value));
-                          prizeList[0] = `$${e.target.value} Cash Amount`;
-                          setPrizeList(prizeList);
                         }}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
@@ -670,7 +671,7 @@ export default function HomePage() {
                 <h2 className="font-poppins text-xl font-semibold text-logo-purple mb-4 text-center">
                   Chat Section
                 </h2>
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-4/5">
                   <div className="flex-grow overflow-y-auto p-2 border border-gray-300 rounded-md">
                     {chatMessages.slice(1).map((msg, index) => {
                       if (msg.role === "system") return null;
