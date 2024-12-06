@@ -1,11 +1,11 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import React from "react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { CompanyInstance } from "../../../util/wrapper/instance";
 import { Company } from "../../../util/wrapper/static";
-import React from "react";
-import { BasicSubmission } from "../../../util/wrapper/basicTypes";
+import { BasicEvent, BasicSubmission } from "../../../util/wrapper/basicTypes";
 
 const SubmissionsPage = ({ params }) => {
   const router = useRouter();
@@ -13,30 +13,21 @@ const SubmissionsPage = ({ params }) => {
   const EventId = parseInt(event_id, 10);
 
   const [submissions, setSubmissions] = useState<BasicSubmission[]>([]);
-  const [company, setCompany] = useState(null);
-  const [event, setEvent] = useState(null);
+  const [company, setCompany] = useState<CompanyInstance | null>(null);
+  const [event, setEvent] = useState<BasicEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const deadlineDate = new Date();
-  const now = new Date();
 
   function toDatetime(datetime: any) {
     const date = new Date(datetime);
-
     const formattedDate = date.toLocaleDateString();
     const formattedTime = date.toLocaleTimeString();
-
     return formattedDate + " at " + formattedTime;
   }
-  // const timeDifference = deadlineDate - now;
-  // const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
   useEffect(() => {
     async function initializeCompany() {
       try {
         const loginResult = await Company.get();
-
         if (loginResult) {
           setCompany(loginResult);
           const events = await loginResult.getEvents();
@@ -58,12 +49,9 @@ const SubmissionsPage = ({ params }) => {
         }
         setIsLoading(false);
       } catch (e) {
-        console.log("error");
-        setError(e);
         setIsLoading(false);
       }
     }
-
     initializeCompany();
   }, []);
 
@@ -79,65 +67,59 @@ const SubmissionsPage = ({ params }) => {
             <div className="max-w-[600px]">
               <div className="flex items-center gap-4 mb-4">
                 <h1 className="text-4xl font-semibold text-gray-900 tracking-wide">
-                  {event.event_name.toUpperCase()}
+                  {event!.event_name.toUpperCase()}
                 </h1>
                 <span
                   className={`px-3 py-1 text-sm font-semibold  rounded-full whitespace-nowrap`}
-                >
-                  {/* {timeDifference > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's': ''} left!`: `Passed deadline!`} */}
-                </span>
+                ></span>
               </div>
-
               <div className="mt-5 font-normal text-[16px] text-gray-500">
-                hosted by {company.name}
+                hosted by {company!.name}
               </div>
-
               <div className="mt-4">
                 Participate till{" "}
                 <span className="text-black font-semibold border rounded-md bg-gray-200 px-2 py-1">
-                  {toDatetime(event.end_time)}
+                  {toDatetime(event!.end_time)}
                 </span>
               </div>
-
               <div className="mt-5 text-gray-700 max-w-full break-words">
-                {event.short_description}
+                {event!.short_description}
               </div>
             </div>
-
             <div className="flex flex-col items-center">
               <div className="flex flex-col justify-center h-full text-center border-none rounded-lg bg-gray-200 px-8 py-4">
-                <h1 className="font-semibold text-3xl">{event.prize} USD</h1>
+                <h1 className="font-semibold text-3xl">{event!.prize} USD</h1>
                 <p className="mt-3">Prize Pool</p>
               </div>
-
               <div className="flex flex-row items-center justify-around w-full gap-2 mt-3">
                 <div className="px-2 py-2 font-semibold text-2xl bg-gray-200 border-none rounded-md shadow-md hover:shadow-none hover:opacity-90 hover:bg-purple-200 active:opacity-60 transition duration-300 cursor-pointer">
-                  {event.payment_status &&
-                    ((event.payment_status === 0 && <div>{"N/A"}</div>) ||
-                      (event.payment_status === 1 && <div>{"Pay 10%"}</div>) ||
-                      (event.payment_status === 2 && (
-                        <div>{"Paid 10%!"}</div>
-                      )) ||
-                      (event.payment_status === 3 && <div>{"Pay 90%"}</div>) ||
-                      (event.payment_status === 4 && <div>{"Paid 90%!"}</div>))}
+                  {event?.payment_status !== undefined &&
+                    (event.payment_status === 0 ? (
+                      <div>{"N/A"}</div>
+                    ) : event.payment_status === 1 ? (
+                      <div>{"Pay 10%"}</div>
+                    ) : event.payment_status === 2 ? (
+                      <div>{"Paid 10%!"}</div>
+                    ) : event.payment_status === 3 ? (
+                      <div>{"Pay 90%"}</div>
+                    ) : event.payment_status === 4 ? (
+                      <div>{"Paid 90%!"}</div>
+                    ) : null)}
                 </div>
               </div>
             </div>
           </div>
-
           <hr className="border border-gray-300" />
-
           <div className="font-semibold underline underline-offset-8 mt-8">
             ALL PROJECTS ({submissions.length})
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
             {submissions.map((submission) => (
               <div
                 key={submission.submission_id}
                 className="border rounded-md bg-gray-100 cursor-pointer"
                 onClick={
-                  event.payment_status === 4
+                  event!.payment_status === 4
                     ? () => {
                         router.push(
                           `${event_id}/submission/${submission.submission_id}`

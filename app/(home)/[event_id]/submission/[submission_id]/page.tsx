@@ -135,7 +135,6 @@ const SubmissionPage = ({ params }) => {
               </div>
             </div>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-300 py-6 pl-3">
             {links.map((link, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -151,32 +150,7 @@ const SubmissionPage = ({ params }) => {
               </div>
             ))}
           </div>
-
-          <div className="pt-8 border-t border-gray-300 w-full" />
-
-          <div className="flex space-x-4 mt-4 border-gray-300">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`py-2 px-4 ${
-                activeTab === "overview"
-                  ? "border-b-2 border-purple-500 font-semibold"
-                  : "text-gray-600"
-              }`}
-            >
-              Project Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("outlook")}
-              className={`py-2 px-4 ${
-                activeTab === "outlook"
-                  ? "border-b-2 border-purple-500 font-semibold"
-                  : "text-gray-600"
-              }`}
-            >
-              Future Outlook
-            </button>
-          </div>
-
+          <div className="border-t border-gray-300 w-full" />
           <div className="mt-8">
             {activeTab === "overview" && (
               <>
@@ -189,7 +163,6 @@ const SubmissionPage = ({ params }) => {
               </>
             )}
           </div>
-
           <div className="flex flex-row justify-center items-center w-full mt-8">
             <iframe
               src={getEmbedURL(submission.project_video_link)}
