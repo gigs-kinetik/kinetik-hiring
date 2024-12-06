@@ -3,19 +3,30 @@
 import React, { useRef, useState, useEffect } from "react";
 import { MdCalendarMonth } from "react-icons/md";
 import { FaLink, FaGithub, FaPaperclip } from "react-icons/fa";
-
+import { BasicSubmission } from "../../../../../util/wrapper/basicTypes";
 import { Company } from "../../../../../util/wrapper/static";
 
 const SubmissionPage = ({ params }) => {
   const { event_id, submission_id } = params;
   const EventId = parseInt(event_id, 10);
   const SubmissionId = parseInt(submission_id, 10);
-
+  const contactRef = useRef<HTMLDivElement | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
-  const [submission, setSubmission] = useState(null);
+  const [submission, setSubmission] = useState<BasicSubmission | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [links, setLinks] = useState([]);
-  const contactRef = useRef(null);
+  const [links, setLinks] = useState<Link[]>([]);
+
+  type Link =
+    | {
+        icon: React.JSX.Element;
+        text: string;
+        url: string;
+      }
+    | {
+        icon: React.JSX.Element;
+        text: string;
+        url?: undefined;
+      };
 
   useEffect(() => {
     async function getSubmissionDetails() {

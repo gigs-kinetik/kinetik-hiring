@@ -419,7 +419,7 @@ def reset(method: str, body: dict):
     if method != 'PUT':
         return 'invalid method', 403
         
-    res = supabase.table('users').select('company_id').eq('company_email', body.get('email')).execute()
+    res = supabase.table('companies').select('company_id').eq('company_email', body.get('email')).execute()
     if hasattr(res, 'code'):
         return 'error', 501
     
