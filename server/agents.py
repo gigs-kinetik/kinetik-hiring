@@ -1,7 +1,8 @@
 import openai
+import util
 
 # Set up your OpenAI API key
-openai.api_key = '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'
+openai.api_key = util.OPEN_AI_KEY
 
 analyze_client = openai.OpenAI(api_key=openai.api_key)
 
