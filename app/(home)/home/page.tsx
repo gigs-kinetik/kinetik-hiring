@@ -229,7 +229,11 @@ export default function HomePage() {
           setCashAmountString(filledJson["cash_prize"].toString());
         }
         if (filledJson["required_skills"]) setRequiredSkills(filledJson["required_skills"]);
-        if (filledJson["other_prizes"]) setPrizeList(filledJson["other_prizes"]);
+        if (filledJson["other_prizes"]) {
+          console.log(filledJson["other_prizes"]);
+          setPrizeList(filledJson["other_prizes"]);
+          console.log(prizeList);
+        }
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -667,8 +671,8 @@ export default function HomePage() {
                         onChange={(e) => {
                           setCashAmountString(e.target.value);
                           setCashAmount(parseFloat(e.target.value));
-                          prizeList[0] = `$${e.target.value} Cash Amount`;
-                          setPrizeList(prizeList);
+                          //prizeList[0] = `$${e.target.value} Cash Amount`;
+                          //setPrizeList(prizeList);
                         }}
                         className="block w-full mt-1 border-gray-300 rounded-md text-sm sm:text-base p-2"
                         required
@@ -688,10 +692,9 @@ export default function HomePage() {
                       Other Prizes/Incentives (semicolon-separated)
                       <input
                         type="text"
-                        value={prizeList.slice(1).join(";")}
+                        value={prizeList.join(";")}
                         onChange={(e) =>
                           setPrizeList([
-                            `$${cashAmount} Cash Amount`,
                             ...e.target.value.split(";"),
                           ])
                         }
