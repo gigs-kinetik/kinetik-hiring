@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from 'next/navigation'
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
@@ -20,6 +21,7 @@ import {
 } from "firebase/firestore";
 
 export default function HomePage() {
+  const router = useRouter()
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -482,8 +484,7 @@ export default function HomePage() {
                             ? "Pending"
                             : "Disburse"}
                         </button>
-                        <a
-                          href={event["Report URL"] || "#"}
+                        <div
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => {
@@ -492,6 +493,9 @@ export default function HomePage() {
                               alert(
                                 "Report is not available yet. Please check 24 hours after the completion of the event."
                               );
+                            } else {
+                              e.preventDefault();
+                              router.push(`/${encodeURIComponent(event["Event ID"])}`)
                             }
                           }}
                           className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
@@ -501,7 +505,7 @@ export default function HomePage() {
                           }`}
                         >
                           See Report
-                        </a>
+                        </div>
                         <button
                           onClick={() => handleDelete(event["Event ID"])}
                           className="rounded-lg p-2 transition-colors duration-300"

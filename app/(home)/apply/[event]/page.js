@@ -10,8 +10,10 @@ import { doc, setDoc, collection } from "firebase/firestore";
 export default function ApplyPage() {
   const router = useRouter();
   const [projectLink, setProjectLink] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [resumeLink, setResumeLink] = useState("");
   const [videoLink, setVideoLink] = useState("");
+  const [projectDescription, setProjectDescription] = useState("")
   const [additionalLink1, setAdditionalLink1] = useState("");
   const [additionalLink2, setAdditionalLink2] = useState("");
   const [additionalLink3, setAdditionalLink3] = useState("");
@@ -57,6 +59,8 @@ export default function ApplyPage() {
       const currTime = new Date().toLocaleTimeString("en-US", options);
       await setDoc(doc(submissionsRef, event["Event ID"]), {
         "Event Name": event["Event Name"],
+        "Project Name": projectName,
+        "Project Description": projectDescription,
         "Submitted At": currDate + ", " + currTime,
         "Project Link": projectLink,
         "Resume Link": resumeLink,
@@ -187,6 +191,30 @@ export default function ApplyPage() {
               </span>
             )}
           </div>
+          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
+            Enter Project Name <span className="text-red-500">*</span>
+          </div>
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
+            Please enter your project's name.
+          </p>
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+          />
+          <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
+            Enter Project Description <span className="text-red-500">*</span>
+          </div>
+          <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
+            Please enter your project's description.
+          </p>
+          <input
+            className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
+            type="text"
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+          />
           <div className="font-poppins sm:text-lg font-semibold text-sm text-logo-purple block mt-4">
             Upload Project Submission <span className="text-red-500">*</span>
           </div>
