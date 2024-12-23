@@ -243,12 +243,12 @@ export default function HomePage() {
               Challenges for you
             </p>
           </div>
-          {/* <div className="w-full mt-4 space-y-4">
+          <div className="w-full mt-4 space-y-4">
             {events.map((event) => {
               console.log(filteredEvents, event);
               if (filteredEvents.includes(event["Event ID"])) {
                 if (
-                  event.InitPaid === "Approved" &&
+                  event["Paid"] >= 2 &&
                   event["Deadline"] &&
                   event["Deadline"]["_seconds"]
                 ) {
@@ -346,7 +346,7 @@ export default function HomePage() {
               }
               return null;
             })}
-          </div> */}
+          </div>
         </div>
       </div>
     );
@@ -395,271 +395,6 @@ export default function HomePage() {
                 handleDelete={handleDelete}
               />
             </div>
-            {/* <div className="w-full mt-4 space-y-4">
-              {challenges.map((event) => (
-                <div
-                  key={event["Event Name"]}
-                  className="bg-white h-fit rounded-lg p-5"
-                >
-                  <div className="flex flex-col">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 font-poppins">
-                      <div className="flex flex-col w-full sm:w-auto">
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {event["Prize List"] &&
-                            event["Prize List"]
-                              .slice(0, 3)
-                              .map((prize, index) => (
-                                <div
-                                  key={index}
-                                  className="rounded-full bg-logo-purple/65 px-2 py-1 font-poppins text-xs font-medium text-white"
-                                >
-                                  {prize}
-                                </div>
-                              ))}
-                        </div>
-                        <div className="font-poppins text-xs text-gray-500">
-                          {event["Company"]}
-                        </div>
-                        <div className="font-poppins text-lg font-semibold text-logo-purple">
-                          {event["Event Name"]}
-                        </div>
-                      </div>
-                      <div className="hidden sm:flex flex-wrap gap-2 w-full sm:w-auto">
-                        <button
-                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
-                            event.InitPaid === "Approved" ||
-                            event.InitPaid === "Completed"
-                              ? "bg-green-600/90 cursor-not-allowed"
-                              : event.InitPaid === "Pending"
-                              ? "bg-orange-500/90"
-                              : "bg-logo-purple/85 hover:bg-logo-purple"
-                          }`}
-                          onClick={() => {
-                            if (
-                              event.InitPaid === "Pay" ||
-                              event.InitPaid === "Pending"
-                            ) {
-                              handlePay(
-                                event["Event ID"],
-                                event["Prize Amount"],
-                                10
-                              );
-                            }
-                          }}
-                          disabled={
-                            event.InitPaid === "Approved" ||
-                            event.InitPaid === "Completed"
-                          }
-                        >
-                          {event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
-                            ? "Approved"
-                            : event.InitPaid === "Pending"
-                            ? "Pending"
-                            : "Pay"}
-                        </button>
-                        <button
-                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow sm:flex-grow-0 ${
-                            event.FinalPaid === "Completed" ||
-                            event.FinalPaid === "Approved"
-                              ? "bg-green-600/90 cursor-not-allowed"
-                              : event.FinalPaid === "Pending"
-                              ? "bg-orange-500/90 hover:bg-orange-600"
-                              : (event.InitPaid === "Pay" ||
-                                  event.InitPaid === "Approved") &&
-                                event["Report URL"]
-                              ? "bg-logo-purple/85 hover:bg-logo-purple"
-                              : "cursor-not-allowed opacity-50 bg-gray-400"
-                          }`}
-                          onClick={() => {
-                            if (
-                              (event.InitPaid === "Pay" ||
-                                event.InitPaid === "Approved") &&
-                              event["Report URL"] !== ""
-                            ) {
-                              handlePay(
-                                event["Event ID"],
-                                event["Prize Amount"],
-                                90
-                              );
-                            }
-                          }}
-                          disabled={
-                            event.FinalPaid === "Completed" ||
-                            event.FinalPaid === "Approved" ||
-                            !event["Report URL"]
-                          }
-                        >
-                          {event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved"
-                            ? "Completed"
-                            : event.FinalPaid === "Pending"
-                            ? "Pending"
-                            : "Disburse"}
-                        </button>
-                        <div
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            if (!event["Report URL"]) {
-                              e.preventDefault();
-                              alert(
-                                "Report is not available yet. Please check 24 hours after the completion of the event."
-                              );
-                            } else {
-                              e.preventDefault();
-                              router.push(`/${encodeURIComponent(event["Event ID"])}`)
-                            }
-                          }}
-                          className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow sm:flex-grow-0 ${
-                            event["Report URL"]
-                              ? "bg-logo-purple/85 hover:bg-logo-purple"
-                              : "cursor-not-allowed opacity-50 bg-gray-400"
-                          }`}
-                        >
-                          See Report
-                        </div>
-                        <button
-                          onClick={() => handleDelete(event["Event ID"])}
-                          className="rounded-lg p-2 transition-colors duration-300"
-                        >
-                          <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="font-poppins text-sm mt-2 mb-4 text-logo-purple">
-                      {event["Short Description"] || "No description available"}
-                    </div>
-                    <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-500">
-                      <div className="mb-2 sm:mb-0 font-poppins">
-                        Deadline set for{" "}
-                        {event["Deadline"] &&
-                          event["Deadline"]
-                            .toDate()
-                            .toLocaleTimeString("en-US", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              timeZone: "America/Los_Angeles",
-                              timeZoneName: "short",
-                            })}{" "}
-                        on{" "}
-                        {event["Deadline"] &&
-                          event["Deadline"]
-                            .toDate()
-                            .toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
-                      </div>
-                      <div className="font-poppins">
-                        {event["Required Skills"]?.join(", ")}
-                      </div>
-                    </div>
-                    <div className="flex sm:hidden flex-wrap gap-2 w-full mt-4">
-                      <button
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
-                            ? "bg-green-600/90 cursor-not-allowed"
-                            : event.InitPaid === "Pending"
-                            ? "bg-orange-500/90"
-                            : "bg-logo-purple/85 hover:bg-logo-purple"
-                        }`}
-                        onClick={() => {
-                          if (
-                            event.InitPaid === "Pay" ||
-                            event.InitPaid === "Pending"
-                          ) {
-                            handlePay(
-                              event["Event ID"],
-                              event["Prize Amount"],
-                              10
-                            );
-                          }
-                        }}
-                        disabled={
-                          event.InitPaid === "Approved" ||
-                          event.InitPaid === "Completed"
-                        }
-                      >
-                        {event.InitPaid === "Approved" ||
-                        event.InitPaid === "Completed"
-                          ? "Approved"
-                          : event.InitPaid === "Pending"
-                          ? "Pending"
-                          : "Pay"}
-                      </button>
-                      <button
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex-grow ${
-                          event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved"
-                            ? "bg-green-600/90 cursor-not-allowed"
-                            : event.FinalPaid === "Pending"
-                            ? "bg-orange-500/90 hover:bg-orange-600"
-                            : (event.InitPaid === "Pay" ||
-                                event.InitPaid === "Approved") &&
-                              event["Report URL"]
-                            ? "bg-logo-purple/85 hover:bg-logo-purple"
-                            : "cursor-not-allowed opacity-50 bg-gray-400"
-                        }`}
-                        onClick={() => {
-                          if (
-                            (event.InitPaid === "Pay" ||
-                              event.InitPaid === "Approved") &&
-                            event["Report URL"] !== ""
-                          ) {
-                            handlePay(
-                              event["Event ID"],
-                              event["Prize Amount"],
-                              90
-                            );
-                          }
-                        }}
-                        disabled={
-                          event.FinalPaid === "Completed" ||
-                          event.FinalPaid === "Approved" ||
-                          !event["Report URL"]
-                        }
-                      >
-                        {event.FinalPaid === "Completed" ||
-                        event.FinalPaid === "Approved"
-                          ? "Completed"
-                          : event.FinalPaid === "Pending"
-                          ? "Pending"
-                          : "Disburse"}
-                      </button>
-                      <a
-                        href={event["Report URL"] || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          if (!event["Report URL"]) {
-                            e.preventDefault();
-                            alert(
-                              "Report is not available yet. Please check 24 hours after the completion of the event."
-                            );
-                          }
-                        }}
-                        className={`rounded-lg font-poppins px-3 py-2 text-sm font-medium text-white flex items-center justify-center flex-grow ${
-                          event["Report URL"]
-                            ? "bg-logo-purple/85 hover:bg-logo-purple"
-                            : "cursor-not-allowed opacity-50 bg-gray-400"
-                        }`}
-                      >
-                        See Report
-                      </a>
-                      <button
-                        onClick={() => handleDelete(event["Event ID"])}
-                        className="rounded-lg p-2 transition-colors duration-300 flex-grow"
-                      >
-                        <TrashIcon className="w-5 h-5 text-gray-500 hover:text-red-500 mx-auto" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div> */}
           </div>
           {isModalOpen && (
             <div
@@ -779,3 +514,4 @@ export default function HomePage() {
   }
   return <div></div>;
 }
+

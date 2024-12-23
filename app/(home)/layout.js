@@ -44,7 +44,7 @@ export default function HomeLayout({ children }) {
   return (
     <EventsProvider>
       <div className="flex flex-col min-h-full">
-        <nav className="sticky top-0 mt-4">
+        <nav className="top-0 mt-4">
           <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-6 items-center justify-between">
             <div className="flex flex-row">
               <div className="flex items-center">

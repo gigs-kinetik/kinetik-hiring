@@ -70,23 +70,21 @@ export function ProjectsList({
               </CardDescription>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge
-                variant={
-                  project["Paid"] === 3 ? "default" : "secondary"
-                }
-              >
-                {project["Paid"] === 3 ? (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-[30px]" />
-                    Approved
-                  </>
-                ) : (
-                  <>
-                    <Clock className="w-4 h-4 mr-[30px]" />
-                    Pending Payment
-                  </>
-                )}
-              </Badge>
+                <div className={`px-2 py-2 font-semibold text-sm cursor-default border-none rounded-md hover:shadow-none hover:opacity-90 ${project["Paid"] && project["Paid"] === 1 ? 'bg-red-200 hover:bg-red-300' : project["Paid"] === 2 ? 'bg-orange-200 hover:bg-orange-300' : project["Paid"] === 3 ? 'bg-blue-200 hover:bg-blue-200' : 'bg-green-200 hover:bg-green-200'} active:opacity-60 transition duration-300`}>
+                    {project && project["Paid"] && 
+                      (project["Paid"] === 0 && <div>{"N/A"}</div> 
+                          || project["Paid"] === 1 && <div>{"Pay 10%"}</div> 
+                          || project["Paid"] === 2 && <div>{"Pay 90%!"}</div> 
+                          || project["Paid"] === 3 && <div>{"Select Winner!"}</div>)
+                          || project["Paid"] === 4 && <div>{"Prize Distributed!"}</div>
+                    }
+                  </div>
+              
+              {expandedIndex === index ? (
+                <ChevronUp className="h-5 w-5 text-gray-500" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-500" />
+              )}
               <Button
                 variant="ghost"
                 size="icon"
@@ -97,11 +95,7 @@ export function ProjectsList({
               >
                 <Trash2 className="h-5 w-5 text-red-500 hover:text-red-700" />
               </Button>
-              {expandedIndex === index ? (
-                <ChevronUp className="h-5 w-5 text-gray-500" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-500" />
-              )}
+              
             </div>
             
           </CardHeader>
@@ -155,34 +149,33 @@ export function ProjectsList({
                         .toLocaleDateString()}
                     </span>
                   </div>
-                  <div className='flex flex-row justify-center gap-3'>
+                  <div className='flex flex-col justify-center gap-3'>
                     <Button
-                    onClick={
-                      (e) => {
-                          if(project["Paid"] === 2) {
-                            e.preventDefault()
-                            router.push(`/${encodeURIComponent(`${project["Event ID"]}`)}`)
-                          } else {
-                            e.preventDefault()
-                            alert("Please pay the 10% first before seeing submissions.")
-                          }
-                        }}
-                    className="bg-black text-white">
+                      onClick={
+                        (e) => {
+                            if(project["Paid"] >= 2) {
+                              e.preventDefault()
+                              router.push(`/${encodeURIComponent(`${project["Event ID"]}`)}`)
+                            } else {
+                              e.preventDefault()
+                              alert("Please pay the 10% first before seeing submissions.")
+                            }
+                          }}
+                      className="bg-black text-white hover:opacity-75">
                       View Submission
                     </Button>
                     <Button
                       onClick={() => {
                         if (project["Paid"] === 1) {
                           handlePay(project["Event ID"], project["Prize Amount"], 10);
-                        } else {
+                        } else if(project["Paid"] === 2) {
                           handlePay(project["Event ID"], project["Prize Amount"], 90);
                         }
                       }}
-                      className={`bg-black hover:bg-purple-700 text-white border-none rounded-md ${project["Paid"] === 3 ? "hidden": ""}`}
+                      className={`bg-black hover:opacity-75 text-white border-none rounded-md ${project["Paid"] === 3 || project["Paid"] === 4 ? "hidden": ""}`}
                     >
                       {project["Paid"] === 1  ? "Pay 10%" : project["Paid"] === 2 ? "Pay 90%" : "Approved!"}
                     </Button>
-
                   </div>
                   
                 </CardFooter> 

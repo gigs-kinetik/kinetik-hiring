@@ -26,7 +26,7 @@ const SubmissionPage = ({ params }) => {
           if(submission) {
                  const links = [
                   { icon: <FaGithub />, text: "Github Link", url: submission[0]["Project Link"]},
-                  { icon: <MdCalendarMonth />, text: `Submitted on ${submission[0]["Submitted At"] ? submission[0]["Submitted At"].toDate().toLocaleDateString() : Timestamp.now().toDate().toLocaleDateString()}`},
+                  { icon: <MdCalendarMonth />, text: `Submitted on ${submission[0]["Submitted At"] ? new Date(submission[0]["Submitted At"]).toLocaleString() : new Date(Date.now()).toLocaleDateString()}`},
                   { icon: <FaPaperclip/>, text: "Resume", url: submission[0]["Resume Link"]},
                 ];
                 const index = 1;
