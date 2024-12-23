@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from 'next/navigation'
 import { Timestamp } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -27,9 +28,10 @@ interface Project {
   "Short Description": string;
   "Long Description": string;
   Deadline: Timestamp;
-  FinalPaid: string;
+  Paid: number;
   "Prize List": string[];
   "Prize Amount": number;
+  "Required Skills": string[];
 }
 
 interface ProjectsListProps {
@@ -48,6 +50,8 @@ export function ProjectsList({
   const toggleExpand = (index: number) => {
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
   };
+
+  const router = useRouter()
 
   return (
     <div className="space-y-6">
@@ -68,17 +72,17 @@ export function ProjectsList({
             <div className="flex items-center space-x-4">
               <Badge
                 variant={
-                  project["FinalPaid"] === "Approved" ? "default" : "secondary"
+                  project["Paid"] === 3 ? "default" : "secondary"
                 }
               >
-                {project["FinalPaid"] === "Approved" ? (
+                {project["Paid"] === 3 ? (
                   <>
-                    <CheckCircle className="w-4 h-4 mr-1" />
+                    <CheckCircle className="w-4 h-4 mr-[30px]" />
                     Approved
                   </>
                 ) : (
                   <>
-                    <Clock className="w-4 h-4 mr-1" />
+                    <Clock className="w-4 h-4 mr-[30px]" />
                     Pending Payment
                   </>
                 )}
@@ -99,6 +103,7 @@ export function ProjectsList({
                 <ChevronDown className="h-5 w-5 text-gray-500" />
               )}
             </div>
+            
           </CardHeader>
           <AnimatePresence>
             {expandedIndex === index && (
@@ -128,6 +133,16 @@ export function ProjectsList({
                         ))}
                       </ul>
                     </div>
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Skills Needed</h3>
+                      <ul className="list-disc list-inside space-y-1">
+                        {project["Required Skills"].map((skill, i) => (
+                          <li key={i} className="text-gray-700">
+                            {skill}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
@@ -140,19 +155,37 @@ export function ProjectsList({
                         .toLocaleDateString()}
                     </span>
                   </div>
-                  <Button
-                    onClick={() =>
-                      handlePay(
-                        project["Event ID"],
-                        project["Prize Amount"],
-                        project["FinalPaid"] === "Approved" ? 90 : 10
-                      )
-                    }
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
-                  >
-                    Pay {project["FinalPaid"] === "Approved" ? "90%" : "10%"}
-                  </Button>
-                </CardFooter>
+                  <div className='flex flex-row justify-center gap-3'>
+                    <Button
+                    onClick={
+                      (e) => {
+                          if(project["Paid"] === 2) {
+                            e.preventDefault()
+                            router.push(`/${encodeURIComponent(`${project["Event ID"]}`)}`)
+                          } else {
+                            e.preventDefault()
+                            alert("Please pay the 10% first before seeing submissions.")
+                          }
+                        }}
+                    className="bg-black text-white">
+                      View Submission
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (project["Paid"] === 1) {
+                          handlePay(project["Event ID"], project["Prize Amount"], 10);
+                        } else {
+                          handlePay(project["Event ID"], project["Prize Amount"], 90);
+                        }
+                      }}
+                      className={`bg-black hover:bg-purple-700 text-white border-none rounded-md ${project["Paid"] === 3 ? "hidden": ""}`}
+                    >
+                      {project["Paid"] === 1  ? "Pay 10%" : project["Paid"] === 2 ? "Pay 90%" : "Approved!"}
+                    </Button>
+
+                  </div>
+                  
+                </CardFooter> 
               </motion.div>
             )}
           </AnimatePresence>

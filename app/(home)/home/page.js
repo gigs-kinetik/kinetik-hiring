@@ -144,8 +144,7 @@ export default function HomePage() {
     const eventsCollectionRef = collection(db, "Events");
     const newEventDocRef = doc(eventsCollectionRef, eventId);
     await setDoc(newEventDocRef, {
-      InitPaid: "Pay",
-      FinalPaid: "Pay",
+      Paid: 1,
       "Event ID": eventId,
       Company: companyName,
       Contact: userEmail,
@@ -205,12 +204,12 @@ export default function HomePage() {
     if (percentage == 10) {
       const userDocRef = doc(db, "Events", eventId);
       await updateDoc(userDocRef, {
-        InitPaid: "Pending",
+        Paid: 1,
       });
     } else if (percentage == 90) {
       const userDocRef = doc(db, "Events", eventId);
       await updateDoc(userDocRef, {
-        FinalPaid: "Pending",
+        Paid: 2,
       });
     }
     try {
@@ -364,7 +363,7 @@ export default function HomePage() {
           )}
           <div className="flex flex-col m-20 mb-10 pl-6 pr-6 w-full">
             <div className="flex justify-between w-full">
-              <div className="flex justify-between w-full items-center">
+              <div className="flex justify-between w-full items-center mb-8">
                 <div className="flex items-center space-x-2">
                   <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
                     My Events
