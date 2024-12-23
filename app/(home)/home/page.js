@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useEvents } from "../../../lib/eventsContext";
 import { useState, useEffect } from "react";
 import { db } from "../../../lib/firebaseConfig";
@@ -25,7 +25,7 @@ import { Plus } from "lucide-react";
 import { ProjectsList } from "../../../components/project/project-list";
 
 export default function HomePage() {
-  const router = useRouter()
+  const router = useRouter();
   const events = useEvents();
   const [submissionIds, setSubmissionIds] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -58,7 +58,7 @@ export default function HomePage() {
     const fetchData = async () => {
       if (userType === "Company") {
         const updatedChallenges = await fetchChallenges();
-        console.log(updatedChallenges)
+        console.log(updatedChallenges);
         setChallenges(updatedChallenges);
         setLoading(false);
       } else if (userType === "Developer") {
@@ -390,7 +390,11 @@ export default function HomePage() {
             <div
               className={`overflow-auto relative group scrollbar-transparent max-h-[calc(100vh-18rem)]`}
             >
-            <ProjectsList projects={challenges} handlePay={handlePay}  handleDelete={handleDelete}/>
+              <ProjectsList
+                projects={challenges}
+                handlePay={handlePay}
+                handleDelete={handleDelete}
+              />
             </div>
             {/* <div className="w-full mt-4 space-y-4">
               {challenges.map((event) => (
