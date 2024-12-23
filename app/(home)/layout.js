@@ -44,8 +44,8 @@ export default function HomeLayout({ children }) {
   return (
     <EventsProvider>
       <div className="flex flex-col min-h-full">
-        <nav className="sticky top-0 bg-off-white mt-4">
-          <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-6 border-b-2 border-light-gray items-center justify-between">
+        <nav className="sticky top-0 mt-4">
+          <div className="flex max-w-screen-5xl pl-10 pr-10 pt-4 pb-6 items-center justify-between">
             <div className="flex flex-row">
               <div className="flex items-center">
                 <Link href="/home">
@@ -107,7 +107,7 @@ export default function HomeLayout({ children }) {
           </div>
         </nav>
         <div className="flex-grow">{children}</div>
-        <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
+        {/* <div className="grid grid-cols-3 text-xs sm:text-sm px-5 py-5 text-off-white bg-logo-purple/85 h-24">
           <div className="flex flex-col items-start justify-center">
             <div className="pb-1">@2024 Kinetik Tech, LLC.</div>
             <div>All Rights Reserved.</div>
@@ -128,7 +128,7 @@ export default function HomeLayout({ children }) {
             <div className="pb-1">Contact us at</div>
             <div>info@kinetikgigs.com</div>
           </div>
-        </div>
+        </div> */}
       </div>
     </EventsProvider>
   );

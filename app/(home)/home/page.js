@@ -20,6 +20,10 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 
+import { Button } from "../../../components/ui/button";
+import { Plus } from "lucide-react";
+import { ProjectsList } from "../../../components/project/project-list";
+
 export default function HomePage() {
   const router = useRouter()
   const events = useEvents();
@@ -54,6 +58,7 @@ export default function HomePage() {
     const fetchData = async () => {
       if (userType === "Company") {
         const updatedChallenges = await fetchChallenges();
+        console.log(updatedChallenges)
         setChallenges(updatedChallenges);
         setLoading(false);
       } else if (userType === "Developer") {
@@ -239,7 +244,7 @@ export default function HomePage() {
               Challenges for you
             </p>
           </div>
-          <div className="w-full mt-4 space-y-4">
+          {/* <div className="w-full mt-4 space-y-4">
             {events.map((event) => {
               console.log(filteredEvents, event);
               if (filteredEvents.includes(event["Event ID"])) {
@@ -342,7 +347,7 @@ export default function HomePage() {
               }
               return null;
             })}
-          </div>
+          </div> */}
         </div>
       </div>
     );
@@ -351,18 +356,18 @@ export default function HomePage() {
   if (userType === "Company" && !loading) {
     if (!challenges.empty) {
       return (
-        <div className="flex flex-row max-w-full max-h-full">
+        <div className="flex flex-row max-w-full max-h-full font-poppins">
           {isDeleting && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
               <div className="text-white text-lg">Deleting...</div>
             </div>
           )}
-          <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
+          <div className="flex flex-col m-20 mb-10 pl-6 pr-6 w-full">
             <div className="flex justify-between w-full">
               <div className="flex justify-between w-full items-center">
                 <div className="flex items-center space-x-2">
                   <p className="font-poppins text-dark-gray mt-2 font-normal text-md sm:text-lg">
-                    Your Dashboard
+                    My Events
                   </p>
                   <a
                     href="https://firebasestorage.googleapis.com/v0/b/gigapp-8cc4b.appspot.com/o/Kinetik%20x%20Sponsors.pdf?alt=media&token=2f8e537c-2dfe-484e-8e23-b89e156b4f54"
@@ -374,15 +379,20 @@ export default function HomePage() {
                     </button>
                   </a>
                 </div>
-                <button
-                  className="rounded-full bg-logo-purple/85 text-white font-poppins font-medium text-xl h-7 w-7 lg:h-10 lg:w-10 mr-0.5 flex items-center justify-center"
+                <Button
+                  className="bg-logo-purple/85 text-white font-poppins font-medium text-md mr-0.5 flex items-center justify-center"
                   onClick={() => setIsModalOpen(true)}
                 >
-                  +
-                </button>
+                  Add Event
+                </Button>
               </div>
             </div>
-            <div className="w-full mt-4 space-y-4">
+            <div
+              className={`overflow-auto relative group scrollbar-transparent max-h-[calc(100vh-18rem)]`}
+            >
+            <ProjectsList projects={challenges} handlePay={handlePay}  handleDelete={handleDelete}/>
+            </div>
+            {/* <div className="w-full mt-4 space-y-4">
               {challenges.map((event) => (
                 <div
                   key={event["Event Name"]}
@@ -646,7 +656,7 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
           {isModalOpen && (
             <div
