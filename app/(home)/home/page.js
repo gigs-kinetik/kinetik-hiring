@@ -22,7 +22,8 @@ import {
 
 import { Button } from "../../../components/ui/button";
 import { Plus } from "lucide-react";
-import { ProjectsList } from "../../../components/project/project-list";
+import { CompaniesList } from "../../../components/project/CompaniesList";
+import { DevelopersList } from "../../../components/project/DevelopersList";
 
 export default function HomePage() {
   const router = useRouter();
@@ -237,116 +238,23 @@ export default function HomePage() {
   if (userType === "Developer" && !loading) {
     return (
       <div className="flex flex-row max-w-full max-h-full">
-        <div className="flex flex-col m-4 mb-10 pl-6 pr-6 w-full">
+        <div className="flex flex-col m-4 mb-20 pl-6 pr-6 w-full">
           <div className="flex w-6/12 max-w-6/12">
-            <p className="font-poppins mt-2 text-dark-gray font-normal text-md sm:text-lg">
+            <p className="font-poppins mt-2 text-dark-gray font-normal text-md sm:text-lg mb-4">
               Challenges for you
             </p>
           </div>
-          <div className="w-full mt-4 space-y-4">
-            {events.map((event) => {
-              console.log(filteredEvents, event);
-              if (filteredEvents.includes(event["Event ID"])) {
-                if (
-                  event["Paid"] >= 2 &&
-                  event["Deadline"] &&
-                  event["Deadline"]["_seconds"]
-                ) {
-                  const eventDate = new Date(
-                    event["Deadline"]["_seconds"] * 1000
-                  );
-                  if (eventDate > new Date()) {
-                    return (
-                      <div
-                        key={event["Event Name"]}
-                        className="bg-white h-fit rounded-lg p-5"
-                      >
-                        <div className="flex flex-col">
-                          <div className="flex flex-row justify-between">
-                            <div className="flex flex-col">
-                              <div className="lg:flex flex-row hidden space-x-2 mb-2">
-                                {event["Prize List"] &&
-                                  event["Prize List"]
-                                    .slice(0, 3)
-                                    .map((prize, index) => (
-                                      <div
-                                        key={index}
-                                        className="rounded-full bg-logo-purple/65 pl-2 pr-2 font-poppins text-sm font-medium text-white"
-                                      >
-                                        {prize}
-                                      </div>
-                                    ))}
-                              </div>
-                              <div className="font-poppins text-xs md:text-sm text-gray-500">
-                                {event["Company"]}
-                              </div>
-                              <div className="font-poppins lg:text-xl sm:text-lg text-md font-semibold text-logo-purple">
-                                {event["Event Name"]}
-                              </div>
-                            </div>
-                            <Link
-                              href={`/apply/${encodeURIComponent(
-                                event["Event Name"]
-                              )}`}
-                              className="w-fit h-fit rounded-lg"
-                            >
-                              <button
-                                className={`rounded-lg font-poppins w-16 md:w-32 h-10 md:text-lg text-xs font-medium text-white ${
-                                  isApplied(event["Event ID"])
-                                    ? "bg-green-600/90 cursor-not-allowed"
-                                    : "bg-logo-purple/85 hover:bg-logo-purple"
-                                }`}
-                                onClick={() =>
-                                  !isApplied(event["Event ID"]) &&
-                                  handleApplyClick(event)
-                                }
-                                disabled={isApplied(event["Event ID"])}
-                              >
-                                {isApplied(event["Event ID"])
-                                  ? "Applied"
-                                  : "Apply"}
-                              </button>
-                            </Link>
-                          </div>
-                          <div className="font-poppins sm:text-sm text-xs mt-4 mb-4 text-logo-purple">
-                            {event["Short Description"] ||
-                              "No description available"}
-                          </div>
-                          <div className="lg:flex hidden flex-row justify-between">
-                            <div className="font-poppins text-sm text-gray-500">
-                              Submit by{" "}
-                              {event["Deadline"] &&
-                                new Date(
-                                  event["Deadline"]["_seconds"] * 1000
-                                ).toLocaleTimeString("en-US", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  timeZone: "America/Los_Angeles",
-                                  timeZoneName: "short",
-                                })}{" "}
-                              on{" "}
-                              {event["Deadline"] &&
-                                new Date(
-                                  event["Deadline"]["_seconds"] * 1000
-                                ).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}
-                            </div>
-                            <div className="font-poppins text-sm pr-2 text-gray-500">
-                              {event["Required Skills"]?.join(", ")}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-                }
-              }
-              return null;
-            })}
-          </div>
+          <div
+              className={`overflow-auto relative group scrollbar-transparent max-h-[calc(100vh-18rem)]`}
+            >
+              <DevelopersList
+                userEmail={userEmail}
+                events={events}
+                filteredEvents={filteredEvents}
+                handleApplyClick={handleApplyClick}
+                isApplied={isApplied}
+              />
+            </div>
         </div>
       </div>
     );
@@ -389,7 +297,7 @@ export default function HomePage() {
             <div
               className={`overflow-auto relative group scrollbar-transparent max-h-[calc(100vh-18rem)]`}
             >
-              <ProjectsList
+              <CompaniesList
                 projects={challenges}
                 handlePay={handlePay}
                 handleDelete={handleDelete}

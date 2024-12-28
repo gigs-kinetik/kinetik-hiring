@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "../../../../lib/firebaseConfig";
 import { doc, setDoc, collection } from "firebase/firestore";
+import validator from 'validator'
+
 
 export default function ApplyPage() {
   const router = useRouter();
@@ -37,6 +39,67 @@ export default function ApplyPage() {
     }
   }, [router]);
 
+  const githubCheck = (projectURL) => {
+    const validUrl = validator.isURL(projectURL, {
+      protocols: ['http', 'https'],
+      require_protocol: true, 
+    });
+
+    const projectCheck = projectURL.toLowerCase().includes('github')
+    if(!projectCheck || !validUrl) {
+      alert("Project link is not a GitHub link.")
+    }
+    return projectCheck && validUrl;
+  }
+
+  const resumeCheck = (resumeURL) => {
+    const validUrl = validator.isURL(resumeURL, {
+      protocols: ['http', 'https'],
+      require_protocol: true,
+    });
+
+    const isPdf = resumeURL.toLowerCase().endsWith('.pdf')
+    if(!isPdf || !validUrl) {
+      alert("Resume link is not a valid PDF file.")
+    }
+    return validUrl && isPdf;
+  }
+
+  const videoCheck = (videoURL) => {
+    const validUrl = validator.isURL(videoURL, {
+      protocols: ['http', 'https'],
+      require_protocol: true,
+    });
+
+    const youtubeCheck = videoURL.toLowerCase().includes('youtube') && videoURL.toLowerCase().includes('watch')
+    if(!validUrl || !youtubeCheck) {
+      alert("Video link is not a YouTube link. Please give a YouTube video.")
+    }
+    return validUrl && youtubeCheck;
+  }
+
+  const additionalLinkCheck = (additionalLinks) => {
+    console.log(additionalLinks)
+    for(const link of additionalLinks) {
+      if(link !== "") {
+        console.log('here')
+        const validUrl = validator.isURL(link, {
+          protocols: ['http', 'https'],
+          require_protocol: true,
+        });
+  
+        if(!validUrl) {
+          alert(link + " is invalid. Please enter a proper 'http' or 'https' link.")
+          return false;
+        }
+      } else {
+        continue;
+      }
+    }
+
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userEmail = sessionStorage.getItem("userEmail");
@@ -57,25 +120,28 @@ export default function ApplyPage() {
         .toLocaleDateString("en-US", options)
         .split(", ")[0];
       const currTime = new Date().toLocaleTimeString("en-US", options);
-      await setDoc(doc(submissionsRef, event["Event ID"]), {
-        "Event Name": event["Event Name"],
-        "Project Name": projectName,
-        "Project Description": projectDescription,
-        "Submitted At": currDate + ", " + currTime,
-        "Project Link": projectLink,
-        "Resume Link": resumeLink,
-        "Video Link": videoLink,
-        "Other Links": [
-          additionalLink1,
-          additionalLink2,
-          additionalLink3,
-        ].filter((link) => link !== ""),
-      });
-      const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
-      const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
-      await setDoc(doc(submissionsRef2, userEmail), {});
-      router.push("/home");
-      alert("Submission successful!");
+
+      if(projectDescription.length > 0 && projectName.length > 0 && videoCheck(videoLink) && githubCheck(projectLink) && resumeCheck(resumeLink) && additionalLinkCheck([additionalLink1, additionalLink2, additionalLink3])) {
+        await setDoc(doc(submissionsRef, event["Event ID"]), {
+          "Event Name": event["Event Name"],
+          "Project Name": projectName,
+          "Project Description": projectDescription,
+          "Submitted At": currDate + ", " + currTime,
+          "Project Link": projectLink,
+          "Resume Link": resumeLink,
+          "Video Link": videoLink,
+          "Other Links": [
+            additionalLink1,
+            additionalLink2,
+            additionalLink3,
+          ].filter((link) => link !== ""),
+        });
+        const eventSubmissionRef = doc(db, "Events", event["Event ID"]);
+        const submissionsRef2 = collection(eventSubmissionRef, "Submissions");
+        await setDoc(doc(submissionsRef2, userEmail), {});
+        router.push("/home");
+        alert("Submission successful!");
+      } 
     } catch (error) {
       console.error("Error adding document: ", error);
       alert("Submission failed.");
@@ -219,8 +285,7 @@ export default function ApplyPage() {
             Upload Project Submission <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
-            Please attach your GitHub link (coding submission) or Google Drive
-            link (business proposal) with proper access.
+            Please attach your GitHub link with proper access.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -235,8 +300,7 @@ export default function ApplyPage() {
             Upload Resume <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
-            Please attach your resume with proper access. We collect resumes for
-            potential sponsor hiring.
+            Please attach your resume with proper access. Make sure that it is a '.pdf' link.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"
@@ -251,8 +315,7 @@ export default function ApplyPage() {
             Upload Video Submission <span className="text-red-500">*</span>
           </div>
           <p className="font-poppins mt-1 sm:text-sm text-xs text-gray-500">
-            Please attach a quick video of you explaining your product or
-            proposal with proper access.
+            Please attach a quick video of you explaining your product on YouTube.
           </p>
           <input
             className="flex font-poppins max-w-96 text-sm text-gray-900 border border-gray-300 rounded-md cursor-text bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-logo-purple/90"

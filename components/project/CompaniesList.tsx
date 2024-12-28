@@ -40,7 +40,7 @@ interface ProjectsListProps {
   handleDelete: (eventId: string) => void;
 }
 
-export function ProjectsList({
+export function CompaniesList({
   projects,
   handlePay,
   handleDelete,
@@ -76,7 +76,7 @@ export function ProjectsList({
                           || project["Paid"] === 1 && <div>{"Pay 10%"}</div> 
                           || project["Paid"] === 2 && <div>{"Pay 90%!"}</div> 
                           || project["Paid"] === 3 && <div>{"Select Winner!"}</div>)
-                          || project["Paid"] === 4 && <div>{"Prize Distributed!"}</div>
+                          || project["Paid"] === 4 && <div>{"Completed!"}</div>
                     }
                   </div>
               
@@ -162,7 +162,7 @@ export function ProjectsList({
                             }
                           }}
                       className="bg-black text-white hover:opacity-75">
-                      View Submission
+                      View Submissions
                     </Button>
                     <Button
                       onClick={() => {
